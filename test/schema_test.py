@@ -52,14 +52,14 @@ def test_add_column_adds_the_column_to_table(table, column):
 
     assert column in table.columns
 
-def test_add_column_with_primary_key(table, column):
-    add_column(table=table, column=column, primary_key=True)
+def test_add_column_with_primary_key(table, primary_key_column):
+    add_column(table=table, column=primary_key_column)
 
-    assert table.primary_key == column
+    assert table.primary_key == primary_key_column
 
 def test_add_column_cannot_reassign_primary_key(table, build_column):
-    column = build_column()
-    add_column(table=table, column=build_column(), primary_key=True)
+    column = build_column(primary_key=True)
+    add_column(table=table, column=build_column(primary_key=True))
 
-    assert add_column(table=table, column=column, primary_key=True) is False
+    assert add_column(table=table, column=column) is False
     assert column not in table.columns

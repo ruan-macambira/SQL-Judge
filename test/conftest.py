@@ -27,11 +27,16 @@ def table(build_table):
 @pytest.fixture
 def build_column():
     """ Column Factory """
-    def _build_column(name: str = 'column_name', col_type: str = 'column_type'):
-        return Column(name=name, col_type=col_type)
+    def _build_column(name: str = 'column_name', col_type: str = 'column_type', primary_key: bool = False):
+        return Column(name=name, col_type=col_type, primary_key=primary_key)
     return _build_column
 
 @pytest.fixture
 def column(build_column):
     """ Basic Column """
     return build_column()
+
+@pytest.fixture
+def primary_key_column(build_column):
+    """ Column that serves as a Primary Key in a Table"""
+    return build_column(primary_key=True)

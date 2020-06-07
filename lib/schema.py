@@ -3,32 +3,39 @@ from itertools import chain
 
 class Column:
     """Table Column"""
-    def __init__(self, name: str, col_type: str):
+    def __init__(self, name: str, col_type: str, primary_key: bool = False):
         self.table: Optional[Table] = None
         self.name: str = name
         self.type: str = col_type
+
+        self.primary_key = primary_key
 
 class Table:
     """Database Table"""
     def __init__(self, name: str):
         self.schema: Optional[Schema] = None
         self.columns: List[Column] = []
-        self.primary_key: Optional[Column] = None
 
         self.name: str = name
 
-def add_column(table: Table, column: Column, primary_key: bool = False) -> bool:
+    @property
+    def primary_key(self) -> Optional[Column]:
+        """ Returns the table Primary Key, if it has any """
+        candidates: List[Column] = [column for column in self.columns if column.primary_key is True]
+
+        if len(candidates) == 0:
+            return None
+        return candidates[0]
+
+def add_column(table: Table, column: Column) -> bool:
     """ Add an Column to the Table """
     if table is None or column is None:
         raise TypeError
-    if primary_key is True and table.primary_key is not None:
+    if column.primary_key is True and table.primary_key is not None:
         return False
 
     table.columns.append(column)
     column.table = table
-
-    if primary_key:
-        table.primary_key = column
 
     return True
 
