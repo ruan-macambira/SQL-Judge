@@ -5,9 +5,19 @@ from lib.schema import Schema, Table, Column
 from lib.schema import add_table, add_column
 
 @pytest.fixture
-def schema():
+def build_schema(build_table):
+    """ Schema Factory """
+    def _build_schema(tables: int = 0):
+        at_schema = Schema()
+        for _ in range(tables):
+            add_table(at_schema, build_table())
+        return at_schema
+    return _build_schema
+
+@pytest.fixture
+def schema(build_schema):
     """ Basic Schema """
-    return Schema()
+    return build_schema()
 
 @pytest.fixture
 def build_table(build_column):
