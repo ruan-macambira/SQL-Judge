@@ -1,5 +1,5 @@
 from typing import Callable, List, Tuple
-from .schema import Table, Schema
+from .schema import Table, Schema, Column
 
 def run_table_validations(table: Table, validations: List[Callable]) -> List[str]:
     """ Run a set of validations through a table and return its errors in a list """
@@ -17,6 +17,23 @@ def run_tableset_validation(tableset: List[Table], validations: List[Callable]) 
 
     for table in tableset:
         val_res += [(table, message) for message in run_table_validations(table, validations)]
+
+    return val_res
+
+def run_column_validations(column: Column, validations: List[Callable]) -> List[str]:
+    if column is None:
+        raise TypeError
+    if len(validations) == 0:
+        raise ValueError
+
+    raw_messages = [val(column) for val in validations]
+    return [message for message in raw_messages if message is not None]
+
+def run_columnset_validations(columnset: List[Column], validations: List[Callable]) -> List[Tuple[Column, str]]:
+    val_res: List[Tuple[Column, str]] = []
+
+    for column in columnset:
+        val_res += [(column, message) for message in run_column_validations(column, validations)]
 
     return val_res
 

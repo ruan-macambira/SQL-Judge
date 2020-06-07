@@ -1,5 +1,6 @@
 import pytest
 from lib.validation import run_table_validations, run_tableset_validation, ValidationConfig, tables_to_validate
+from lib.validation import run_column_validations, run_columnset_validations
 
 def pass_validation(_table):
     return None
@@ -30,6 +31,30 @@ def test_run_tableset_validations(table):
 def test_cannot_run_tableset_with_no_validations(table):
     with pytest.raises(ValueError):
         run_tableset_validation([table], [])
+
+# run_column_validations
+def test_run_column_validations_returns_a_list(column):
+    assert run_column_validations(column, [pass_validation, fail_validation]) == ['ERROR']
+
+def test_run_column_validations_no_messages_returns_empty_list(column):
+    assert run_column_validations(column, [pass_validation]) == []
+
+def test_cannot_run_validations_in_no_column():
+    with pytest.raises(TypeError):
+        run_column_validations(None, [pass_validation])
+
+def test_cannot_run_no_validations_in_a_column(column):
+    with pytest.raises(ValueError):
+        run_column_validations(column, [])
+
+# run_columnset_validation
+def test_run_columnset_validations(column):
+    assert run_columnset_validations([column], [fail_validation]) == [(column, 'ERROR')]
+
+
+def test_cannot_run_columnset_with_no_validations(column):
+    with pytest.raises(ValueError):
+        run_columnset_validations([column], [])
 
 # tables_to_validate
 def test_tables_to_validate(build_schema):
