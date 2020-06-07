@@ -1,3 +1,5 @@
+# pylint: disable = missing-module-docstring
+# pylint: disable = missing-function-docstring
 from lib.schema import Table
 from . import examples
 

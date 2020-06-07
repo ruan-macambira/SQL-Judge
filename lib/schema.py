@@ -1,3 +1,4 @@
+""" Database Schema-Related objects and fucntions """
 from typing import List, Optional
 from itertools import chain
 
