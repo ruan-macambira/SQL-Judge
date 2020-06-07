@@ -63,3 +63,17 @@ def test_add_column_cannot_reassign_primary_key(table, build_column):
 
     assert add_column(table=table, column=column) is False
     assert column not in table.columns
+
+# Table
+def test_table_start_without_primary_key(table):
+    assert table.primary_key is None
+
+# Column
+def test_column_references(build_column, table):
+    column = build_column(references=table)
+
+    assert column.references == table
+
+def test_column_cannot_be_both_primary_key_and_foreign_key(build_column, table):
+    with pytest.raises(TypeError):
+        build_column(primary_key=True, references=table)

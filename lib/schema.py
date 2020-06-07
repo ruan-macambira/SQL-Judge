@@ -3,12 +3,16 @@ from itertools import chain
 
 class Column:
     """Table Column"""
-    def __init__(self, name: str, col_type: str, primary_key: bool = False):
+    def __init__(self, name: str, col_type: str, primary_key: bool = False, references: 'Table' = None):
         self.table: Optional[Table] = None
         self.name: str = name
         self.type: str = col_type
 
+        if references is not None and primary_key is True:
+            raise TypeError
+
         self.primary_key = primary_key
+        self.references: Optional['Table'] = references
 
 class Table:
     """Database Table"""

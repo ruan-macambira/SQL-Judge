@@ -27,8 +27,8 @@ def table(build_table):
 @pytest.fixture
 def build_column():
     """ Column Factory """
-    def _build_column(name: str = 'column_name', col_type: str = 'column_type', primary_key: bool = False):
-        return Column(name=name, col_type=col_type, primary_key=primary_key)
+    def _build_column(name: str = 'column_name', col_type: str = 'column_type', primary_key: bool = False, references: Table = None):
+        return Column(name=name, col_type=col_type, primary_key=primary_key, references=references)
     return _build_column
 
 @pytest.fixture
