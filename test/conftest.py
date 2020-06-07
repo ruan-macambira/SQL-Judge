@@ -9,8 +9,8 @@ def build_schema(build_table):
     """ Schema Factory """
     def _build_schema(tables: int = 0):
         at_schema = Schema()
-        for _ in range(tables):
-            add_table(at_schema, build_table())
+        for i in range(tables):
+            add_table(at_schema, build_table(name=f'table_{i}'))
         return at_schema
     return _build_schema
 
