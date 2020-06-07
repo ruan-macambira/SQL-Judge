@@ -1,4 +1,5 @@
-def table_has_valid_initials(table_name):
+def table_has_valid_initials(table):
+    table_name = table.name
     splitted = table_name[1:].split('_')
     if len(splitted) == 2:
         return splitted[0] == splitted[1][0:4]
@@ -11,5 +12,6 @@ def table_has_valid_initials(table_name):
     else:
         return False
 
-def table_starts_with_t(table_name):
+def table_starts_with_t(table):
+    table_name = table.name
     return table_name[0].upper() == 'T'
