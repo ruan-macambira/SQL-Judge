@@ -24,6 +24,8 @@ class ValidationConfig:
     """ Stores and configuration options for running the validations """
     def __init__(self, ignore_tables: List[str] = None):
         self.ignore_tables: List[str] = [] if ignore_tables is None else ignore_tables
+        self.table_validations: List[Callable] = []
+        self.column_validations: List[Callable] = []
 
 def tables_to_validate(schema: Schema, config: ValidationConfig):
     """ Filter Entity Tables to ignore the ones specified in configuration """
