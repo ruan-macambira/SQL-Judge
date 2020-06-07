@@ -1,4 +1,5 @@
-from lib.schema import Schema, Table, Column
+#pylint: disable=missing-module-docstring
+#pylint: disable=missing-function-docstring
 from lib.schema import add_column, add_table
 
 # Schema
