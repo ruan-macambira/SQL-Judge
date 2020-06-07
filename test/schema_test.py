@@ -1,5 +1,6 @@
 #pylint: disable=missing-module-docstring
 #pylint: disable=missing-function-docstring
+import pytest
 from lib.schema import add_column, add_table
 
 # Schema
@@ -14,20 +15,33 @@ def test_columns_returns_every_column_from_every_table(schema, build_table):
     assert table2.columns[0] in schema.columns()
 
 # add_table
+def test_no_schema_cannot_have_tables_added(table):
+    with pytest.raises(TypeError):
+        add_table(None, table)
+
+def test_cannot_add_no_table_to_a_schema(schema):
+    with pytest.raises(TypeError):
+        add_table(schema, None)
+
 def test_add_table_assigns_schema_to_table(schema, table):
     add_table(schema, table)
 
     assert table.schema == schema
 
-
-def test_dd_table_adds_the_table_to_schema(schema, table):
+def test_add_table_adds_the_table_to_schema(schema, table):
     add_table(schema, table)
 
     assert table in schema.tables
 
-# Table
-
 # add_column
+def test_cannot_add_column_to_no_table(column):
+    with pytest.raises(TypeError):
+        add_column(None, column)
+
+def test_cannot_add_no_column_to_table(table):
+    with pytest.raises(TypeError):
+        add_column(table, None)
+
 def test_add_column_assigns_table_to_column(table, column):
     add_column(table, column)
 
@@ -37,3 +51,15 @@ def test_add_column_adds_the_column_to_table(table, column):
     add_column(table, column)
 
     assert column in table.columns
+
+def test_add_column_with_primary_key(table, column):
+    add_column(table=table, column=column, primary_key=True)
+
+    assert table.primary_key == column
+
+def test_add_column_cannot_reassign_primary_key(table, build_column):
+    column = build_column()
+    add_column(table=table, column=build_column(), primary_key=True)
+
+    assert add_column(table=table, column=column, primary_key=True) is False
+    assert column not in table.columns

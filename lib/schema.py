@@ -17,10 +17,18 @@ class Table:
 
         self.name: str = name
 
-def add_column(table: Table, column: Column) -> bool:
+def add_column(table: Table, column: Column, primary_key: bool = False) -> bool:
     """ Add an Column to the Table """
+    if table is None or column is None:
+        raise TypeError
+    if primary_key is True and table.primary_key is not None:
+        return False
+
     table.columns.append(column)
     column.table = table
+
+    if primary_key:
+        table.primary_key = column
 
     return True
 
@@ -36,6 +44,9 @@ class Schema:
 
 def add_table(schema: Schema, table: Table) -> bool:
     """ Add an Table to the Schema """
+    if schema is None or table is None:
+        raise TypeError
+
     schema.tables.append(table)
     table.schema = schema
 
