@@ -3,5 +3,6 @@
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
     "python.linting.pylintUseMinimalCheckers": false,
+    "python.linting.pylintArgs": ["--extension-pkg-whitelist=cx_Oracle"],
     "python.linting.mypyEnabled": true,
 }

@@ -7,8 +7,10 @@ verify_ssl = true
 pylint = "*"
 pytest = "*"
 mypy = "*"
+faker = "*"
 
 [packages]
+cx-oracle = "*"
 
 [requires]
 python_version = "3.7"
