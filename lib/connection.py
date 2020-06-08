@@ -6,6 +6,7 @@ class DBConnection:
         raise NotImplementedError
 
 class OracleConnection(DBConnection):
+    """ Database Connection to a Oracle Database """
     def __init__(self, host: str, database: str, username: str, password: str):
         self.host: str = host
         self.database: str = database
@@ -20,6 +21,7 @@ class OracleConnection(DBConnection):
                 return cursor.fetchall()
 
 class SQLiteConnection(DBConnection):
+    """ Database Connection to a SQLite Database """
     def __init__(self, filename: str):
         self.filename: str = filename
 
@@ -43,9 +45,7 @@ class SQLiteConnection(DBConnection):
         """ Return the tables of the schema """
         sql = "SELECT tbl_name FROM SQLITE_MASTER WHERE TYPE='table' ORDER BY tbl_name"
 
-        table_query = self.execute(sql)
-
-        return [row['tbl_name'].upper() for row in table_query]
+        return [row['tbl_name'].upper() for row in self.execute(sql)]
 
     def columns(self, table_name):
         """ Return the columns and the types of a table """

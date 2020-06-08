@@ -1,8 +1,10 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
 import pytest
+import sqlite3
 from lib.schema import Schema, Table, Column
 from lib.schema import add_table, add_column
+from lib.connection import SQLiteConnection
 
 @pytest.fixture
 def build_schema(build_table):
@@ -50,3 +52,22 @@ def column(build_column):
 def primary_key_column(build_column):
     """ Column that serves as a Primary Key in a Table"""
     return build_column(primary_key=True)
+
+@pytest.fixture
+def sqlite_conn():
+    """ A Connection with a Database containing two tables
+        - products: Empty Table
+        - contacts: Containting one element """
+    with sqlite3.connect('temp/test.sqlite3') as conn:
+        conn.execute('CREATE TABLE products(name TEXT)')
+
+        conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
+        conn.execute("INSERT INTO contacts VALUES('Alan', 'Turing')")
+        conn.commit()
+
+    yield SQLiteConnection('temp/test.sqlite3')
+
+    with sqlite3.connect('temp/test.sqlite3') as conn:
+        conn.execute('DROP TABLE contacts')
+        conn.execute('DROP TABLE products')
+        conn.commit()
