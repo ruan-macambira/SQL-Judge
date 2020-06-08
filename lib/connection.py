@@ -1,8 +1,18 @@
-import cx_Oracle
 import sqlite3
+from typing import List, Dict
+import cx_Oracle
 
 class DBConnection:
-    def execute(self, sql):
+    def execute(self, sql: str) -> List[Dict[str, str]]:
+        """ Execute an SQL 'SELECT' Query """
+        raise NotImplementedError
+
+    def tables(self) -> List[str]:
+        """ Return the tables on the Schema """
+        raise NotImplementedError
+
+    def columns(self, table_name: str) -> List[Dict[str, str]]:
+        """ Return the column names and types in the table """
         raise NotImplementedError
 
 class OracleConnection(DBConnection):
@@ -25,7 +35,7 @@ class SQLiteConnection(DBConnection):
     def __init__(self, filename: str):
         self.filename: str = filename
 
-    def execute(self, sql):
+    def execute(self, sql: str) -> List[Dict[str, str]]:
         """ Execute a 'SELECT' statement """
         with sqlite3.connect(self.filename) as connection:
             cursor = connection.cursor()
@@ -41,7 +51,7 @@ class SQLiteConnection(DBConnection):
 
             return ret
 
-    def tables(self):
+    def tables(self) -> List[str]:
         """ Return the tables of the schema """
         sql = "SELECT tbl_name FROM SQLITE_MASTER WHERE TYPE='table' ORDER BY tbl_name"
 
