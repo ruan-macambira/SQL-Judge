@@ -38,3 +38,21 @@ class SQLiteConnection(DBConnection):
             cursor.close()
 
             return ret
+
+    def tables(self):
+        """ Return the tables of the schema """
+        sql = "SELECT tbl_name FROM SQLITE_MASTER WHERE TYPE='table' ORDER BY tbl_name"
+
+        table_query = self.execute(sql)
+
+        return [row['tbl_name'].upper() for row in table_query]
+
+    def columns(self, table_name):
+        """ Return the columns and the types of a table """
+        sql = f"SELECT * FROM pragma_table_info('{table_name}')"
+
+        with sqlite3.connect(self.filename) as connection:
+            cursor = connection.cursor()
+            cursor.execute(sql)
+
+            return [{'name': aux[1].upper(), 'type': aux[2]} for aux in cursor.fetchall()]
