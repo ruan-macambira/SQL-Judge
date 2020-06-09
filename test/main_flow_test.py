@@ -3,7 +3,6 @@ from lib.validation import batch_validate_entities, ValidationConfig, \
     tables_to_validate, columns_to_validate
 from lib.generate_schema import generate_schema
 from lib.run import run
-from lib.report import Report, generate_report
 
 def table_has_tbl_as_prefix(table):
     if table.name[0:3] != 'tbl':

@@ -1,39 +1,29 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
 
-from lib.report import Report, generate_report
-from lib.report import TableReport, ColumnReport
-from lib.report import generate_entity_report
+from lib.report import generate_report
+from lib.report import entity_report
 
 def test_generate_table_report_one_message():
-    table_report = TableReport(table_name='table_one', messages=['message one'])
-
-    assert generate_entity_report(table_report.report_name(), table_report.messages) == \
+    assert entity_report('table_one', ['message one']) == \
         [' + table_one', '   + message one']
 
 def test_generate_table_report_two_messages():
-    table_report = TableReport(table_name='table_one', messages=['message one', 'message two'])
-
-    assert generate_entity_report(table_report.report_name(), table_report.messages) == \
+    assert entity_report('table_one', ['message one', 'message two']) == \
         [' + table_one', '   + message one', '   + message two']
 
 def test_generate_column_report_one_message():
-    column_report = ColumnReport(table_name='table_one',
-                                 column_name='column_one', messages=['message one'])
-
-    assert generate_entity_report(column_report.report_name(), column_report.messages) == \
+    assert entity_report('table_one.column_one', ['message one']) == \
         [' + table_one.column_one', '   + message one']
 
 def test_generate_column_report_two_messages():
-    column_report = ColumnReport(table_name='table_one',
-                                 column_name='column_one', messages=['message one', 'message two'])
-
-    assert generate_entity_report(column_report.report_name(), column_report.messages) == \
+    assert entity_report('table_one.column_one', ['message one', 'message two']) == \
         [' + table_one.column_one', '   + message one', '   + message two']
 
 def test_generate_report_one_table():
-    table_report = TableReport(table_name='table_one', messages=['message one'])
-    report = Report([table_report])
+    report = {'Tables': {
+        'table_one': ['message one']
+    }}
 
     assert generate_report(report) == [
         'REPORT', '=' * 50, 'Tables:', '=' * 50,
@@ -41,11 +31,10 @@ def test_generate_report_one_table():
     ]
 
 def test_generate_report_two_tables():
-    table_reports = [
-        TableReport(table_name='table_one', messages=['message one']),
-        TableReport(table_name='table_two', messages=['message two'])
-    ]
-    report = Report(table_reports)
+    report = {'Tables': {
+        'table_one': ['message one'],
+        'table_two': ['message two']
+    }}
 
     assert generate_report(report) == [
         'REPORT', '=' * 50, 'Tables:', '=' * 50,
@@ -54,10 +43,9 @@ def test_generate_report_two_tables():
     ]
 
 def test_generate_report_one_column():
-    column_reports = [
-        ColumnReport(table_name='table_one', column_name='column_one', messages=['message one'])
-    ]
-    report = Report(column_reports=column_reports)
+    report = {'Columns': {
+        'table_one.column_one': ['message one']
+    }}
 
     assert generate_report(report) == [
         'REPORT', '=' * 50, 'Columns:', '=' * 50,
@@ -65,11 +53,10 @@ def test_generate_report_one_column():
     ]
 
 def test_generate_report_two_columns():
-    column_reports = [
-        ColumnReport(table_name='table_one', column_name='column_one', messages=['message one']),
-        ColumnReport(table_name='table_one', column_name='column_two', messages=['message two'])
-    ]
-    report = Report(column_reports=column_reports)
+    report = {'Columns': {
+        'table_one.column_one': ['message one'],
+        'table_one.column_two': ['message two']
+    }}
 
     assert generate_report(report) == [
         'REPORT', '=' * 50, 'Columns:', '=' * 50,
@@ -78,11 +65,11 @@ def test_generate_report_two_columns():
     ]
 
 def test_generate_report_one_table_one_column():
-    table_reports = [TableReport(table_name='table_one', messages=['message one'])]
-    column_reports = [
-        ColumnReport(table_name='table_one', column_name='column_one', messages=['message one'])
-    ]
-    report = Report(table_reports=table_reports, column_reports=column_reports)
+    report = {'Tables': {
+        'table_one': ['message one']
+    }, 'Columns': {
+        'table_one.column_one': ['message one']
+    }}
 
     assert generate_report(report) == [
         'REPORT', '=' * 50,
