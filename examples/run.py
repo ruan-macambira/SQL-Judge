@@ -1,23 +1,11 @@
 from lib.run import run
 from lib.validation import ValidationConfig
-from lib.connection import DBConnection
+from lib.connection import SQLiteConnection
+from helpers import generate_sqlite_schema
 from .examples import *
 
-class MockConnection(DBConnection):
-    """ Mock classes to generate the return values of a connection object """
-    def __init__(self, mock_values):
-        self.mock_values = mock_values
 
-    def execute(self, sql):
-        return None
-
-    def tables(self):
-        return self.mock_values.keys()
-
-    def columns(self, table_name):
-        return self.mock_values[table_name]
-
-_mock_values = {
+schema = {
         'tblProduct': [
             {'name': 'id', 'type': 'numeric'},
             {'name': 'cl_name', 'type': 'varchar'},
@@ -26,12 +14,14 @@ _mock_values = {
         'metadata_info': [{'name': 'version', 'type': 'varchar'}]
 }
 
+generate_sqlite_schema('./example_schema', schema)
+
 config = ValidationConfig(
-        ignore_tables=['metadata_info'],
+        ignore_tables=['METADATA_INFO'],
         table_validations=[table_has_valid_initials, table_starts_with_t],
         # column_validations=[column_has_cl_as_prefix],
         column_validations=[columm_starts_with_c],
-        connection=MockConnection(_mock_values)
+        connection=SQLiteConnection('./example_schema')
     )
 
 if __name__ == '__main__':
