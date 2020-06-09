@@ -4,7 +4,7 @@ import pytest
 import sqlite3
 from lib.schema import Schema, Table, Column
 from lib.schema import add_table, add_column
-from lib.connection import SQLiteConnection
+from lib.connection import SQLiteConnection, DBConnection
 
 @pytest.fixture
 def build_schema(build_table):
@@ -71,3 +71,30 @@ def sqlite_conn():
         conn.execute('DROP TABLE contacts')
         conn.execute('DROP TABLE products')
         conn.commit()
+
+class MockConnection(DBConnection):
+    def __init__(self, mock_values):
+        self.mock_values = mock_values
+
+    def execute(self, sql):
+        return None
+
+    def tables(self):
+        return self.mock_values.keys()
+
+    def columns(self, table_name):
+        return self.mock_values[table_name]
+
+@pytest.fixture
+def build_mock_conn():
+    def _build_mock_conn(mock_values):
+        return MockConnection(mock_values)
+    return _build_mock_conn
+
+@pytest.fixture
+def mock_conn():
+    return MockConnection({
+        'table_one': [{'name': 'column_one', 'type': 'text'}],
+        'table_two': [{'name': 'column_1', 'type': 'int'}, {'name': 'column_2', 'type': 'int'}]
+    })
+    

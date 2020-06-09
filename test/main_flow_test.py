@@ -1,6 +1,7 @@
 """ Test for running the main flow of the system """
 from lib.schema import Schema, Table, Column, add_column, add_table
 from lib.validation import batch_validate_entities, ValidationConfig, tables_to_validate, columns_to_validate
+from lib.generate_schema import generate_schema
 
 def table_has_tbl_as_prefix(table):
     if table.name[0:3] != 'tbl':
@@ -11,21 +12,25 @@ def column_has_cl_as_prefix(column):
     if column.name[0:2] != 'cl':
         return f"Column '{column.name}' does not have 'cl' as prefix"
 
-def tests_validate_database_schema():
+def tests_validate_database_schema(build_mock_conn):
     # Setting Up Mock Database
     schema = Schema()
 
-    tbl_product = Table('tblProduct')
-    metadata = Table('metadata_info')
+    mock_values = {
+        'tblProduct': [
+            {'name': 'id', 'type': 'numeric'},
+            {'name': 'cl_name', 'type': 'varchar'},
+            {'name':'cl_weight', 'type': 'numeric'}
+        ],
+        'metadata_info': [{'name': 'version', 'type': 'varchar'}]
+    }
 
-    add_table(schema, tbl_product)
-    add_table(schema, metadata)
+    conn = build_mock_conn(mock_values)
 
-    add_column(tbl_product, Column('id', 'numeric'))
-    add_column(tbl_product, Column('cl_name', 'varchar'))
-    add_column(tbl_product, Column('cl_weight', 'numberic'))
+    generate_schema(schema, conn)
 
-    add_column(metadata, Column('version', 'varchar'))
+    tbl_product = schema.tables[0]
+    metadata = schema.tables[1]
 
     # Setting Up Configuration
     config = ValidationConfig(
