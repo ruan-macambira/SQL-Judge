@@ -2,31 +2,33 @@
 # pylint: disable = missing-function-docstring
 
 from lib.report import Report, generate_report
-from lib.report import TableReport, generate_table_report
-from lib.report import ColumnReport, generate_column_report
+from lib.report import TableReport, ColumnReport
+from lib.report import generate_entity_report
 
 def test_generate_table_report_one_message():
     table_report = TableReport(table_name='table_one', messages=['message one'])
 
-    assert generate_table_report(table_report) == [' + table_one', '   + message one']
+    assert generate_entity_report(table_report.report_name(), table_report.messages) == \
+        [' + table_one', '   + message one']
 
 def test_generate_table_report_two_messages():
     table_report = TableReport(table_name='table_one', messages=['message one', 'message two'])
 
-    assert generate_table_report(table_report) == \
+    assert generate_entity_report(table_report.report_name(), table_report.messages) == \
         [' + table_one', '   + message one', '   + message two']
 
 def test_generate_column_report_one_message():
     column_report = ColumnReport(table_name='table_one',
                                  column_name='column_one', messages=['message one'])
 
-    assert generate_column_report(column_report) == [' + table_one.column_one', '   + message one']
+    assert generate_entity_report(column_report.report_name(), column_report.messages) == \
+        [' + table_one.column_one', '   + message one']
 
 def test_generate_column_report_two_messages():
     column_report = ColumnReport(table_name='table_one',
                                  column_name='column_one', messages=['message one', 'message two'])
 
-    assert generate_column_report(column_report) == \
+    assert generate_entity_report(column_report.report_name(), column_report.messages) == \
         [' + table_one.column_one', '   + message one', '   + message two']
 
 def test_generate_report_one_table():
