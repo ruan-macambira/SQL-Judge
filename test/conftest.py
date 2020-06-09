@@ -120,4 +120,3 @@ def mock_conn():
         'table_one': [{'name': 'column_one', 'type': 'text'}],
         'table_two': [{'name': 'column_1', 'type': 'int'}, {'name': 'column_2', 'type': 'int'}]
     })
-    

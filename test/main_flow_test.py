@@ -1,6 +1,6 @@
 """ Test for running the main flow of the system """
-from lib.schema import Schema, Table, Column, add_column, add_table
-from lib.validation import batch_validate_entities, ValidationConfig, tables_to_validate, columns_to_validate
+from lib.validation import batch_validate_entities, ValidationConfig, \
+    tables_to_validate, columns_to_validate
 from lib.generate_schema import generate_schema
 
 def table_has_tbl_as_prefix(table):
