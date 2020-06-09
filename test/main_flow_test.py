@@ -14,8 +14,6 @@ def column_has_cl_as_prefix(column):
 
 def tests_validate_database_schema(build_mock_conn):
     # Setting Up Mock Database
-    schema = Schema()
-
     mock_values = {
         'tblProduct': [
             {'name': 'id', 'type': 'numeric'},
@@ -27,7 +25,7 @@ def tests_validate_database_schema(build_mock_conn):
 
     conn = build_mock_conn(mock_values)
 
-    generate_schema(schema, conn)
+    schema = generate_schema(conn)
 
     tbl_product = schema.tables[0]
     metadata = schema.tables[1]
