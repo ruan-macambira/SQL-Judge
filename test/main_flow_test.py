@@ -23,19 +23,18 @@ def tests_validate_database_schema(build_mock_conn):
         'metadata_info': [{'name': 'version', 'type': 'varchar'}]
     }
 
-    conn = build_mock_conn(mock_values)
-
-    schema = generate_schema(conn)
-
-    tbl_product = schema.tables[0]
-    metadata = schema.tables[1]
-
     # Setting Up Configuration
     config = ValidationConfig(
         ignore_tables='metadata_info',
         table_validations=[table_has_tbl_as_prefix],
-        column_validations=[column_has_cl_as_prefix]
+        column_validations=[column_has_cl_as_prefix],
+        connection=build_mock_conn(mock_values)
     )
+
+    schema = generate_schema(config.connection)
+
+    tbl_product = schema.tables[0]
+    metadata = schema.tables[1]
 
     # Validate
     validation_tables = tables_to_validate(schema, config)

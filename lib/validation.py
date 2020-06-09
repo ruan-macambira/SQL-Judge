@@ -1,6 +1,7 @@
 """ Validations """
 from typing import Callable, List, Tuple, Union
 from .schema import Table, Schema, Column
+from .connection import DBConnection
 
 def validate_entity(entity: Union[Table, Column], validations: List[Callable]) -> List[str]:
     """ Run a list of validations for an entity """
@@ -23,10 +24,12 @@ def batch_validate_entities(entities: List, validations: List[Callable]) -> List
 
 class ValidationConfig:
     """ Stores and configuration options for running the validations """
-    def __init__(self, table_validations: List[Callable], column_validations: List[Callable], ignore_tables: List[str] = None,):
+    def __init__(self, table_validations: List[Callable], column_validations: List[Callable],
+                 connection: DBConnection, ignore_tables: List[str] = None):
         self.ignore_tables: List[str] = [] if ignore_tables is None else ignore_tables
         self.table_validations: List[Callable] = table_validations
         self.column_validations: List[Callable] = column_validations
+        self.connection: DBConnection = connection
 
 def tables_to_validate(schema: Schema, config: ValidationConfig):
     """ Filter Entity Tables to ignore the ones specified in configuration """

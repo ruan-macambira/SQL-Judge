@@ -1,11 +1,13 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
-import pytest
 import sqlite3
+import pytest
 from lib.schema import Schema, Table, Column
 from lib.schema import add_table, add_column
 from lib.connection import SQLiteConnection, DBConnection
+from lib.validation import ValidationConfig
 
+# schema.Schema
 @pytest.fixture
 def build_schema(build_table):
     """ Schema Factory """
@@ -21,6 +23,8 @@ def schema(build_schema):
     """ Basic Schema """
     return build_schema()
 
+
+# schema.Table
 @pytest.fixture
 def build_table(build_column):
     """ Table Factory """
@@ -36,6 +40,7 @@ def table(build_table):
     """ Basic Table """
     return build_table()
 
+# schema.Column
 @pytest.fixture
 def build_column():
     """ Column Factory """
@@ -53,6 +58,23 @@ def primary_key_column(build_column):
     """ Column that serves as a Primary Key in a Table"""
     return build_column(primary_key=True)
 
+# validation.ValidationConfig
+@pytest.fixture
+def build_validation_config(mock_conn):
+    def _build_validation_config(_table_validations=None, _column_validations=None,
+                                 _connection=None, _ignore_tables=None):
+        table_validations = _table_validations if _table_validations else []
+        column_validations = _column_validations if  _column_validations else []
+        connection = _connection if _connection else mock_conn
+        ignore_tables = _ignore_tables if _ignore_tables else []
+        return ValidationConfig(table_validations, column_validations, connection, ignore_tables)
+    return _build_validation_config
+
+@pytest.fixture
+def validation_config(build_validation_config, mock_conn):
+    return build_validation_config([], [], mock_conn, [])
+
+# connection.SQLiteConnection
 @pytest.fixture
 def sqlite_conn():
     """ A Connection with a Database containing two tables
@@ -73,6 +95,7 @@ def sqlite_conn():
         conn.commit()
 
 class MockConnection(DBConnection):
+    """ Mock classes to generate the return values of a connection object """
     def __init__(self, mock_values):
         self.mock_values = mock_values
 

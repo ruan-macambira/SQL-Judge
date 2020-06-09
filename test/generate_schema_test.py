@@ -1,3 +1,5 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
 from lib.generate_schema import generate_schema
 
 def test_generate_schema_adds_tables_to_schema(mock_conn):
