@@ -42,10 +42,10 @@ class SQLiteConnection(DBConnection):
             cursor.execute(sql)
 
             ret = []
-            for aux in cursor.fetchall():
+            for query_row in cursor.fetchall():
                 auy = {}
                 for i in range(len(cursor.description)):
-                    auy[cursor.description[i][0]] = aux[i]
+                    auy[cursor.description[i][0]] = query_row[i]
                 ret.append(auy)
             cursor.close()
 
@@ -59,18 +59,24 @@ class SQLiteConnection(DBConnection):
 
     def columns(self, table_name):
         """ Return the columns and the types of a table """
-        sql = f"SELECT * FROM pragma_table_info('{table_name}')"
-        
+        cols_sql = f"select name, type, pk from pragma_table_info('{table_name}')"
+        fks_sql = f"select `table`, `from` from pragma_foreign_key_list('{table_name}')"
+
         intbool = ['false', 'true']
 
         with sqlite3.connect(self.filename) as connection:
+            fks = connection.execute(fks_sql).fetchall()
             cursor = connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(cols_sql)
 
             columns_info = []
             for column_data in cursor.fetchall():
-                columns_info.append({
-                    'name': column_data[1].upper(), 'type': column_data[2], 'primary_key': intbool[column_data[5]]
-                })
+                column_info = {
+                    'name': column_data[0].upper(), 'type': column_data[1], 'primary_key': intbool[column_data[2]]
+                }
+                for foreign_key in fks:
+                    if column_data[0] == foreign_key[1]:
+                        column_info['references'] = foreign_key[0].upper()
+                        break
+                columns_info.append(column_info)
             return columns_info
-            # return [{'name': aux[1].upper(), 'type': aux[2], 'primary_key': x[aux[3]]} for aux in cursor.fetchall()]

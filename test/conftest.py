@@ -89,9 +89,27 @@ def sqlite_conn():
             conn.execute('CREATE TABLE products(name TEXT)')
 
             conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
-            conn.execute("INSERT INTO contacts VALUES('Alan', 'Turing')")
+            conn.execute("INSERT INTO contacts(first_name, last_name) VALUES('Alan', 'Turing')")
+            conn.commit()
 
-            conn.execute('CREATE TABLE services(id integer PRIMARY KEY)')
+        yield SQLiteConnection(dbfile)
+    finally:
+        os.remove(dbfile)
+
+
+@pytest.fixture
+def sqlite_conn_fk():
+    from datetime import datetime
+    import os
+    """ A Connection with a Database containing two tables
+        - products: Empty Table
+        - contacts: Containting one element """
+    salt = datetime.now().strftime('%Y%m%d%H%m%s%f')
+    dbfile = f'temp/test{salt}.sqlite3'
+    try:
+        with sqlite3.connect(dbfile) as conn:
+            conn.execute('CREATE TABLE contacts(ID INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT)')
+            conn.execute('CREATE TABLE services(id integer PRIMARY KEY, contact_id integer references contacts(id))')
             conn.commit()
 
         yield SQLiteConnection(dbfile)

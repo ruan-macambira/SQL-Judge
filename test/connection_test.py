@@ -13,12 +13,16 @@ def test_execute_custom_select(sqlite_conn):
 
 
 def test_tables_return_the_database_tables(sqlite_conn):
-    assert sqlite_conn.tables() == ['CONTACTS', 'PRODUCTS', 'SERVICES']
+    assert sqlite_conn.tables() == ['CONTACTS', 'PRODUCTS']
 
 def test_columns_return_the_tables_columns(sqlite_conn):
-    assert sqlite_conn.columns('CONTACTS') == \
-        [{'name': 'FIRST_NAME', 'type': 'TEXT', 'primary_key': 'false'},
-         {'name': 'LAST_NAME', 'type': 'TEXT', 'primary_key': 'false'}]
+    assert sqlite_conn.columns('CONTACTS') == [
+            {'name': 'FIRST_NAME', 'type': 'TEXT', 'primary_key': 'false'},
+            {'name': 'LAST_NAME', 'type': 'TEXT', 'primary_key': 'false'}
+        ]
 
-def test_columns_marks_the_primary_key_column(sqlite_conn):
-    assert sqlite_conn.columns('SERVICES')[0]['primary_key'] == 'true'
+def test_columns_marks_the_primary_key_column(sqlite_conn_fk):
+    assert sqlite_conn_fk.columns('SERVICES')[0]['primary_key'] == 'true'
+
+def test_columns_marks_the_foreign_key_references(sqlite_conn_fk):
+    assert sqlite_conn_fk.columns('SERVICES')[1]['references'] == 'CONTACTS'
