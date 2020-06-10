@@ -25,3 +25,13 @@ def test_generate_schema_assigns_the_primary_key_to_the_table(build_mock_conn):
     schema = generate_schema(mock_conn)
 
     assert schema.tables[0].primary_key.name == 'primary_column'
+
+def test_generate_schema_assigns_references_to_foreign_keus_columns(build_mock_conn):
+    mock_conn = build_mock_conn({ 'table': [
+        {'name': 'id', 'type': 'integer', 'primary_key': 'true'}
+    ], 'foreign_key_table': [
+        {'name': 'table_id', 'type': 'integer', 'references': 'table'}
+    ]})
+    schema = generate_schema(mock_conn)
+
+    assert schema.tables[1].columns[0].references == schema.tables[0]

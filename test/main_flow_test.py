@@ -20,6 +20,14 @@ def primary_key_columns_should_be_named_id(column):
         return None
     return f"Column should be named 'id', but it is '{column.name}' instead"
 
+def foreign_key_columns_should_be_table_name_id(column):
+    if column.references is None:
+        return None
+    expected_name = f'{column.references.name}_id'.upper()
+    if column.name.upper() == expected_name:
+        return None
+    return f"Column should be named '{expected_name}', but it is '{column.name.upper()}' instead"
+
 def tests_validate_database_schema(build_mock_conn):
     # Setting Up Mock Database
     mock_values = {
@@ -31,6 +39,10 @@ def tests_validate_database_schema(build_mock_conn):
         'tblService': [
             {'name': 'service_id', 'type': 'numeric', 'primary_key': 'true'}
         ],
+        'tblEmployee': [
+            {'name': 'id', 'type': 'integer', 'primary_key': 'true'},
+            {'name': 'service_id', 'type': 'integer', 'references': 'tblService'}
+        ],
         'metadata_info': [{'name': 'version', 'type': 'varchar'}]
     }
 
@@ -38,7 +50,9 @@ def tests_validate_database_schema(build_mock_conn):
     config = ValidationConfig(
         ignore_tables='metadata_info',
         table_validations=[table_has_tbl_as_prefix],
-        column_validations=[column_has_cl_as_prefix, primary_key_columns_should_be_named_id],
+        column_validations=[column_has_cl_as_prefix,
+                            primary_key_columns_should_be_named_id,
+                            foreign_key_columns_should_be_table_name_id],
         connection=build_mock_conn(mock_values)
     )
 
@@ -46,7 +60,8 @@ def tests_validate_database_schema(build_mock_conn):
 
     tbl_product = schema.tables[0]
     tbl_service = schema.tables[1]
-    metadata = schema.tables[2]
+    tbl_employee = schema.tables[2]
+    metadata = schema.tables[3]
 
     # Validate
     validation_tables = tables_to_validate(schema, config)
@@ -57,6 +72,8 @@ def tests_validate_database_schema(build_mock_conn):
         (tbl_product.columns[0], "Column 'id' does not have 'cl' as prefix")
     assert batch_validate_entities(validation_columns, config.column_validations)[2] == \
         (tbl_service.columns[0], "Column should be named 'id', but it is 'service_id' instead")
+    assert batch_validate_entities(validation_columns, config.column_validations)[5] == \
+        (tbl_employee.columns[1], "Column should be named 'TBLSERVICE_ID', but it is 'SERVICE_ID' instead")
 
 def tests_validate_run(build_mock_conn):
     # Setting Up Mock Database

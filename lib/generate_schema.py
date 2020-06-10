@@ -7,9 +7,14 @@ def generate_schema(conn: DBConnection) -> Schema:
         table: Table = Table(table_name)
         add_table(schema, table)
 
-        for column_hash in conn.columns(table_name):
+    for table in schema.tables:
+        for column_hash in conn.columns(table.name):
             column = Column(name=column_hash['name'], col_type=column_hash['type'],
                             primary_key=as_bool(sanitize(column_hash, 'primary_key', 'false')))
+
+            for xtable in schema.tables:
+                if sanitize(column_hash, 'references', None) == xtable.name:
+                    column.references = xtable
             add_column(table, column)
 
     return schema

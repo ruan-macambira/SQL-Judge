@@ -19,4 +19,9 @@ def create_table_query(table_name: str, columns: list):
 def create_table_column_subquery(options: dict):
     column_name = options['name']
     column_type = options['type']
+
+    if 'primary_key' in options and options['primary_key'] == 'true':
+        return '{} {} PRIMARY KEY'.format(column_name, column_type)
+    if 'references' in options and options['references'] is not None:
+        return '{} {} REFERENCES {}'.format(column_name, column_type, options['references'])
     return f'{column_name} {column_type}'
