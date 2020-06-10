@@ -8,6 +8,7 @@ pylint = "*"
 pytest = "*"
 mypy = "*"
 faker = "*"
+pytest-cov = "*"
 
 [packages]
 cx-oracle = "*"

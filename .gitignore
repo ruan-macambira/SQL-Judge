@@ -1,3 +1,5 @@
 __pycache__/
 .ropeproject/
 temp/
+*.py,cover
+.coverage

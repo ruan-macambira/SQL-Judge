@@ -19,7 +19,6 @@ generate_sqlite_schema('./example_schema', schema)
 config = ValidationConfig(
         ignore_tables=['METADATA_INFO'],
         table_validations=[table_has_valid_initials, table_starts_with_t],
-        # column_validations=[column_has_cl_as_prefix],
         column_validations=[columm_starts_with_c],
         connection=SQLiteConnection('./example_schema')
     )
