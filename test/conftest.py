@@ -77,22 +77,26 @@ def validation_config(build_validation_config, mock_conn):
 # connection.SQLiteConnection
 @pytest.fixture
 def sqlite_conn():
+    from datetime import datetime
+    import os
     """ A Connection with a Database containing two tables
         - products: Empty Table
         - contacts: Containting one element """
-    with sqlite3.connect('temp/test.sqlite3') as conn:
-        conn.execute('CREATE TABLE products(name TEXT)')
+    salt = datetime.now().strftime('%Y%m%d%H%m%s%f')
+    dbfile = f'temp/test{salt}.sqlite3'
+    try:
+        with sqlite3.connect(dbfile) as conn:
+            conn.execute('CREATE TABLE products(name TEXT)')
 
-        conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
-        conn.execute("INSERT INTO contacts VALUES('Alan', 'Turing')")
-        conn.commit()
+            conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
+            conn.execute("INSERT INTO contacts VALUES('Alan', 'Turing')")
 
-    yield SQLiteConnection('temp/test.sqlite3')
+            conn.execute('CREATE TABLE services(id integer PRIMARY KEY)')
+            conn.commit()
 
-    with sqlite3.connect('temp/test.sqlite3') as conn:
-        conn.execute('DROP TABLE contacts')
-        conn.execute('DROP TABLE products')
-        conn.commit()
+        yield SQLiteConnection(dbfile)
+    finally:
+        os.remove(dbfile)
 
 class MockConnection(DBConnection):
     """ Mock classes to generate the return values of a connection object """

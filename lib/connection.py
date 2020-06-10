@@ -60,9 +60,17 @@ class SQLiteConnection(DBConnection):
     def columns(self, table_name):
         """ Return the columns and the types of a table """
         sql = f"SELECT * FROM pragma_table_info('{table_name}')"
+        
+        intbool = ['false', 'true']
 
         with sqlite3.connect(self.filename) as connection:
             cursor = connection.cursor()
             cursor.execute(sql)
 
-            return [{'name': aux[1].upper(), 'type': aux[2]} for aux in cursor.fetchall()]
+            columns_info = []
+            for column_data in cursor.fetchall():
+                columns_info.append({
+                    'name': column_data[1].upper(), 'type': column_data[2], 'primary_key': intbool[column_data[5]]
+                })
+            return columns_info
+            # return [{'name': aux[1].upper(), 'type': aux[2], 'primary_key': x[aux[3]]} for aux in cursor.fetchall()]
