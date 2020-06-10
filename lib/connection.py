@@ -59,24 +59,24 @@ class SQLiteConnection(DBConnection):
 
     def columns(self, table_name):
         """ Return the columns and the types of a table """
-        cols_sql = f"select name, type, pk from pragma_table_info('{table_name}')"
-        fks_sql = f"select `table`, `from` from pragma_foreign_key_list('{table_name}')"
+        table_columns_sql = f"select name, type, pk from pragma_table_info('{table_name}')"
+        table_fks_sql = f"select `table`, `from` from pragma_foreign_key_list('{table_name}')"
 
         intbool = ['false', 'true']
 
-        with sqlite3.connect(self.filename) as connection:
-            fks = connection.execute(fks_sql).fetchall()
-            cursor = connection.cursor()
-            cursor.execute(cols_sql)
+        table_columns = self.execute(table_columns_sql)
+        table_foreign_keys = self.execute(table_fks_sql)
 
-            columns_info = []
-            for column_data in cursor.fetchall():
-                column_info = {
-                    'name': column_data[0].upper(), 'type': column_data[1], 'primary_key': intbool[column_data[2]]
-                }
-                for foreign_key in fks:
-                    if column_data[0] == foreign_key[1]:
-                        column_info['references'] = foreign_key[0].upper()
-                        break
-                columns_info.append(column_info)
-            return columns_info
+        columns_info = []
+        for column_data in table_columns:
+            column_info = {
+                'name': column_data['name'].upper(), 'type': column_data['type'],
+                'primary_key': intbool[column_data['pk']]
+            }
+
+            for foreign_key in table_foreign_keys:
+                if column_data['name'] == foreign_key['from']:
+                    column_info['references'] = foreign_key['table'].upper()
+                    break
+            columns_info.append(column_info)
+        return columns_info
