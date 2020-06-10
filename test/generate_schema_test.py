@@ -17,3 +17,11 @@ def test_generate_schema_assigns_the_column_type_to_column(mock_conn):
     schema = generate_schema(mock_conn)
 
     assert [column.type for column in schema.tables[0].columns] == ['text']
+
+def test_generate_schema_assigns_the_primary_key_to_the_table(build_mock_conn):
+    mock_conn = build_mock_conn({'table_primary_key': [
+        {'name': 'primary_column', 'type': 'integer', 'primary_key': 'true'}
+    ]})
+    schema = generate_schema(mock_conn)
+
+    assert schema.tables[0].primary_key.name == 'primary_column'
