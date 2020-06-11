@@ -31,7 +31,7 @@ def generate_sqlite_schema(schema_options: Dict[str, list],
 
     cursor.close()
 
-    if filepath == ':memory':
+    if filepath == ':memory:':
         return connection
 
     connection.close()

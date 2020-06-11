@@ -17,9 +17,9 @@ def test_tables_return_the_database_tables(sqlite_conn):
 
 def test_columns_return_the_tables_columns(sqlite_conn):
     assert sqlite_conn.columns('CONTACTS') == [
-            {'name': 'FIRST_NAME', 'type': 'TEXT', 'primary_key': 'false'},
-            {'name': 'LAST_NAME', 'type': 'TEXT', 'primary_key': 'false'}
-        ]
+        {'name': 'FIRST_NAME', 'type': 'TEXT', 'primary_key': 'false'},
+        {'name': 'LAST_NAME', 'type': 'TEXT', 'primary_key': 'false'}
+    ]
 
 def test_columns_marks_the_primary_key_column(sqlite_conn_fk):
     assert sqlite_conn_fk.columns('SERVICES')[0]['primary_key'] == 'true'

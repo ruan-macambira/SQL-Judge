@@ -37,7 +37,7 @@ def test_cannot_run_tableset_with_no_validations(table):
 # tables_to_validate
 def test_tables_to_validate(build_schema, build_validation_config):
     schema = build_schema(tables=2)
-    config = build_validation_config(_ignore_tables=[schema.tables[0].name])
+    config = build_validation_config(ignore_tables=[schema.tables[0].name])
 
     assert schema.tables[0] not in tables_to_validate(schema, config)
     assert schema.tables[1] in tables_to_validate(schema, config)
@@ -67,5 +67,5 @@ def test_columns_to_validate(schema, build_table, validation_config, build_valid
     add_table(schema, build_table(name='table_2', columns=2))
     assert len(columns_to_validate(schema, validation_config)) == 4
 
-    config = build_validation_config(_ignore_tables=['table_1'])
+    config = build_validation_config(ignore_tables=['table_1'])
     assert len(columns_to_validate(schema, config)) == 2

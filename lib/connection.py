@@ -1,5 +1,5 @@
 """ Database adapters """
-import sqlite3
+from sqlite3 import connect, Connection
 from typing import List, Dict
 import cx_Oracle
 
@@ -34,24 +34,27 @@ class OracleConnection(DBConnection):
 
 class SQLiteConnection(DBConnection):
     """ Database Connection to a SQLite Database """
-    def __init__(self, filename: str):
-        self.filename: str = filename
+    def __init__(self, filename: str = None, connection: Connection = None):
+        if connection is not None:
+            self.connection = connection
+            return
+        if filename is not None:
+            self.connection = connect(filename)
 
     def execute(self, sql: str) -> List[Dict[str, str]]:
         """ Execute a 'SELECT' statement """
-        with sqlite3.connect(self.filename) as connection:
-            cursor = connection.cursor()
-            cursor.execute(sql)
+        cursor = self.connection.cursor()
+        cursor.execute(sql)
 
-            ret = []
-            for query_row in cursor.fetchall():
-                auy = {}
-                for i in range(len(cursor.description)):
-                    auy[cursor.description[i][0]] = query_row[i]
-                ret.append(auy)
-            cursor.close()
+        ret = []
+        for query_row in cursor.fetchall():
+            auy = {}
+            for i in range(len(cursor.description)):
+                auy[cursor.description[i][0]] = query_row[i]
+            ret.append(auy)
+        cursor.close()
 
-            return ret
+        return ret
 
     def tables(self) -> List[str]:
         """ Return the tables of the schema """

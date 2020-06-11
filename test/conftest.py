@@ -44,7 +44,8 @@ def table(build_table):
 @pytest.fixture
 def build_column():
     """ Column Factory """
-    def _build_column(name: str = 'column_name', col_type: str = 'column_type', primary_key: bool = False, references: Table = None):
+    def _build_column(name: str = 'column_name', col_type: str = 'column_type',
+                      primary_key: bool = False, references: Table = None):
         return Column(name=name, col_type=col_type, primary_key=primary_key, references=references)
     return _build_column
 
@@ -60,61 +61,47 @@ def primary_key_column(build_column):
 
 # validation.ValidationConfig
 @pytest.fixture
-def build_validation_config(mock_conn):
-    def _build_validation_config(_table_validations=None, _column_validations=None,
-                                 _connection=None, _ignore_tables=None):
-        table_validations = _table_validations if _table_validations else []
-        column_validations = _column_validations if  _column_validations else []
-        connection = _connection if _connection else mock_conn
-        ignore_tables = _ignore_tables if _ignore_tables else []
+def build_validation_config():
+    """ Validation Configuration object Factory """
+    def _build_validation_config(table_validations=None, column_validations=None,
+                                 connection=None, ignore_tables=None):
         return ValidationConfig(table_validations, column_validations, connection, ignore_tables)
     return _build_validation_config
 
 @pytest.fixture
 def validation_config(build_validation_config, mock_conn):
+    """ Basic validation Configuration File """
     return build_validation_config([], [], mock_conn, [])
 
 # connection.SQLiteConnection
 @pytest.fixture
 def sqlite_conn():
-    from datetime import datetime
-    import os
     """ A Connection with a Database containing two tables
         - products: Empty Table
         - contacts: Containting one element """
-    salt = datetime.now().strftime('%Y%m%d%H%m%s%f')
-    dbfile = f'temp/test{salt}.sqlite3'
-    try:
-        with sqlite3.connect(dbfile) as conn:
-            conn.execute('CREATE TABLE products(name TEXT)')
+    with sqlite3.connect(':memory:') as conn:
+        conn.execute('CREATE TABLE products(name TEXT)')
 
-            conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
-            conn.execute("INSERT INTO contacts(first_name, last_name) VALUES('Alan', 'Turing')")
-            conn.commit()
+        conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
+        conn.execute("INSERT INTO contacts(first_name, last_name) VALUES('Alan', 'Turing')")
+        conn.commit()
 
-        yield SQLiteConnection(dbfile)
-    finally:
-        os.remove(dbfile)
+        yield SQLiteConnection(connection=conn)
 
 
 @pytest.fixture
 def sqlite_conn_fk():
-    from datetime import datetime
-    import os
     """ A Connection with a Database containing two tables
         - products: Empty Table
         - contacts: Containting one element """
-    salt = datetime.now().strftime('%Y%m%d%H%m%s%f')
-    dbfile = f'temp/test{salt}.sqlite3'
-    try:
-        with sqlite3.connect(dbfile) as conn:
-            conn.execute('CREATE TABLE contacts(ID INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT)')
-            conn.execute('CREATE TABLE services(id integer PRIMARY KEY, contact_id integer references contacts(id))')
-            conn.commit()
+    with sqlite3.connect(':memory:') as conn:
+        conn.execute('CREATE TABLE contacts(ID INTEGER PRIMARY KEY AUTOINCREMENT,'\
+            'first_name TEXT, last_name TEXT)')
+        conn.execute('CREATE TABLE services(id integer PRIMARY KEY,' \
+            'contact_id integer references contacts(id))')
+        conn.commit()
 
-        yield SQLiteConnection(dbfile)
-    finally:
-        os.remove(dbfile)
+        yield SQLiteConnection(connection=conn)
 
 class MockConnection(DBConnection):
     """ Mock classes to generate the return values of a connection object """
@@ -132,12 +119,14 @@ class MockConnection(DBConnection):
 
 @pytest.fixture
 def build_mock_conn():
+    """ Mock Database schema Adapter Factory """
     def _build_mock_conn(mock_values):
         return MockConnection(mock_values)
     return _build_mock_conn
 
 @pytest.fixture
 def mock_conn():
+    """ A basic mock database schema adapter """
     return MockConnection({
         'table_one': [{'name': 'column_one', 'type': 'text'}],
         'table_two': [{'name': 'column_1', 'type': 'int'}, {'name': 'column_2', 'type': 'int'}]
