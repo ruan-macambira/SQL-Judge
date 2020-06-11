@@ -1,8 +1,10 @@
+""" Database adapters """
 import sqlite3
 from typing import List, Dict
 import cx_Oracle
 
 class DBConnection:
+    """ Specify the methods a Database Connection must have """
     def execute(self, sql: str) -> List[Dict[str, str]]:
         """ Execute an SQL 'SELECT' Query """
         raise NotImplementedError
@@ -74,6 +76,7 @@ class SQLiteConnection(DBConnection):
                 'primary_key': intbool[column_data['pk']]
             }
 
+            # cross-references the table columns to the table references to identify foreign keys
             for foreign_key in table_foreign_keys:
                 if column_data['name'] == foreign_key['from']:
                     column_info['references'] = foreign_key['table'].upper()

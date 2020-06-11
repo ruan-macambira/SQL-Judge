@@ -1,12 +1,14 @@
+#pylint: disable=missing-module-docstring
 import os
 from lib.run import run
 from lib.validation import ValidationConfig
 from lib.connection import SQLiteConnection
 from helpers import generate_sqlite_schema
-from .examples import *
+from .examples import * #pylint: disable=wildcard-import
 
 
 def main():
+    """ run the example """
     schema = {
         'tbl_store': [
             {'name': 'id', 'type': 'integer', 'primary_key': 'true'},
@@ -19,13 +21,13 @@ def main():
         ], 'metadata_info': [{'name': 'version', 'type': 'varchar'}]
     }
 
-    generate_sqlite_schema('./example_schema', schema)
+    generate_sqlite_schema(schema, './example_schema')
 
     config = ValidationConfig(
-            ignore_tables=['METADATA_INFO'],
-            table_validations=[table_has_valid_initials, table_starts_with_t],
-            column_validations=[columm_starts_with_c],
-            connection=SQLiteConnection('./example_schema')
+        ignore_tables=['METADATA_INFO'],
+        table_validations=[table_has_valid_initials, table_starts_with_t],
+        column_validations=[columm_starts_with_c],
+        connection=SQLiteConnection('./example_schema')
         )
 
     report_rows = run(config)

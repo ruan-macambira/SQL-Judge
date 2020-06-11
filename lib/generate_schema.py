@@ -1,7 +1,9 @@
+""" Use the database connection to adapt its schema to the applications objects """
 from lib.schema import Schema, Table, Column, add_table, add_column
 from lib.connection import DBConnection
 
 def generate_schema(conn: DBConnection) -> Schema:
+    """ Generate an Schema objects containing the schema contained in the provided database """
     schema = Schema()
     for table_name in conn.tables():
         table: Table = Table(table_name)
@@ -10,17 +12,17 @@ def generate_schema(conn: DBConnection) -> Schema:
     for table in schema.tables:
         for column_hash in conn.columns(table.name):
             column = Column(name=column_hash['name'], col_type=column_hash['type'],
-                            primary_key=as_bool(sanitize(column_hash, 'primary_key', 'false')))
+                            primary_key=_as_bool(_sanitize(column_hash, 'primary_key', 'false')))
 
             for xtable in schema.tables:
-                if sanitize(column_hash, 'references', None) == xtable.name:
+                if _sanitize(column_hash, 'references', None) == xtable.name:
                     column.references = xtable
             add_column(table, column)
 
     return schema
 
-def sanitize(unsanitized_hash: dict, key, default=None):
+def _sanitize(unsanitized_hash: dict, key, default=None):
     return unsanitized_hash[key] if key in unsanitized_hash else default
 
-def as_bool(not_bool: str) -> bool:
+def _as_bool(not_bool: str) -> bool:
     return {'false': False, 'true': True}[not_bool]
