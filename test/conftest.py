@@ -4,7 +4,8 @@ import sqlite3
 import pytest
 from lib.schema import Schema, Table, Column
 from lib.schema import add_table, add_column
-from lib.connection import SQLiteConnection, DBConnection
+from lib.adapter import DBAdapter
+from adapters.sqlite_adapter import SQLiteAdapter
 from lib.validation import ValidationConfig
 
 # schema.Schema
@@ -89,7 +90,7 @@ def sqlite_conn():
         conn.execute("INSERT INTO contacts(first_name, last_name) VALUES('Alan', 'Turing')")
         conn.commit()
 
-        yield SQLiteConnection(connection=conn)
+        yield SQLiteAdapter(connection=conn)
 
 
 @pytest.fixture
@@ -104,12 +105,15 @@ def sqlite_conn_fk():
             'contact_id integer references contacts(id))')
         conn.commit()
 
-        yield SQLiteConnection(connection=conn)
+        yield SQLiteAdapter(connection=conn)
 
-class MockConnection(DBConnection):
+class MockConnection(DBAdapter):
     """ Mock classes to generate the return values of a connection object """
     def __init__(self, mock_values):
         self.mock_values = mock_values
+    
+    def connection(self):
+        return None
 
     def execute(self, sql):
         return None

@@ -1,8 +1,8 @@
 """ Use the database connection to adapt its schema to the applications objects """
 from lib.schema import Schema, Table, Column, add_table, add_column
-from lib.connection import DBConnection
+from lib.adapter import DBAdapter
 
-def generate_schema(conn: DBConnection) -> Schema:
+def generate_schema(conn: DBAdapter) -> Schema:
     """ Generate an Schema objects containing the schema contained in the provided database """
     schema = Schema()
     for table_name in conn.tables():

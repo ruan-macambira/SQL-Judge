@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from typing import Callable, List, Tuple, Union
 from .schema import Table, Schema, Column
-from .connection import DBConnection
+from .adapter import DBAdapter
 
 def validate_entity(entity: Union[Table, Column], validations: List[Callable]) -> List[str]:
     """ Run a list of validations for an entity """
@@ -26,7 +26,7 @@ def batch_validate_entities(entities: List, validations: List[Callable]) -> List
 @dataclass
 class ValidationConfig:
     """ Stores and configuration options for running the validations """
-    connection: DBConnection
+    connection: DBAdapter
     table_validations: List[Callable] = field(default_factory=List)
     column_validations: List[Callable] = field(default_factory=List)
     ignore_tables: List[str] = field(default_factory=List)
