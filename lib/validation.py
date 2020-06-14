@@ -1,4 +1,5 @@
 """ Validations """
+from dataclasses import dataclass, field
 from typing import Callable, List, Tuple, Union
 from .schema import Table, Schema, Column
 from .connection import DBConnection
@@ -22,14 +23,13 @@ def batch_validate_entities(entities: List, validations: List[Callable]) -> List
 
     return val_res
 
+@dataclass
 class ValidationConfig:
     """ Stores and configuration options for running the validations """
-    def __init__(self, table_validations: List[Callable], column_validations: List[Callable],
-                 connection: DBConnection, ignore_tables: List[str] = None):
-        self.ignore_tables: List[str] = [] if ignore_tables is None else ignore_tables
-        self.table_validations: List[Callable] = table_validations
-        self.column_validations: List[Callable] = column_validations
-        self.connection: DBConnection = connection
+    connection: DBConnection
+    table_validations: List[Callable] = field(default_factory=List)
+    column_validations: List[Callable] = field(default_factory=List)
+    ignore_tables: List[str] = field(default_factory=List)
 
 def tables_to_validate(schema: Schema, config: ValidationConfig):
     """ Filter Entity Tables to ignore the ones specified in configuration """

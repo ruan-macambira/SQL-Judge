@@ -2,9 +2,15 @@
 from sqlite3 import connect, Connection
 from typing import List, Dict
 import cx_Oracle
+import psycopg2
 
 class DBConnection:
     """ Specify the methods a Database Connection must have """
+
+    def connection(self):
+        """ The Database connection object """
+        raise NotImplementedError
+
     def execute(self, sql: str) -> List[Dict[str, str]]:
         """ Execute an SQL 'SELECT' Query """
         raise NotImplementedError
@@ -25,25 +31,76 @@ class OracleConnection(DBConnection):
         self.username: str = username
         self.password: str = password
 
+    def connection(self):
+        return cx_Oracle.connect(
+            self.username, self.password,
+            f'{self.host}/{self.database}'
+        )
+
     def execute(self, sql):
-        aux = f'{self.host}/{self.database}'
-        with cx_Oracle.connect(self.username, self.password, aux) as connection:
-            with connection.cursor() as cursor:
+        with self.connection() as conn:
+            with conn.cursor() as cursor:
                 cursor.execute(sql)
                 return cursor.fetchall()
+
+    def tables(self):
+        return []
+
+    def columns(self, table_name: str):
+        return []
+
+class PostgresConnection(DBConnection):
+    """ Database Adapter to a Postgress database """
+    def __init__(self, host: str, database: str, username: str, password: str, port:str):
+        self.host = host
+        self.database = database
+        self.username = username
+        self.password = password
+        self.port = port
+
+    def connection(self):
+        return psycopg2.connect(
+            host=self.host, dbname=self.database, port=self.port,
+            user=self.username, password=self.password
+        )
+
+    def execute(self, sql):
+        conn = self.connection()
+        cursor = conn.cursor()
+        cursor.execute(sql)
+
+        ret = []
+        for query_row in cursor.fetchall():
+            auy = {}
+            for i in range(len(cursor.description)):
+                auy[cursor.description[i][0]] = query_row[i]
+            ret.append(auy)
+        cursor.close()
+        conn.close()
+
+        return ret
+
+    def tables(self):
+        sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = \'public\'"
+
+        return [row['table_name'].upper() for row in self.execute(sql)]
 
 class SQLiteConnection(DBConnection):
     """ Database Connection to a SQLite Database """
     def __init__(self, filename: str = None, connection: Connection = None):
         if connection is not None:
-            self.connection = connection
+            self._connection = connection
             return
         if filename is not None:
-            self.connection = connect(filename)
+            self._connection = connect(filename)
+
+    def connection(self):
+        return self._connection
 
     def execute(self, sql: str) -> List[Dict[str, str]]:
         """ Execute a 'SELECT' statement """
-        cursor = self.connection.cursor()
+        connection = self.connection()
+        cursor = connection.cursor()
         cursor.execute(sql)
 
         ret = []

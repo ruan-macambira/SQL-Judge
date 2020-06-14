@@ -65,7 +65,10 @@ def build_validation_config():
     """ Validation Configuration object Factory """
     def _build_validation_config(table_validations=None, column_validations=None,
                                  connection=None, ignore_tables=None):
-        return ValidationConfig(table_validations, column_validations, connection, ignore_tables)
+        return ValidationConfig(
+            connection=connection, table_validations=table_validations or [],
+            column_validations=column_validations or [], ignore_tables=ignore_tables or []
+        )
     return _build_validation_config
 
 @pytest.fixture

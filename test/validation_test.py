@@ -2,7 +2,7 @@
 # pylint: disable = missing-function-docstring
 import pytest
 from lib.validation import validate_entity, batch_validate_entities
-from lib.validation import ValidationConfig, tables_to_validate, columns_to_validate
+from lib.validation import tables_to_validate, columns_to_validate
 
 def pass_validation(_table):
     return None
