@@ -2,6 +2,33 @@
 from typing import List, Optional
 from itertools import chain
 
+class Schema:
+    """Database Schema"""
+    def __init__(self):
+        self.tables: List['Table'] = []
+
+    def columns(self) -> List['Column']:
+        """Database Tables Columns"""
+        tables_columns = [table.columns for table in self.tables]
+        return list(chain(*tables_columns))
+
+class Table:
+    """Database Table"""
+    def __init__(self, name: str):
+        self.schema: Optional[Schema] = None
+        self.columns: List['Column'] = []
+
+        self.name: str = name
+
+    @property
+    def primary_key(self) -> Optional['Column']:
+        """ Returns the table Primary Key, if it has any """
+        candidates: List['Column'] = [column for column in self.columns if column.primary_key]
+
+        if len(candidates) == 0:
+            return None
+        return candidates[0]
+
 class Column:
     """Table Column"""
     def __init__(self, name: str, col_type: str,
@@ -16,24 +43,18 @@ class Column:
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
 
-class Table:
-    """Database Table"""
-    def __init__(self, name: str):
-        self.schema: Optional[Schema] = None
-        self.columns: List[Column] = []
 
-        self.name: str = name
+def add_table_to_schema(schema: Schema, table: Table) -> bool:
+    """ Add an Table to the Schema """
+    if schema is None or table is None:
+        raise TypeError
 
-    @property
-    def primary_key(self) -> Optional[Column]:
-        """ Returns the table Primary Key, if it has any """
-        candidates: List[Column] = [column for column in self.columns if column.primary_key is True]
+    schema.tables.append(table)
+    table.schema = schema
 
-        if len(candidates) == 0:
-            return None
-        return candidates[0]
+    return True
 
-def add_column(table: Table, column: Column) -> bool:
+def add_column_to_table(table: Table, column: Column) -> bool:
     """ Add an Column to the Table """
     if table is None or column is None:
         raise TypeError
@@ -42,25 +63,5 @@ def add_column(table: Table, column: Column) -> bool:
 
     table.columns.append(column)
     column.table = table
-
-    return True
-
-class Schema:
-    """Database Schema"""
-    def __init__(self):
-        self.tables: List[Table] = []
-
-    def columns(self) -> List[Column]:
-        """Database Tables Columns"""
-        tables_columns = [table.columns for table in self.tables]
-        return list(chain(*tables_columns))
-
-def add_table(schema: Schema, table: Table) -> bool:
-    """ Add an Table to the Schema """
-    if schema is None or table is None:
-        raise TypeError
-
-    schema.tables.append(table)
-    table.schema = schema
 
     return True

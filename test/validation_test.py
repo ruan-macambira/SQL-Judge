@@ -61,10 +61,10 @@ def test_cannot_filter_columns_no_schema(validation_config):
         assert columns_to_validate(None, validation_config)
 
 def test_columns_to_validate(schema, build_table, validation_config, build_validation_config):
-    from lib.schema import add_table
+    from lib.schema import add_table_to_schema
 
-    add_table(schema, build_table(name='table_1', columns=2))
-    add_table(schema, build_table(name='table_2', columns=2))
+    add_table_to_schema(schema, build_table(name='table_1', columns=2))
+    add_table_to_schema(schema, build_table(name='table_2', columns=2))
     assert len(columns_to_validate(schema, validation_config)) == 4
 
     config = build_validation_config(ignore_tables=['table_1'])

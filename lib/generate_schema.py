@@ -1,5 +1,5 @@
 """ Use the database connection to adapt its schema to the applications objects """
-from lib.schema import Schema, Table, Column, add_table, add_column
+from lib.schema import Schema, Table, Column, add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
 
 def generate_schema(conn: DBAdapter) -> Schema:
@@ -7,7 +7,7 @@ def generate_schema(conn: DBAdapter) -> Schema:
     schema = Schema()
     for table_name in conn.tables():
         table: Table = Table(table_name)
-        add_table(schema, table)
+        add_table_to_schema(schema, table)
 
     for table in schema.tables:
         for column_hash in conn.columns(table.name):
@@ -17,7 +17,7 @@ def generate_schema(conn: DBAdapter) -> Schema:
             for xtable in schema.tables:
                 if _sanitize(column_hash, 'references', None) == xtable.name:
                     column.references = xtable
-            add_column(table, column)
+            add_column_to_table(table, column)
 
     return schema
 
