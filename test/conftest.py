@@ -6,6 +6,7 @@ from lib.schema import Schema, Table, Column, Index
 from lib.schema import add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
 from lib.validation import ValidationConfig
+from adapters.mock_adapter import MockAdapter
 from adapters.sqlite_adapter import SQLiteAdapter
 
 # adapter.DBAdapter
@@ -119,34 +120,17 @@ def sqlite_conn_fk():
 
         yield SQLiteAdapter(connection=conn)
 
-class MockConnection(DBAdapter):
-    """ Mock classes to generate the return values of a connection object """
-    def __init__(self, mock_values):
-        self.mock_values = mock_values
-    
-    def connection(self):
-        return None
-
-    def execute(self, sql):
-        return None
-
-    def tables(self):
-        return self.mock_values.keys()
-
-    def columns(self, table_name):
-        return self.mock_values[table_name]
-
 @pytest.fixture
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
     def _build_mock_conn(mock_values):
-        return MockConnection(mock_values)
+        return MockAdapter(mock_values)
     return _build_mock_conn
 
 @pytest.fixture
 def mock_conn():
     """ A basic mock database schema adapter """
-    return MockConnection({
+    return MockAdapter({
         'table_one': [{'name': 'column_one', 'type': 'text'}],
         'table_two': [{'name': 'column_1', 'type': 'int'}, {'name': 'column_2', 'type': 'int'}]
     })
