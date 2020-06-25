@@ -2,11 +2,17 @@
 # pylint: disable=redefined-outer-name
 import sqlite3
 import pytest
-from lib.schema import Schema, Table, Column
+from lib.schema import Schema, Table, Column, Index
 from lib.schema import add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
-from adapters.sqlite_adapter import SQLiteAdapter
 from lib.validation import ValidationConfig
+from adapters.sqlite_adapter import SQLiteAdapter
+
+# adapter.DBAdapter
+@pytest.fixture
+def db_adapter():
+    """ Basic DB Adapter """
+    return DBAdapter()
 
 # schema.Schema
 @pytest.fixture
@@ -59,6 +65,12 @@ def column(build_column):
 def primary_key_column(build_column):
     """ Column that serves as a Primary Key in a Table"""
     return build_column(primary_key=True)
+
+# schema.Index
+@pytest.fixture
+def index():
+    """ Basic Index """
+    return Index('index', False)
 
 # validation.ValidationConfig
 @pytest.fixture

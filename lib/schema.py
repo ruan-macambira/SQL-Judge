@@ -7,6 +7,7 @@ class Schema:
     def __init__(self):
         self.tables: List['Table'] = []
 
+    @property
     def columns(self) -> List['Column']:
         """Database Tables Columns"""
         tables_columns = [table.columns for table in self.tables]
@@ -34,6 +35,7 @@ class Column:
     def __init__(self, name: str, col_type: str,
                  primary_key: bool = False, references: 'Table' = None):
         self.table: Optional[Table] = None
+        self.index: Optional['Index']
         self.name: str = name
         self.type: str = col_type
 
@@ -43,9 +45,16 @@ class Column:
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
 
+class Index:
+    """Column Index"""
+    def __init__(self, name: str, unique: bool = False):
+        self.column: Optional[Column] = None
+        self.name: str = name
+        self.unique: bool = unique
+
 
 def add_table_to_schema(schema: Schema, table: Table) -> bool:
-    """ Add an Table to the Schema """
+    """ Add a Table to the Schema """
     if schema is None or table is None:
         raise TypeError
 
@@ -55,7 +64,7 @@ def add_table_to_schema(schema: Schema, table: Table) -> bool:
     return True
 
 def add_column_to_table(table: Table, column: Column) -> bool:
-    """ Add an Column to the Table """
+    """ Add a Column to a Table """
     if table is None or column is None:
         raise TypeError
     if column.primary_key is True and table.primary_key is not None:
@@ -63,5 +72,15 @@ def add_column_to_table(table: Table, column: Column) -> bool:
 
     table.columns.append(column)
     column.table = table
+
+    return True
+
+def add_index_to_column(column: Column, index: Index) -> bool:
+    """ Add an Index to a Column """
+    if column is None or index is None:
+        raise TypeError
+
+    column.index = index
+    index.column = column
 
     return True

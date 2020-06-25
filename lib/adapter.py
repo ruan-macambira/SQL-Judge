@@ -19,3 +19,7 @@ class DBAdapter:
     def columns(self, table_name: str) -> List[Dict[str, str]]:
         """ Return the column names and types in the table """
         raise NotImplementedError
+
+    def indexes(self, table_name: str):
+        """ Return the indexes assigned to columns in a table """
+        raise NotImplementedError

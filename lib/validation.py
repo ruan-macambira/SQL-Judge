@@ -41,5 +41,5 @@ def columns_to_validate(schema: Schema, config: ValidationConfig):
     """ Filter Entity Columns to ignore those that are from the tables to ignore """
     if schema is None or config is None:
         raise TypeError
-    return [column for column in schema.columns()
+    return [column for column in schema.columns
             if column.table is not None and column.table.name not in config.ignore_tables]
