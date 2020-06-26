@@ -19,19 +19,27 @@ def test_generate_schema_assigns_the_column_type_to_column(mock_conn):
     assert [column.type for column in schema.tables[0].columns] == ['text']
 
 def test_generate_schema_assigns_the_primary_key_to_the_table(build_mock_conn):
-    mock_conn = build_mock_conn({'table_primary_key': [
-        {'name': 'primary_column', 'type': 'integer', 'primary_key': 'true'}
-    ]})
+    mock_conn = build_mock_conn({
+        'table_primary_key': {
+            'columns': {'primary_column': 'integer'},
+            'primary_key': ['primary_column']
+        }
+    })
     schema = generate_schema(mock_conn)
 
     assert schema.tables[0].primary_key.name == 'primary_column'
 
-def test_generate_schema_assigns_references_to_foreign_keus_columns(build_mock_conn):
-    mock_conn = build_mock_conn({'table': [
-        {'name': 'id', 'type': 'integer', 'primary_key': 'true'}
-    ], 'foreign_key_table': [
-        {'name': 'table_id', 'type': 'integer', 'references': 'table'}
-    ]})
+def test_generate_schema_assigns_references_to_foreign_keys_columns(build_mock_conn):
+    mock_conn = build_mock_conn({
+        'table': {
+            'columns': {'id': 'integer'},
+            'primary_key': ['id']
+        },
+        'foreign_key_table': {
+            'columns': {'table_id': 'integer'},
+            'references': {'table_id': 'table' }
+        }
+    })
     schema = generate_schema(mock_conn)
 
     assert schema.tables[1].columns[0].references == schema.tables[0]

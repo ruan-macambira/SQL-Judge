@@ -1,5 +1,5 @@
 """ Database adapters """
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 class DBAdapter:
     """ Specify the methods a Database Connection must have """
@@ -8,18 +8,18 @@ class DBAdapter:
         """ Return the tables on the Schema """
         raise NotImplementedError
 
-    def columns(self, table_name: str) -> List[Dict[str, str]]:
+    def columns(self, table_name: str) -> Dict[str, str]:
         """ Given a Table Name, returns its columns names and types """
         raise NotImplementedError
 
-    def primary_key(self, table_name: str) -> List[str]:
-        """ Given a table name, returns the column(s) that are primary keys """
+    def primary_key(self, table_name: str, column_name: str) -> bool:
+        """ Given a table name and a column, informs if it is a primary key """
         raise NotImplementedError
 
-    def references(self, table_name: str) -> Dict[str, str]:
-        """ Given a Table Name, returns which columns references which table """
+    def references(self, table_name: str, column_name: str) -> Optional[str]:
+        """ Given a table and a column, returns which table it references """
         raise NotImplementedError
 
-    def indexes(self, table_name: str):
-        """ Return the indexes assigned to columns in a table """
+    def index(self, table_name: str, column_name: str) -> Optional[str]:
+        """ Return the indexes assigned a column in a table """
         raise NotImplementedError

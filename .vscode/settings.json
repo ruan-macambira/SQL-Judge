@@ -1,8 +1,6 @@
 {
-    "python.pythonPath": "/home/sharon-apple/.local/share/virtualenvs/SQL-Schema-Naming-Validation-_UZ0ANT3/bin/python",
     "python.linting.enabled": true,
     "python.linting.pylintEnabled": true,
     "python.linting.pylintUseMinimalCheckers": false,
-    "python.linting.pylintArgs": ["--extension-pkg-whitelist=cx_Oracle"],
-    "python.linting.mypyEnabled": true,
+    "python.linting.mypyEnabled": true
 }

@@ -128,9 +128,12 @@ def build_mock_conn():
     return _build_mock_conn
 
 @pytest.fixture
-def mock_conn():
+def mock_conn(build_mock_conn):
     """ A basic mock database schema adapter """
-    return MockAdapter({
-        'table_one': [{'name': 'column_one', 'type': 'text'}],
-        'table_two': [{'name': 'column_1', 'type': 'int'}, {'name': 'column_2', 'type': 'int'}]
+    return build_mock_conn({
+        'table_one': {
+            'columns': {'column_one': 'text'},
+        }, 'table_two': {
+            'columns': {'column_1': 'int', 'column_2': 'int'}
+        }
     })

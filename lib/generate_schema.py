@@ -10,19 +10,13 @@ def generate_schema(conn: DBAdapter) -> Schema:
         add_table_to_schema(schema, table)
 
     for table in schema.tables:
-        for column_hash in conn.columns(table.name):
-            column = Column(name=column_hash['name'], col_type=column_hash['type'],
-                            primary_key=_as_bool(_sanitize(column_hash, 'primary_key', 'false')))
+        for name, col_type in conn.columns(table.name).items():
+            column = Column(name=name, col_type=col_type,
+                            primary_key=conn.primary_key(table.name, name))
 
             for xtable in schema.tables:
-                if _sanitize(column_hash, 'references', None) == xtable.name:
+                if conn.references(table.name, name) == xtable.name:
                     column.references = xtable
             add_column_to_table(table, column)
 
     return schema
-
-def _sanitize(unsanitized_hash: dict, key, default=None):
-    return unsanitized_hash[key] if key in unsanitized_hash else default
-
-def _as_bool(not_bool: str) -> bool:
-    return {'false': False, 'true': True}[not_bool]

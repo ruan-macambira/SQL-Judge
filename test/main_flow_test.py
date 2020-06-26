@@ -31,19 +31,19 @@ def foreign_key_columns_should_be_table_name_id(column):
 def tests_validate_database_schema(build_mock_conn):
     # Setting Up Mock Database
     mock_values = {
-        'tblProduct': [
-            {'name': 'id', 'type': 'numeric', 'primary_key': 'true'},
-            {'name': 'cl_name', 'type': 'varchar'},
-            {'name':'cl_weight', 'type': 'numeric'}
-        ],
-        'tblService': [
-            {'name': 'service_id', 'type': 'numeric', 'primary_key': 'true'}
-        ],
-        'tblEmployee': [
-            {'name': 'id', 'type': 'integer', 'primary_key': 'true'},
-            {'name': 'service_id', 'type': 'integer', 'references': 'tblService'}
-        ],
-        'metadata_info': [{'name': 'version', 'type': 'varchar'}]
+        'tblProduct': {
+            'columns': {'id': 'numeric', 'cl_name': 'varchar', 'cl_weigth': 'numeric'},
+            'primary_key': ['id']
+        }, 'tblService': {
+            'columns': {'service_id': 'numeric'},
+            'primary_key': ['service_id']
+        }, 'tblEmployee': {
+            'columns': {'id': 'integer', 'service_id': 'integer'},
+            'primary_key': ['id'],
+            'references': {'service_id': 'tblService'}
+        }, 'metadata_info': {
+            'columns': {'version': 'varchar'}
+        }
     }
 
     # Setting Up Configuration
@@ -78,12 +78,13 @@ def tests_validate_database_schema(build_mock_conn):
 def tests_validate_run(build_mock_conn):
     # Setting Up Mock Database
     mock_values = {
-        'tblProduct': [
-            {'name': 'id', 'type': 'numeric'},
-            {'name': 'cl_name', 'type': 'varchar'},
-            {'name':'cl_weight', 'type': 'numeric'}
-        ],
-        'metadata_info': [{'name': 'version', 'type': 'varchar'}]
+        'tblProduct': {
+            'columns': {
+                'id': 'numeric', 'cl_name': 'varchar', 'cl_weight': 'numeric'
+            }
+        }, 'metadata_info': {
+            'columns': {'version': 'varchar'}
+        }
     }
 
     # Setting Up Configuration
