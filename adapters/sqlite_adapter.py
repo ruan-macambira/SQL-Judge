@@ -14,7 +14,6 @@ class SQLiteAdapter(DBAdapter):
         return self._connection
 
     def execute(self, sql: str) -> List[Dict[str, str]]:
-        """ Execute a 'SELECT' statement """
         connection = self.connection()
         cursor = connection.cursor()
         cursor.execute(sql)
@@ -30,32 +29,27 @@ class SQLiteAdapter(DBAdapter):
         return ret
 
     def tables(self) -> List[str]:
-        """ Return the tables of the schema """
         sql = "SELECT tbl_name FROM SQLITE_MASTER WHERE TYPE='table' ORDER BY tbl_name"
-
         return [row['tbl_name'].upper() for row in self.execute(sql)]
 
     def columns(self, table_name):
-        """ Return the columns and the types of a table """
         table_columns_sql = f"select name, type, pk from pragma_table_info('{table_name}')"
-        table_fks_sql = f"select `table`, `from` from pragma_foreign_key_list('{table_name}')"
-
-        intbool = ['false', 'true']
-
         table_columns = self.execute(table_columns_sql)
+
+        return {
+            column_data['name'].upper():column_data['type'].upper() for column_data in table_columns
+        }
+
+    def primary_key(self, table_name, column_name):
+        sql = f"select pk from pragma_table_info('{table_name}') where name = '{column_name}'"
+        return len(self.execute(sql)) != 0
+
+
+    def references(self, table_name, column_name):
+        if column_name not in self.columns(table_name).keys():
+            return None
+        table_fks_sql = f"select `table`, `from` from pragma_foreign_key_list('{table_name}')' \
+            ' where `from` = '{column_name}'"
         table_foreign_keys = self.execute(table_fks_sql)
 
-        columns_info = []
-        for column_data in table_columns:
-            column_info = {
-                'name': column_data['name'].upper(), 'type': column_data['type'],
-                'primary_key': intbool[column_data['pk']]
-            }
-
-            # cross-references the table columns to the table references to identify foreign keys
-            for foreign_key in table_foreign_keys:
-                if column_data['name'] == foreign_key['from']:
-                    column_info['references'] = foreign_key['table'].upper()
-                    break
-            columns_info.append(column_info)
-        return columns_info
+        return table_foreign_keys[0]['table'].upper() if len(table_foreign_keys) > 0 else None

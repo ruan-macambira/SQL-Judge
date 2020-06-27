@@ -2,7 +2,7 @@
 import os
 from lib.run import run
 from lib.validation import ValidationConfig
-from lib.connection import SQLiteConnection
+from adapters.sqlite_adapter import SQLiteAdapter
 from helpers import generate_sqlite_schema
 from .examples import * #pylint: disable=wildcard-import
 
@@ -27,7 +27,7 @@ def main():
         ignore_tables=['METADATA_INFO'],
         table_validations=[table_has_valid_initials, table_starts_with_t],
         column_validations=[columm_starts_with_c],
-        connection=SQLiteConnection('./example_schema')
+        connection=SQLiteAdapter('./example_schema')
         )
 
     report_rows = run(config)

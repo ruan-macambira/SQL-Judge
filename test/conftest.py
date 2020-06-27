@@ -114,8 +114,8 @@ def sqlite_conn_fk():
     with sqlite3.connect(':memory:') as conn:
         conn.execute('CREATE TABLE contacts(ID INTEGER PRIMARY KEY AUTOINCREMENT,'\
             'first_name TEXT, last_name TEXT)')
-        conn.execute('CREATE TABLE services(id integer PRIMARY KEY,' \
-            'contact_id integer references contacts(id))')
+        conn.execute('CREATE TABLE services(ID integer PRIMARY KEY,' \
+            'CONTACT_ID integer references contacts(id))')
         conn.commit()
 
         yield SQLiteAdapter(connection=conn)
