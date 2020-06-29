@@ -26,8 +26,8 @@ def main():
     config = Configuration(
         ignore_tables=['METADATA_INFO'],
         validations={
-            'table': [table_has_valid_initials, table_starts_with_t],
-            'column': [columm_starts_with_c]
+            'Tables': [table_has_valid_initials, table_starts_with_t],
+            'Columns': [columm_starts_with_c]
         },
         connection=SQLiteAdapter('./example_schema')
         )

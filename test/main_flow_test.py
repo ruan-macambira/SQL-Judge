@@ -1,6 +1,5 @@
 """ Test for running the main flow of the system """
-from lib.validation import batch_validate_entities, Configuration, \
-    tables_to_validate, columns_to_validate
+from lib.validation import batch_validate_entities, Configuration, entities_to_validate
 from lib.generate_schema import generate_schema
 from lib.run import run
 
@@ -50,8 +49,8 @@ def tests_validate_database_schema(build_mock_conn):
     config = Configuration(
         ignore_tables='metadata_info',
         validations={
-            'table': [table_has_tbl_as_prefix],
-            'column': [column_has_cl_as_prefix,
+            'Tables': [table_has_tbl_as_prefix],
+            'Columns': [column_has_cl_as_prefix,
                        primary_key_columns_should_be_named_id,
                        foreign_key_columns_should_be_table_name_id],
         },
@@ -66,15 +65,15 @@ def tests_validate_database_schema(build_mock_conn):
     metadata = schema.tables[3]
 
     # Validate
-    validation_tables = tables_to_validate(schema, config)
-    validation_columns = columns_to_validate(schema, config)
+    validation_tables = entities_to_validate('Tables', schema, config)
+    validation_columns = entities_to_validate('Columns', schema, config)
 
-    assert metadata not in batch_validate_entities(validation_tables, config.validations['table'])
-    assert batch_validate_entities(validation_columns, config.validations['column'])[0] == \
+    assert metadata not in batch_validate_entities(validation_tables, config.validations['Tables'])
+    assert batch_validate_entities(validation_columns, config.validations['Columns'])[0] == \
         (tbl_product.columns[0], "Column 'id' does not have 'cl' as prefix")
-    assert batch_validate_entities(validation_columns, config.validations['column'])[2] == \
+    assert batch_validate_entities(validation_columns, config.validations['Columns'])[2] == \
         (tbl_service.columns[0], "Column should be named 'id', but it is 'service_id' instead")
-    assert batch_validate_entities(validation_columns, config.validations['column'])[5] == \
+    assert batch_validate_entities(validation_columns, config.validations['Columns'])[5] == \
         (tbl_employee.columns[1], "Column should be named 'TBLSERVICE_ID', but it is 'SERVICE_ID' instead")
 
 def tests_validate_run(build_mock_conn):
@@ -93,8 +92,8 @@ def tests_validate_run(build_mock_conn):
     config = Configuration(
         ignore_tables='metadata_info',
         validations={
-            'table': [table_has_tbl_as_prefix],
-            'column': [column_has_cl_as_prefix]
+            'Tables': [table_has_tbl_as_prefix],
+            'Columns': [column_has_cl_as_prefix]
         },
         connection=build_mock_conn(mock_values)
     )

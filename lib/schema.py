@@ -13,9 +13,23 @@ class Schema:
         tables_columns = [table.columns for table in self.tables]
         return list(chain(*tables_columns))
 
+    @property
+    def entities(self) -> dict:
+        return {
+            'Tables': self.tables,
+            'Columns': self.columns
+        }
+
+    @property
+    def entity_groups(self):
+        return self.entities.keys()
+
 class SchemaEntity:
     """Generic Schema Entity of a Database"""
-    pass
+    @property
+    def canonical_name(self):
+        """ The unique name the entity has that represents itself """
+        raise NotImplementedError
 
 class Table(SchemaEntity):
     """Database Table"""
@@ -34,6 +48,10 @@ class Table(SchemaEntity):
             return None
         return candidates[0]
 
+    @property
+    def canonical_name(self):
+        return self.name
+
 class Column(SchemaEntity):
     """Table Column"""
     def __init__(
@@ -47,6 +65,11 @@ class Column(SchemaEntity):
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
 
+    @property
+    def canonical_name(self):
+        return f'{self.table.canonical_name}.{self.name}'
+
+
 class Index(SchemaEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
@@ -59,6 +82,10 @@ class Index(SchemaEntity):
         if self.column is None:
             return None
         return self.column.table
+
+    @property
+    def canonical_name(self):
+        return f'{self.column.canonical_name}.{self.name}'
 
 def add_table_to_schema(schema: Schema, table: Table) -> bool:
     """ Add a Table to the Schema """
