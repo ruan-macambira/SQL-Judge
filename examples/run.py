@@ -1,7 +1,7 @@
 #pylint: disable=missing-module-docstring
 import os
 from lib.run import run
-from lib.validation import ValidationConfig
+from lib.validation import Configuration
 from adapters.sqlite_adapter import SQLiteAdapter
 from helpers import generate_sqlite_schema
 from .examples import * #pylint: disable=wildcard-import
@@ -23,10 +23,12 @@ def main():
 
     generate_sqlite_schema(schema, './example_schema')
 
-    config = ValidationConfig(
+    config = Configuration(
         ignore_tables=['METADATA_INFO'],
-        table_validations=[table_has_valid_initials, table_starts_with_t],
-        column_validations=[columm_starts_with_c],
+        validations={
+            'table': [table_has_valid_initials, table_starts_with_t],
+            'column': [columm_starts_with_c]
+        },
         connection=SQLiteAdapter('./example_schema')
         )
 

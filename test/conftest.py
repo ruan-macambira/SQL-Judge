@@ -5,7 +5,7 @@ import pytest
 from lib.schema import Schema, Table, Column, Index
 from lib.schema import add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
-from lib.validation import ValidationConfig
+from lib.validation import Configuration
 from adapters.mock_adapter import MockAdapter
 from adapters.sqlite_adapter import SQLiteAdapter
 
@@ -77,18 +77,17 @@ def index():
 @pytest.fixture
 def build_validation_config():
     """ Validation Configuration object Factory """
-    def _build_validation_config(table_validations=None, column_validations=None,
-                                 connection=None, ignore_tables=None):
-        return ValidationConfig(
-            connection=connection, table_validations=table_validations or [],
-            column_validations=column_validations or [], ignore_tables=ignore_tables or []
+    def _build_validation_config(validations=None, connection=None, ignore_tables=None):
+        return Configuration(
+            connection=connection, validations=validations or {},
+            ignore_tables=ignore_tables or []
         )
     return _build_validation_config
 
 @pytest.fixture
 def validation_config(build_validation_config, mock_conn):
     """ Basic validation Configuration File """
-    return build_validation_config([], [], mock_conn, [])
+    return build_validation_config(validations={}, connection=mock_conn, ignore_tables=[])
 
 # connection.SQLiteConnection
 @pytest.fixture

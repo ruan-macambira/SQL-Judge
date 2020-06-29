@@ -13,7 +13,11 @@ class Schema:
         tables_columns = [table.columns for table in self.tables]
         return list(chain(*tables_columns))
 
-class Table:
+class SchemaEntity:
+    """Generic Schema Entity of a Database"""
+    pass
+
+class Table(SchemaEntity):
     """Database Table"""
     def __init__(self, name: str):
         self.schema: Optional[Schema] = None
@@ -30,7 +34,7 @@ class Table:
             return None
         return candidates[0]
 
-class Column:
+class Column(SchemaEntity):
     """Table Column"""
     def __init__(
             self, name: str, col_type: str, primary_key: bool = False, references: 'Table' = None):
@@ -43,7 +47,7 @@ class Column:
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
 
-class Index:
+class Index(SchemaEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
         self.column: Optional[Column] = None

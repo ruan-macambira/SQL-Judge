@@ -1,20 +1,20 @@
 """ Run the application """
 from typing import List, Dict, Callable
-from lib.validation import batch_validate_entities, ValidationConfig, \
+from lib.validation import batch_validate_entities, Configuration, \
     tables_to_validate, columns_to_validate
 from lib.generate_schema import generate_schema
 from lib.report import generate_report
 
-def run(config: ValidationConfig) -> List[str]:
+def run(config: Configuration) -> List[str]:
     """ Run the schema validation and return a report """
     schema = generate_schema(config.connection)
 
     tables = tables_to_validate(schema, config)
     columns = columns_to_validate(schema, config)
 
-    table_reports = _validate(tables, config.table_validations,
+    table_reports = _validate(tables, config.validations['table'],
                               lambda table: table.name)
-    column_reports = _validate(columns, config.column_validations,
+    column_reports = _validate(columns, config.validations['column'],
                                lambda column: f'{column.table.name}.{column.name}')
 
     report = {'Tables': table_reports, 'Columns': column_reports}

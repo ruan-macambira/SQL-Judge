@@ -1,9 +1,16 @@
 """ Validations """
 import functools
 from dataclasses import dataclass, field
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Tuple, Union, Dict
 from .schema import Table, Schema, Column
 from .adapter import DBAdapter
+
+@dataclass
+class Configuration:
+    """ Stores and configuration options for running the validations """
+    connection: DBAdapter
+    validations: Dict[str, List[Callable]] = field(default_factory=dict)
+    ignore_tables: List[str] = field(default_factory=list)
 
 def validate_entity(entity: Union[Table, Column], validations: List[Callable]) -> List[str]:
     """ Run a list of validations for an entity """
@@ -33,21 +40,13 @@ def does_not_accept_none_for_args(function):
         return function(schema, config)
     return wrapper
 
-@dataclass
-class ValidationConfig:
-    """ Stores and configuration options for running the validations """
-    connection: DBAdapter
-    table_validations: List[Callable] = field(default_factory=List)
-    column_validations: List[Callable] = field(default_factory=List)
-    ignore_tables: List[str] = field(default_factory=List)
-
 @does_not_accept_none_for_args
-def tables_to_validate(schema: Schema, config: ValidationConfig):
+def tables_to_validate(schema: Schema, config: Configuration):
     """ Filter Entity Tables to ignore the ones specified in configuration """
     return [table for table in schema.tables if table.name not in config.ignore_tables]
 
 @does_not_accept_none_for_args
-def columns_to_validate(schema: Schema, config: ValidationConfig):
+def columns_to_validate(schema: Schema, config: Configuration):
     """ Filter Entity Columns to ignore those that are from the tables to ignore """
     return [column for column in schema.columns
             if column.table is not None and column.table.name not in config.ignore_tables]
