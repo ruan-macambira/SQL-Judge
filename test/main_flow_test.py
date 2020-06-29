@@ -1,3 +1,4 @@
+#pylint: disable=missing-function-docstring
 """ Test for running the main flow of the system """
 from lib.validation import batch_validate_entities, Configuration, entities_to_validate
 from lib.generate_schema import generate_schema
@@ -13,7 +14,7 @@ def column_has_cl_as_prefix(column):
         return f"Column '{column.name}' does not have 'cl' as prefix"
 
 def primary_key_columns_should_be_named_id(column):
-    if column.primary_key is False:    
+    if column.primary_key is False:
         return None
     if column.name.upper() == 'ID':
         return None
@@ -51,8 +52,8 @@ def tests_validate_database_schema(build_mock_conn):
         validations={
             'Tables': [table_has_tbl_as_prefix],
             'Columns': [column_has_cl_as_prefix,
-                       primary_key_columns_should_be_named_id,
-                       foreign_key_columns_should_be_table_name_id],
+                        primary_key_columns_should_be_named_id,
+                        foreign_key_columns_should_be_table_name_id],
         },
         connection=build_mock_conn(mock_values)
     )
@@ -74,7 +75,8 @@ def tests_validate_database_schema(build_mock_conn):
     assert batch_validate_entities(validation_columns, config.validations['Columns'])[2] == \
         (tbl_service.columns[0], "Column should be named 'id', but it is 'service_id' instead")
     assert batch_validate_entities(validation_columns, config.validations['Columns'])[5] == \
-        (tbl_employee.columns[1], "Column should be named 'TBLSERVICE_ID', but it is 'SERVICE_ID' instead")
+        (tbl_employee.columns[1],
+         "Column should be named 'TBLSERVICE_ID', but it is 'SERVICE_ID' instead")
 
 def tests_validate_run(build_mock_conn):
     # Setting Up Mock Database

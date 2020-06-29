@@ -1,7 +1,8 @@
+""" A Mock for a Database Adapter, used to run tests """
 import functools
 from lib.adapter import DBAdapter
 
-def none_if_key_error(method):
+def _none_if_key_error(method):
     @functools.wraps(method)
     def wrapper(*args, **kwargs):
         try:
@@ -22,10 +23,10 @@ class MockAdapter(DBAdapter):
     def columns(self, table_name):
         return self.mock_values[table_name]['columns']
 
-    @none_if_key_error
+    @_none_if_key_error
     def primary_key(self, table_name, column_name):
         return column_name in self.mock_values[table_name]['primary_key']
 
-    @none_if_key_error
+    @_none_if_key_error
     def references(self, table_name, column_name):
         return self.mock_values[table_name]['references'][column_name]

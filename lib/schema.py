@@ -15,6 +15,7 @@ class Schema:
 
     @property
     def entities(self) -> dict:
+        """A Dict containing the schema entities"""
         return {
             'Tables': self.tables,
             'Columns': self.columns
@@ -22,6 +23,7 @@ class Schema:
 
     @property
     def entity_groups(self):
+        """ the groups of entitites contained in a schema """
         return self.entities.keys()
 
 class SchemaEntity:
@@ -79,6 +81,7 @@ class Index(SchemaEntity):
 
     @property
     def table(self):
+        """ Index Column's associated table """
         if self.column is None:
             return None
         return self.column.table

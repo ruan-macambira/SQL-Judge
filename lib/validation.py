@@ -1,5 +1,4 @@
 """ Validations """
-import functools
 from dataclasses import dataclass, field
 from typing import Callable, List, Tuple, Union, Dict
 from .schema import Table, Schema, Column, SchemaEntity
@@ -32,6 +31,7 @@ def batch_validate_entities(entities: List, validations: List[Callable]) -> List
     return val_res
 
 def not_ignored(entity_group: str, entity: SchemaEntity, config: Configuration) -> bool:
+    """ Checks if the entity should not be ignored """
     rules = {
         'Tables': lambda table: table.name not in config.ignore_tables,
         'Columns': lambda column: column.table.name not in config.ignore_tables
@@ -39,7 +39,12 @@ def not_ignored(entity_group: str, entity: SchemaEntity, config: Configuration) 
 
     return rules[entity_group](entity)
 
-def entities_to_validate(entity_group: str, schema: Schema, config: Configuration) -> List[SchemaEntity]:
+def entities_to_validate(
+        entity_group: str, schema: Schema, config: Configuration) -> List[SchemaEntity]:
+    """ Filter in the entities of a certain group that are meant to run the validations """
     if schema is None or config is None:
         raise TypeError
-    return [entity for entity in schema.entities[entity_group] if not_ignored(entity_group, entity, config)]
+    return [
+        entity for entity in schema.entities[entity_group]
+        if not_ignored(entity_group, entity, config)
+    ]
