@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 from sqlite3 import connect, Connection
 from lib.adapter import DBAdapter
 class SQLiteAdapter(DBAdapter):
@@ -18,21 +18,19 @@ class SQLiteAdapter(DBAdapter):
         cursor = connection.cursor()
         cursor.execute(sql)
 
-        ret = []
-        for query_row in cursor.fetchall():
-            auy = {}
-            for i in range(len(cursor.description)):
-                auy[cursor.description[i][0]] = query_row[i]
-            ret.append(auy)
+        result = [
+            {cursor.description[i][0]: query_row[i] for i in range(len(cursor.description))}
+            for query_row in cursor.fetchall()
+        ]
         cursor.close()
 
-        return ret
+        return result
 
     def tables(self) -> List[str]:
         sql = "SELECT tbl_name FROM SQLITE_MASTER WHERE TYPE='table' ORDER BY tbl_name"
         return [row['tbl_name'].upper() for row in self.execute(sql)]
 
-    def columns(self, table_name):
+    def columns(self, table_name) -> Dict[str, str]:
         table_columns_sql = f"select name, type, pk from pragma_table_info('{table_name}')"
         table_columns = self.execute(table_columns_sql)
 
@@ -40,12 +38,12 @@ class SQLiteAdapter(DBAdapter):
             column_data['name'].upper():column_data['type'].upper() for column_data in table_columns
         }
 
-    def primary_key(self, table_name, column_name):
+    def primary_key(self, table_name, column_name) -> bool:
         sql = f"select pk from pragma_table_info('{table_name}') where name = '{column_name}'"
         return len(self.execute(sql)) != 0
 
 
-    def references(self, table_name, column_name):
+    def references(self, table_name, column_name) -> Optional[str]:
         if column_name not in self.columns(table_name).keys():
             return None
         table_fks_sql = f"select `table`, `from` from pragma_foreign_key_list('{table_name}')' \

@@ -32,16 +32,14 @@ class Table:
 
 class Column:
     """Table Column"""
-    def __init__(self, name: str, col_type: str,
-                 primary_key: bool = False, references: 'Table' = None):
+    def __init__(
+            self, name: str, col_type: str, primary_key: bool = False, references: 'Table' = None):
+        if references is not None and primary_key is True:
+            raise TypeError
         self.table: Optional[Table] = None
         self.index: Optional['Index']
         self.name: str = name
         self.type: str = col_type
-
-        if references is not None and primary_key is True:
-            raise TypeError
-
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
 
@@ -52,6 +50,11 @@ class Index:
         self.name: str = name
         self.unique: bool = unique
 
+    @property
+    def table(self):
+        if self.column is None:
+            return None
+        return self.column.table
 
 def add_table_to_schema(schema: Schema, table: Table) -> bool:
     """ Add a Table to the Schema """
