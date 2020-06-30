@@ -28,6 +28,11 @@ def foreign_key_columns_should_be_table_name_id(column):
         return None
     return f"Column should be named '{expected_name}', but it is '{column.name.upper()}' instead"
 
+def index_starts_with_index(index):
+    if index.name == f'index_{index.column.name}':
+        return None
+    return f"Table Should start with 'index', but it is '{index.name}' instead"
+
 def tests_validate_database_schema(build_mock_conn):
     # Setting Up Mock Database
     mock_values = {
@@ -84,6 +89,9 @@ def tests_validate_run(build_mock_conn):
         'tblProduct': {
             'columns': {
                 'id': 'numeric', 'cl_name': 'varchar', 'cl_weight': 'numeric'
+            },
+            'indexes': {
+                'id': 'id_index'
             }
         }, 'metadata_info': {
             'columns': {'version': 'varchar'}
@@ -95,7 +103,8 @@ def tests_validate_run(build_mock_conn):
         ignore_tables='metadata_info',
         validations={
             'Tables': [table_has_tbl_as_prefix],
-            'Columns': [column_has_cl_as_prefix]
+            'Columns': [column_has_cl_as_prefix],
+            'Indexes': [index_starts_with_index]
         },
         connection=build_mock_conn(mock_values)
     )
@@ -105,3 +114,4 @@ def tests_validate_run(build_mock_conn):
     assert ' + tblProduct' not in actual_report
     assert ' + metadata_info' not in actual_report
     assert "   + Column 'id' does not have 'cl' as prefix" in actual_report
+    assert " + tblProduct.id.id_index" in actual_report

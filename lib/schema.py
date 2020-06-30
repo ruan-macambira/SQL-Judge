@@ -14,11 +14,17 @@ class Schema:
         return list(chain(*tables_columns))
 
     @property
+    def indexes(self) -> List['Index']:
+        """ Database Columns Indexes """
+        return [column.index for column in self.columns if column.index is not None]
+
+    @property
     def entities(self) -> dict:
         """A Dict containing the schema entities"""
         return {
             'Tables': self.tables,
-            'Columns': self.columns
+            'Columns': self.columns,
+            'Indexes': self.indexes,
         }
 
     @property
@@ -61,7 +67,7 @@ class Column(SchemaEntity):
         if references is not None and primary_key is True:
             raise TypeError
         self.table: Optional[Table] = None
-        self.index: Optional['Index']
+        self.index: Optional['Index'] = None
         self.name: str = name
         self.type: str = col_type
         self.primary_key = primary_key

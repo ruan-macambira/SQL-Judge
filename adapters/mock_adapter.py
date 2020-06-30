@@ -30,3 +30,7 @@ class MockAdapter(DBAdapter):
     @_none_if_key_error
     def references(self, table_name, column_name):
         return self.mock_values[table_name]['references'][column_name]
+
+    @_none_if_key_error
+    def index(self, table_name, column_name):
+        return self.mock_values[table_name]['indexes'][column_name]

@@ -37,9 +37,20 @@ def test_generate_schema_assigns_references_to_foreign_keys_columns(build_mock_c
         },
         'foreign_key_table': {
             'columns': {'table_id': 'integer'},
-            'references': {'table_id': 'table' }
+            'references': {'table_id': 'table'}
         }
     })
     schema = generate_schema(mock_conn)
 
     assert schema.tables[1].columns[0].references == schema.tables[0]
+
+def test_generate_schema_assigns_index(build_mock_conn):
+    mock_conn = build_mock_conn({
+        'table': {
+            'columns': {'id': 'integer'},
+            'indexes': {'id': 'id_index'}
+        }
+    })
+    schema = generate_schema(mock_conn)
+
+    assert schema.tables[0].columns[0].index == schema.indexes[0]
