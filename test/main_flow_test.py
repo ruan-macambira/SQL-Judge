@@ -94,7 +94,7 @@ def tests_validate_database_schema(build_mock_conn):
 
 def tests_validate_run(build_mock_conn):
     # Setting Up Mock Database
-    mock_values = {
+    tables_info = {
         'tblProduct': {
             'columns': {
                 'id': 'numeric', 'cl_name': 'varchar', 'cl_weight': 'numeric'
@@ -110,6 +110,8 @@ def tests_validate_run(build_mock_conn):
             'columns': {'version': 'varchar'}
         }
     }
+    functions_info = ['wrong_name_function']
+    procedures_info = ['wrong_name_procedure']
 
     # Setting Up Configuration
     config = Configuration(
@@ -119,11 +121,11 @@ def tests_validate_run(build_mock_conn):
             'Columns': [column_has_cl_as_prefix],
             'Indexes': [index_starts_with_index],
             'Constraints': [constraint_starts_with_table_name],
-            'Triggers': [trigger_is_wrong]
+            'Triggers': [trigger_is_wrong],
+            'Functions': [trigger_is_wrong], 'Procedures': []
         },
-        connection=build_mock_conn(mock_values)
+        connection=build_mock_conn(tables_info, functions_info, procedures_info)
     )
-
     actual_report = run(config)
 
     assert ' + tblProduct' not in actual_report
@@ -132,3 +134,4 @@ def tests_validate_run(build_mock_conn):
     assert " + tblProduct.id.id_index" in actual_report
     assert " + tblProduct.id.id_primary_key" in actual_report
     assert " + tblProduct.wrong_name_trigger" in actual_report
+    assert " + wrong_name_function" in actual_report

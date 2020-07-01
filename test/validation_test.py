@@ -21,18 +21,9 @@ def test_cannot_run_validations_in_no_table():
     with pytest.raises(TypeError):
         validate_entity(None, [pass_validation])
 
-def test_cannot_run_no_validations_in_a_table(table):
-    with pytest.raises(ValueError):
-        validate_entity(table, [])
-
 # run_tableset_validation
 def test_run_tableset_validations(table):
     assert batch_validate_entities([table], [fail_validation]) == [(table, 'ERROR')]
-
-
-def test_cannot_run_tableset_with_no_validations(table):
-    with pytest.raises(ValueError):
-        batch_validate_entities([table], [])
 
 # tables_to_validate
 def test_tables_to_validate(build_schema, build_validation_config):

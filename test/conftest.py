@@ -2,7 +2,7 @@
 # pylint: disable=redefined-outer-name
 import sqlite3
 import pytest
-from lib.schema import Schema, Table, Column, Index
+from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, Function, Procedure
 from lib.schema_operations import add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
 from lib.validation import Configuration
@@ -73,6 +73,29 @@ def index():
     """ Basic Index """
     return Index('index', False)
 
+# schema.constraint
+@pytest.fixture
+def constraint():
+    """ Basic Constraint """
+    return Constraint('constraint', 'PK')
+
+#schema.trigger
+@pytest.fixture
+def trigger():
+    """ Basic Trigger """
+    return Trigger('trigger', 'AFTER INSERT')
+
+#schema.function
+@pytest.fixture
+def function():
+    """ Basic function """
+    return Function('function')
+
+@pytest.fixture
+def procedure():
+    """ Basic Procedure """
+    return Procedure('procedure')
+
 # validation.ValidationConfig
 @pytest.fixture
 def build_validation_config():
@@ -122,8 +145,8 @@ def sqlite_conn_fk():
 @pytest.fixture
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
-    def _build_mock_conn(mock_values):
-        return MockAdapter(mock_values)
+    def _build_mock_conn(tables_info, functions_info=None, procedures_info=None):
+        return MockAdapter(tables_info, functions_info, procedures_info)
     return _build_mock_conn
 
 @pytest.fixture
