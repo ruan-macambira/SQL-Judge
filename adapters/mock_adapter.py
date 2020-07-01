@@ -34,3 +34,9 @@ class MockAdapter(DBAdapter):
     @_none_if_key_error
     def index(self, table_name, column_name):
         return self.mock_values[table_name]['indexes'][column_name]
+
+    def constraints(self, table_name, column_name):
+        try:
+            return self.mock_values[table_name]['constraints'][column_name]
+        except KeyError:
+            return {}

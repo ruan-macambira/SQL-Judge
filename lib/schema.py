@@ -1,6 +1,7 @@
 """ Database Schema-Related objects and fucntions """
 from typing import List, Optional
 from itertools import chain
+import functools
 
 class Schema:
     """Database Schema"""
@@ -19,12 +20,19 @@ class Schema:
         return [column.index for column in self.columns if column.index is not None]
 
     @property
+    def constraints(self) -> List['Constraint']:
+        """ Database Column Constraints """
+        column_constraints = [column.constraints for column in self.columns]
+        return list(chain(*column_constraints))
+
+    @property
     def entities(self) -> dict:
         """A Dict containing the schema entities"""
         return {
             'Tables': self.tables,
             'Columns': self.columns,
             'Indexes': self.indexes,
+            'Constraints': self.constraints
         }
 
     @property
@@ -68,6 +76,7 @@ class Column(SchemaEntity):
             raise TypeError
         self.table: Optional[Table] = None
         self.index: Optional['Index'] = None
+        self.constraints: List['Constraint'] = []
         self.name: str = name
         self.type: str = col_type
         self.primary_key = primary_key
@@ -96,20 +105,41 @@ class Index(SchemaEntity):
     def canonical_name(self):
         return f'{self.column.canonical_name}.{self.name}'
 
+class Constraint(SchemaEntity):
+    """ Column Constraint """
+    def __init__(self, name: str, cons_type: str):
+        self.column: Optional[Column] = None
+        self.name = name
+        self.type = cons_type
+
+    @property
+    def table(self):
+        """ Constraint Column's associated Table """
+        return self.column.table
+
+    @property
+    def canonical_name(self):
+        return f'{self.column.canonical_name}.{self.name}'
+
+def _raise_type_error_if_any_is_none(function):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs):
+        if None in args or None in kwargs:
+            raise TypeError
+        return function(*args, **kwargs)
+    return wrapper
+
+@_raise_type_error_if_any_is_none
 def add_table_to_schema(schema: Schema, table: Table) -> bool:
     """ Add a Table to the Schema """
-    if schema is None or table is None:
-        raise TypeError
-
     schema.tables.append(table)
     table.schema = schema
 
     return True
 
+@_raise_type_error_if_any_is_none
 def add_column_to_table(table: Table, column: Column) -> bool:
     """ Add a Column to a Table """
-    if table is None or column is None:
-        raise TypeError
     if column.primary_key is True and table.primary_key is not None:
         return False
 
@@ -118,12 +148,18 @@ def add_column_to_table(table: Table, column: Column) -> bool:
 
     return True
 
+@_raise_type_error_if_any_is_none
 def add_index_to_column(column: Column, index: Index) -> bool:
     """ Add an Index to a Column """
-    if column is None or index is None:
-        raise TypeError
-
     column.index = index
     index.column = column
+
+    return True
+
+@_raise_type_error_if_any_is_none
+def add_constraint_to_column(column: Column, constraint: Constraint) -> bool:
+    """ Add a constraint to a Column """
+    column.constraints.append(constraint)
+    constraint.column = column
 
     return True

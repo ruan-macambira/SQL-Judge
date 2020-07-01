@@ -1,7 +1,7 @@
 """ Use the database connection to adapt its schema to the applications objects """
 from lib.schema import (
-    Schema, Table, Column, Index,
-    add_table_to_schema, add_column_to_table, add_index_to_column
+    Schema, Table, Column, Index, Constraint,
+    add_table_to_schema, add_column_to_table, add_index_to_column, add_constraint_to_column
 )
 from lib.adapter import DBAdapter
 
@@ -24,7 +24,10 @@ def generate_schema(conn: DBAdapter) -> Schema:
 
     for column in schema.columns:
         index = Index(name=conn.index(column.table.name, column.name))
-
         add_index_to_column(column, index)
+
+        for (cons_name, cons_type) in conn.constraints(column.table.name, column.name).items():
+            constraint = Constraint(name=cons_name, cons_type=cons_type)
+            add_constraint_to_column(column, constraint)
 
     return schema

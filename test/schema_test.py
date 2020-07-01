@@ -13,6 +13,15 @@ def test_columns_returns_every_column_from_every_table(schema, build_table):
 
     assert schema.columns == table1.columns + table2.columns
 
+def test_columns_in_an_empty_schema_returns_an_empty_list(schema):
+    assert schema.columns == []
+
+def test_indexes_in_an_empty_schema_returns_an_empty_list(schema):
+    assert schema.indexes == []
+
+def test_constraints_in_an_empty_schema_returns_an_empty_list(schema):
+    assert schema.constraints == []
+
 # Table
 def test_table_start_without_primary_key(table):
     assert table.primary_key is None

@@ -8,7 +8,8 @@ def adapter(build_mock_conn):
         'table_one': {
             'columns': {'column_one': 'int', 'column_two': 'int'},
             'primary_key': ['column_one'],
-            'references': {'column_two': 'table_two'}
+            'references': {'column_two': 'table_two'},
+            'constraints': {'column_one': {'column_one_constraint': 'primary_key'}}
         }, 'table_two': {
             'columns': {'column_three': 'int', 'column_four': 'int'},
             'primary_key': ['column_three'],
@@ -40,3 +41,6 @@ def test_indexes(adapter):
 
 def test_no_indexes(adapter):
     assert adapter.index('table_two', 'column_four') is None
+
+def test_constraints(adapter):
+    assert adapter.constraints('table_one', 'column_one') == {'column_one_constraint': 'primary_key'}

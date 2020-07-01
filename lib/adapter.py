@@ -1,6 +1,5 @@
 """ Database adapters """
 from typing import List, Dict, Optional
-
 class DBAdapter:
     """ Specify the methods a Database Connection must have """
 
@@ -22,4 +21,8 @@ class DBAdapter:
 
     def index(self, table_name: str, column_name: str) -> Optional[str]:
         """ Return the indexes assigned a column in a table """
+        raise NotImplementedError
+
+    def constraints(self, table_name: str, column_name: str) -> Dict[str, str]:
+        """ Return the constraint assigned to a column in a table """
         raise NotImplementedError
