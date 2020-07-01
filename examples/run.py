@@ -27,16 +27,18 @@ def main():
         ignore_tables=['METADATA_INFO'],
         validations={
             'Tables': [table_has_valid_initials, table_starts_with_t],
-            'Columns': [columm_starts_with_c]
+            'Columns': [columm_starts_with_c],
+            'Triggers': [], 'Indexes': [], 'Constraints': []
         },
         connection=SQLiteAdapter('./example_schema')
         )
 
-    report_rows = run(config)
-
-    for row in report_rows:
-        print(row)
-    os.remove('./example_schema')
+    try:
+        report_rows = run(config)
+        for row in report_rows:
+            print(row)
+    finally:
+        os.remove('./example_schema')
 
 
 if __name__ == '__main__':

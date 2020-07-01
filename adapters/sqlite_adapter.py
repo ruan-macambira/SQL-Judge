@@ -30,6 +30,9 @@ class SQLiteAdapter(DBAdapter):
         sql = "SELECT tbl_name FROM SQLITE_MASTER WHERE TYPE='table' ORDER BY tbl_name"
         return [row['tbl_name'].upper() for row in self.execute(sql)]
 
+    def triggers(self, table_name) -> Dict[str, str]:
+        return {}
+
     def columns(self, table_name) -> Dict[str, str]:
         table_columns_sql = f"select name, type, pk from pragma_table_info('{table_name}')"
         table_columns = self.execute(table_columns_sql)
@@ -51,3 +54,9 @@ class SQLiteAdapter(DBAdapter):
         table_foreign_keys = self.execute(table_fks_sql)
 
         return table_foreign_keys[0]['table'].upper() if len(table_foreign_keys) > 0 else None
+
+    def index(self, table_name, column_name) -> Optional[str]:
+        return None
+
+    def constraints(self, table_name, column_name) -> Dict[str, str]:
+        return {}
