@@ -30,3 +30,11 @@ class DBAdapter:
     def constraints(self, table_name: str, column_name: str) -> Dict[str, str]:
         """ Return the constraint assigned to a column in a table """
         raise NotImplementedError
+
+    def functions(self) -> List[str]:
+        """ Return the Schema Functions """
+        raise NotImplementedError
+
+    def procedures(self) -> List[str]:
+        """ Return the Schema Procedures """
+        raise NotImplementedError

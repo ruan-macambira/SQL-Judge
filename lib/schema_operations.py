@@ -1,5 +1,5 @@
 import functools
-from .schema import Schema, Table, Column, Index, Constraint, Trigger
+from .schema import Schema, Table, Column, Index, Constraint, Trigger, Function, Procedure
 
 def _raise_type_error_if_any_is_none(function):
     @functools.wraps(function)
@@ -49,5 +49,21 @@ def add_constraint_to_column(column: Column, constraint: Constraint) -> bool:
     """ Add a constraint to a Column """
     column.constraints.append(constraint)
     constraint.column = column
+
+    return True
+
+@_raise_type_error_if_any_is_none
+def add_function_to_schema(schema: Schema, function: Function) -> bool:
+    """ Add a function to a Schema """
+    schema.functions.append(function)
+    function.schema = schema
+
+    return True
+
+@_raise_type_error_if_any_is_none
+def add_procedure_to_schema(schema: Schema, procedure: Procedure) -> bool:
+    """ Add a procedure to a Schema """
+    schema.procedures.append(procedure)
+    procedure.schema = schema
 
     return True

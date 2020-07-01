@@ -23,31 +23,39 @@ def _empty_dict_if_key_error(function):
 
 class MockAdapter(DBAdapter):
     """ Mock classes to generate the return values of a connection object """
-    def __init__(self, mock_values):
-        self.mock_values = mock_values
+    def __init__(self, tables_info, functions_info=None, procedures_info=None):
+        self.tables_info = tables_info
+        self.functions_info = functions_info or []
+        self.procedures_info = procedures_info or []
 
     def tables(self):
-        return list(self.mock_values.keys())
+        return list(self.tables_info.keys())
 
     def columns(self, table_name):
-        return self.mock_values[table_name]['columns']
+        return self.tables_info[table_name]['columns']
 
     @_none_if_key_error
     def primary_key(self, table_name, column_name):
-        return column_name in self.mock_values[table_name]['primary_key']
+        return column_name in self.tables_info[table_name]['primary_key']
 
     @_none_if_key_error
     def references(self, table_name, column_name):
-        return self.mock_values[table_name]['references'][column_name]
+        return self.tables_info[table_name]['references'][column_name]
 
     @_none_if_key_error
     def index(self, table_name, column_name):
-        return self.mock_values[table_name]['indexes'][column_name]
+        return self.tables_info[table_name]['indexes'][column_name]
 
     @_empty_dict_if_key_error
     def constraints(self, table_name, column_name):
-        return self.mock_values[table_name]['constraints'][column_name]
+        return self.tables_info[table_name]['constraints'][column_name]
 
     @_empty_dict_if_key_error
     def triggers(self, table_name):
-        return self.mock_values[table_name]['triggers']
+        return self.tables_info[table_name]['triggers']
+
+    def functions(self):
+        return self.functions_info
+
+    def procedures(self):
+        return self.procedures_info

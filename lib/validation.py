@@ -15,8 +15,6 @@ def validate_entity(entity: Union[Table, Column], validations: List[Callable]) -
     """ Run a list of validations for an entity """
     if entity is None:
         raise TypeError
-    if len(validations) == 0:
-        raise ValueError
 
     raw_messages = [val(entity) for val in validations]
     return [message for message in raw_messages if message is not None]

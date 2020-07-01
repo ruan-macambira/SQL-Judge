@@ -6,6 +6,14 @@ class Schema:
     """Database Schema"""
     def __init__(self):
         self.tables: List['Table'] = []
+        self.functions: List['Function'] = []
+        self.procedures: List['Procedure'] = []
+
+    @property
+    def triggers(self) -> List['Trigger']:
+        """ Database Table Triggers """
+        table_triggers = [table.triggers for table in self.tables]
+        return list(chain(*table_triggers))
 
     @property
     def columns(self) -> List['Column']:
@@ -25,12 +33,6 @@ class Schema:
         return list(chain(*column_constraints))
 
     @property
-    def triggers(self) -> List['Trigger']:
-        """ Database Table Triggers """
-        table_triggers = [table.triggers for table in self.tables]
-        return list(chain(*table_triggers))
-
-    @property
     def entities(self) -> dict:
         """A Dict containing the schema entities"""
         return {
@@ -38,13 +40,19 @@ class Schema:
             'Columns': self.columns,
             'Triggers': self.triggers,
             'Indexes': self.indexes,
-            'Constraints': self.constraints
+            'Constraints': self.constraints,
+            'Functions': self.functions,
+            'Procedures': self.procedures
         }
 
     @property
     def entity_groups(self):
         """ the groups of entitites contained in a schema """
         return self.entities.keys()
+
+def null_schema():
+    """ Schema Null Object """
+    return Schema()
 
 class SchemaEntity:
     """Generic Schema Entity of a Database"""
@@ -83,7 +91,7 @@ class Table(SchemaEntity):
         return self.name
 
 def null_table() -> Table:
-    """Null Object Table"""
+    """Table Null Object"""
     return Table('')
 
 class Trigger(SchemaEntity):
@@ -124,7 +132,7 @@ class Column(SchemaEntity):
         return f'{self.table.canonical_name}.{self.name}'
 
 def null_column() -> Column:
-    """Null Object Column"""
+    """Column Null Object"""
     return Column('', '')
 
 class Index(SchemaEntity):
@@ -157,3 +165,29 @@ class Constraint(SchemaEntity):
     @property
     def canonical_name(self):
         return f'{self.column.canonical_name}.{self.name}'
+
+class Function(SchemaEntity):
+    """ Schema Function """
+    def __init__(self, name):
+        self.name = name
+        self.schema: Schema = null_schema()
+
+    def table_name(self):
+        return 'sjnkjrnreojnregojrebnreojgbreogjbrnegorueb'
+
+    @property
+    def canonical_name(self):
+        return self.name
+
+class Procedure(SchemaEntity):
+    """ Schema Procedure """
+    def __init__(self, name):
+        self.name = name
+        self.schema: Schema = null_schema()
+
+    def table_name(self):
+        return ''
+
+    @property
+    def canonical_name(self):
+        return self.name

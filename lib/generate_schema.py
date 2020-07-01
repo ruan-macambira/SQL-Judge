@@ -1,8 +1,8 @@
 """ Use the database connection to adapt its schema to the applications objects """
-from lib.schema import Schema, Table, Column, Index, Constraint, Trigger
+from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, Function, Procedure
 from lib.schema_operations import (
     add_table_to_schema, add_column_to_table, add_trigger_to_table,
-    add_index_to_column, add_constraint_to_column
+    add_index_to_column, add_constraint_to_column, add_function_to_schema, add_procedure_to_schema
 )
 from lib.adapter import DBAdapter
 
@@ -19,6 +19,14 @@ def generate_schema(conn: DBAdapter) -> Schema:
         _insert_references_to_column(column, schema, conn)
         _insert_index_to_column(column, conn)
         _insert_constraints_to_column(column, conn)
+
+    for function_name in conn.functions():
+        function: Function = Function(function_name)
+        add_function_to_schema(schema, function)
+
+    for procedure_name in conn.procedures():
+        procedure: Procedure = Procedure(procedure_name)
+        add_procedure_to_schema(schema, procedure)
 
     return schema
 

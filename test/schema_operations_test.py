@@ -1,7 +1,7 @@
-# add_table_to_schema
 import pytest
-from lib.schema_operations import add_column_to_table, add_table_to_schema, add_index_to_column
+from lib.schema_operations import (add_column_to_table, add_table_to_schema, add_index_to_column, add_trigger_to_table, add_constraint_to_column)
 
+# add_table_to_schema
 def test_no_schema_cannot_have_tables_added(table):
     with pytest.raises(TypeError):
         add_table_to_schema(None, table)
@@ -69,3 +69,25 @@ def test_add_index_assigns_index_to_column(column, index):
     add_index_to_column(column, index)
 
     assert index.column == column
+
+# add_constraint_to_column
+def test_add_constraint_assigns_constraints_to_column(column, constraint):
+    add_constraint_to_column(column, constraint)
+
+    assert constraint in column.constraints
+
+def test_add_constraint_assigns_column_to_constraint(column, constraint):
+    add_constraint_to_column(column, constraint)
+
+    assert constraint.column == column
+
+# add_trigger_to_table
+def test_add_trigger_assigns_trigger_to_table(table, trigger):
+    add_trigger_to_table(table, trigger)
+
+    assert trigger in table.triggers
+
+def test_add_trigger_assigns_table_to_trigger(table, trigger):
+    add_trigger_to_table(table, trigger)
+
+    assert trigger.table == table
