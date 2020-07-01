@@ -3,7 +3,7 @@
 import sqlite3
 import pytest
 from lib.schema import Schema, Table, Column, Index
-from lib.schema import add_table_to_schema, add_column_to_table
+from lib.schema_operations import add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
 from lib.validation import Configuration
 from adapters.mock_adapter import MockAdapter

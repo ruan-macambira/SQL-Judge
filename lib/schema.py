@@ -1,7 +1,6 @@
 """ Database Schema-Related objects and fucntions """
 from typing import List, Optional
 from itertools import chain
-import functools
 
 class Schema:
     """Database Schema"""
@@ -68,13 +67,17 @@ class Table(SchemaEntity):
     def canonical_name(self):
         return self.name
 
+def null_table() -> Table:
+    """Null Object Table"""
+    return Table('')
+
 class Column(SchemaEntity):
     """Table Column"""
     def __init__(
             self, name: str, col_type: str, primary_key: bool = False, references: 'Table' = None):
         if references is not None and primary_key is True:
             raise TypeError
-        self.table: Optional[Table] = None
+        self.table: Table = null_table()
         self.index: Optional['Index'] = None
         self.constraints: List['Constraint'] = []
         self.name: str = name
@@ -86,11 +89,14 @@ class Column(SchemaEntity):
     def canonical_name(self):
         return f'{self.table.canonical_name}.{self.name}'
 
+def null_column() -> Column:
+    """Null Object Column"""
+    return Column('', '')
 
 class Index(SchemaEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
-        self.column: Optional[Column] = None
+        self.column: Column = null_column()
         self.name: str = name
         self.unique: bool = unique
 
@@ -108,7 +114,7 @@ class Index(SchemaEntity):
 class Constraint(SchemaEntity):
     """ Column Constraint """
     def __init__(self, name: str, cons_type: str):
-        self.column: Optional[Column] = None
+        self.column: Column = null_column()
         self.name = name
         self.type = cons_type
 
@@ -120,46 +126,3 @@ class Constraint(SchemaEntity):
     @property
     def canonical_name(self):
         return f'{self.column.canonical_name}.{self.name}'
-
-def _raise_type_error_if_any_is_none(function):
-    @functools.wraps(function)
-    def wrapper(*args, **kwargs):
-        if None in args or None in kwargs:
-            raise TypeError
-        return function(*args, **kwargs)
-    return wrapper
-
-@_raise_type_error_if_any_is_none
-def add_table_to_schema(schema: Schema, table: Table) -> bool:
-    """ Add a Table to the Schema """
-    schema.tables.append(table)
-    table.schema = schema
-
-    return True
-
-@_raise_type_error_if_any_is_none
-def add_column_to_table(table: Table, column: Column) -> bool:
-    """ Add a Column to a Table """
-    if column.primary_key is True and table.primary_key is not None:
-        return False
-
-    table.columns.append(column)
-    column.table = table
-
-    return True
-
-@_raise_type_error_if_any_is_none
-def add_index_to_column(column: Column, index: Index) -> bool:
-    """ Add an Index to a Column """
-    column.index = index
-    index.column = column
-
-    return True
-
-@_raise_type_error_if_any_is_none
-def add_constraint_to_column(column: Column, constraint: Constraint) -> bool:
-    """ Add a constraint to a Column """
-    column.constraints.append(constraint)
-    constraint.column = column
-
-    return True

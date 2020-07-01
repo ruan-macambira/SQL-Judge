@@ -61,7 +61,7 @@ def test_cannot_filter_columns_no_schema(validation_config):
         assert entities_to_validate('Columns', None, validation_config)
 
 def test_entities_to_validate(schema, build_table, validation_config, build_validation_config):
-    from lib.schema import add_table_to_schema # pylint: disable=import-outside-toplevel
+    from lib.schema_operations import add_table_to_schema # pylint: disable=import-outside-toplevel
 
     add_table_to_schema(schema, build_table(name='table_1', columns=2))
     add_table_to_schema(schema, build_table(name='table_2', columns=2))

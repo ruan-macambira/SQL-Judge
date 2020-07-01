@@ -43,4 +43,5 @@ def test_no_indexes(adapter):
     assert adapter.index('table_two', 'column_four') is None
 
 def test_constraints(adapter):
-    assert adapter.constraints('table_one', 'column_one') == {'column_one_constraint': 'primary_key'}
+    assert adapter.constraints('table_one', 'column_one') == \
+        {'column_one_constraint': 'primary_key'}

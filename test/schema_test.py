@@ -1,7 +1,7 @@
 #pylint: disable=missing-module-docstring
 #pylint: disable=missing-function-docstring
 import pytest
-from lib.schema import add_column_to_table, add_table_to_schema, add_index_to_column
+from lib.schema_operations import add_column_to_table, add_table_to_schema, add_index_to_column
 
 # Schema
 def test_columns_returns_every_column_from_every_table(schema, build_table):
