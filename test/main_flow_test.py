@@ -34,7 +34,7 @@ def index_starts_with_index(index):
     return f"Table Should start with 'index', but it is '{index.name}' instead"
 
 def constraint_starts_with_table_name(constraint):
-    table_name = constraint.table.name
+    table_name = constraint.column.table.name
     if constraint.name[:len(table_name)] == table_name:
         return None
     return f"Table Should start with '{table_name}', but it is '{constraint.name}' instead"

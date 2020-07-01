@@ -48,6 +48,10 @@ class Schema:
 
 class SchemaEntity:
     """Generic Schema Entity of a Database"""
+    def table_name(self):
+        """ The Table this entity is associated, directly or not """
+        raise NotImplementedError
+
     @property
     def canonical_name(self):
         """ The unique name the entity has that represents itself """
@@ -60,7 +64,10 @@ class Table(SchemaEntity):
         self.columns: List['Column'] = []
         self.triggers: List['Trigger'] = []
 
-        self.name: str = name
+        self.name = name
+
+    def table_name(self):
+        return self.name
 
     @property
     def primary_key(self) -> Optional['Column']:
@@ -83,8 +90,12 @@ class Trigger(SchemaEntity):
     """Table Trigger"""
     def __init__(self, name: str, hook: str):
         self.table: Table = null_table()
+
         self.name = name
         self.hook = hook.upper() # AFTER CREATE, AFTER UPDATE, AFTER DELETE
+
+    def table_name(self):
+        return self.table.name
 
     @property
     def canonical_name(self):
@@ -99,10 +110,14 @@ class Column(SchemaEntity):
         self.table: Table = null_table()
         self.index: Optional['Index'] = None
         self.constraints: List['Constraint'] = []
+
         self.name: str = name
         self.type: str = col_type
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
+
+    def table_name(self):
+        return self.table.name
 
     @property
     def canonical_name(self):
@@ -116,15 +131,13 @@ class Index(SchemaEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
         self.column: Column = null_column()
+
         self.name: str = name
         self.unique: bool = unique
 
-    @property
-    def table(self):
-        """ Index Column's associated table """
-        if self.column is None:
-            return None
-        return self.column.table
+
+    def table_name(self):
+        return self.column.table.name
 
     @property
     def canonical_name(self):
@@ -134,13 +147,12 @@ class Constraint(SchemaEntity):
     """ Column Constraint """
     def __init__(self, name: str, cons_type: str):
         self.column: Column = null_column()
+
         self.name = name
         self.type = cons_type
 
-    @property
-    def table(self):
-        """ Constraint Column's associated Table """
-        return self.column.table
+    def table_name(self):
+        return self.column.table.name
 
     @property
     def canonical_name(self):

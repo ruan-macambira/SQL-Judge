@@ -30,17 +30,9 @@ def batch_validate_entities(entities: List, validations: List[Callable]) -> List
 
     return val_res
 
-def needs_to_be_validated(entity: SchemaEntity, entity_group: str, config: Configuration) -> bool:
+def needs_to_be_validated(entity: SchemaEntity, config: Configuration) -> bool:
     """ Checks if the entity should not be ignored """
-    rules = {
-        'Tables': lambda table: table.name not in config.ignore_tables,
-        'Columns': lambda column: column.table.name not in config.ignore_tables,
-        'Triggers': lambda trigger: trigger.table.name not in config.ignore_tables,
-        'Indexes': lambda index: index.table.name not in config.ignore_tables,
-        'Constraints': lambda constraint: constraint.table.name not in config.ignore_tables
-    }
-
-    return rules[entity_group](entity)
+    return entity.table_name() not in config.ignore_tables
 
 def entities_to_validate(
         entity_group: str, schema: Schema, config: Configuration) -> List[SchemaEntity]:
@@ -49,5 +41,5 @@ def entities_to_validate(
         raise TypeError
     return [
         entity for entity in schema.entities[entity_group]
-        if needs_to_be_validated(entity, entity_group, config)
+        if needs_to_be_validated(entity, config)
     ]
