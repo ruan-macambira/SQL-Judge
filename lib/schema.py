@@ -25,11 +25,18 @@ class Schema:
         return list(chain(*column_constraints))
 
     @property
+    def triggers(self) -> List['Trigger']:
+        """ Database Table Triggers """
+        table_triggers = [table.triggers for table in self.tables]
+        return list(chain(*table_triggers))
+
+    @property
     def entities(self) -> dict:
         """A Dict containing the schema entities"""
         return {
             'Tables': self.tables,
             'Columns': self.columns,
+            'Triggers': self.triggers,
             'Indexes': self.indexes,
             'Constraints': self.constraints
         }
@@ -51,6 +58,7 @@ class Table(SchemaEntity):
     def __init__(self, name: str):
         self.schema: Optional[Schema] = None
         self.columns: List['Column'] = []
+        self.triggers: List['Trigger'] = []
 
         self.name: str = name
 
@@ -70,6 +78,17 @@ class Table(SchemaEntity):
 def null_table() -> Table:
     """Null Object Table"""
     return Table('')
+
+class Trigger(SchemaEntity):
+    """Table Trigger"""
+    def __init__(self, name: str, hook: str):
+        self.table: Table = null_table()
+        self.name = name
+        self.hook = hook.upper() # AFTER CREATE, AFTER UPDATE, AFTER DELETE
+
+    @property
+    def canonical_name(self):
+        return f'{self.table.canonical_name}.{self.name}'
 
 class Column(SchemaEntity):
     """Table Column"""

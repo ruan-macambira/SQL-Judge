@@ -1,5 +1,5 @@
 import functools
-from .schema import Schema, Table, Column, Index, Constraint
+from .schema import Schema, Table, Column, Index, Constraint, Trigger
 
 def _raise_type_error_if_any_is_none(function):
     @functools.wraps(function)
@@ -25,6 +25,14 @@ def add_column_to_table(table: Table, column: Column) -> bool:
 
     table.columns.append(column)
     column.table = table
+
+    return True
+
+@_raise_type_error_if_any_is_none
+def add_trigger_to_table(table: Table, trigger: Trigger) -> bool:
+    """ Add a Trigger to a Table """
+    table.triggers.append(trigger)
+    trigger.table = table
 
     return True
 

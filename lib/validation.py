@@ -35,6 +35,7 @@ def needs_to_be_validated(entity: SchemaEntity, entity_group: str, config: Confi
     rules = {
         'Tables': lambda table: table.name not in config.ignore_tables,
         'Columns': lambda column: column.table.name not in config.ignore_tables,
+        'Triggers': lambda trigger: trigger.table.name not in config.ignore_tables,
         'Indexes': lambda index: index.table.name not in config.ignore_tables,
         'Constraints': lambda constraint: constraint.table.name not in config.ignore_tables
     }

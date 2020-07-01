@@ -11,6 +11,10 @@ class DBAdapter:
         """ Given a Table Name, returns its columns names and types """
         raise NotImplementedError
 
+    def triggers(self, table_name: str) -> Dict[str, str]:
+        """ Given a Table, returns the triggers associated """
+        raise NotImplementedError
+
     def primary_key(self, table_name: str, column_name: str) -> bool:
         """ Given a table name and a column, informs if it is a primary key """
         raise NotImplementedError

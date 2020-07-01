@@ -39,6 +39,9 @@ def constraint_starts_with_table_name(constraint):
         return None
     return f"Table Should start with '{table_name}', but it is '{constraint.name}' instead"
 
+def trigger_is_wrong(_trigger):
+    return "It's Wrong"
+
 def tests_validate_database_schema(build_mock_conn):
     # Setting Up Mock Database
     mock_values = {
@@ -100,6 +103,8 @@ def tests_validate_run(build_mock_conn):
                 'id': 'id_index'
             }, 'constraints': {
                 'id': {'id_primary_key': 'primary_key'}
+            }, 'triggers': {
+                'wrong_name_trigger': 'AFTER INSERT'
             }
         }, 'metadata_info': {
             'columns': {'version': 'varchar'}
@@ -113,7 +118,8 @@ def tests_validate_run(build_mock_conn):
             'Tables': [table_has_tbl_as_prefix],
             'Columns': [column_has_cl_as_prefix],
             'Indexes': [index_starts_with_index],
-            'Constraints': [constraint_starts_with_table_name]
+            'Constraints': [constraint_starts_with_table_name],
+            'Triggers': [trigger_is_wrong]
         },
         connection=build_mock_conn(mock_values)
     )
@@ -125,3 +131,4 @@ def tests_validate_run(build_mock_conn):
     assert "   + Column 'id' does not have 'cl' as prefix" in actual_report
     assert " + tblProduct.id.id_index" in actual_report
     assert " + tblProduct.id.id_primary_key" in actual_report
+    assert " + tblProduct.wrong_name_trigger" in actual_report

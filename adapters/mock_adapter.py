@@ -12,6 +12,15 @@ def _none_if_key_error(method):
 
     return wrapper
 
+def _empty_dict_if_key_error(function):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except KeyError:
+            return {}
+    return wrapper
+
 class MockAdapter(DBAdapter):
     """ Mock classes to generate the return values of a connection object """
     def __init__(self, mock_values):
@@ -35,8 +44,10 @@ class MockAdapter(DBAdapter):
     def index(self, table_name, column_name):
         return self.mock_values[table_name]['indexes'][column_name]
 
+    @_empty_dict_if_key_error
     def constraints(self, table_name, column_name):
-        try:
-            return self.mock_values[table_name]['constraints'][column_name]
-        except KeyError:
-            return {}
+        return self.mock_values[table_name]['constraints'][column_name]
+
+    @_empty_dict_if_key_error
+    def triggers(self, table_name):
+        return self.mock_values[table_name]['triggers']
