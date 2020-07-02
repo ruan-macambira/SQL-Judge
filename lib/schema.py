@@ -32,50 +32,32 @@ class Schema:
         column_constraints = [column.constraints for column in self.columns]
         return list(chain(*column_constraints))
 
-    @property
-    def entities(self) -> dict:
-        """A Dict containing the schema entities"""
-        return {
-            'Tables': self.tables,
-            'Columns': self.columns,
-            'Triggers': self.triggers,
-            'Indexes': self.indexes,
-            'Constraints': self.constraints,
-            'Functions': self.functions,
-            'Procedures': self.procedures
-        }
-
-    @property
-    def entity_groups(self):
-        """ the groups of entitites contained in a schema """
-        return self.entities.keys()
-
 def null_schema():
     """ Schema Null Object """
     return Schema()
 
-class SchemaEntity:
+class Entity:
     """Generic Schema Entity of a Database"""
-    def table_name(self):
-        """ The Table this entity is associated, directly or not """
-        raise NotImplementedError
+    def __init__(self, name: str):
+        self._name = name
 
     @property
-    def canonical_name(self):
-        """ The unique name the entity has that represents itself """
-        raise NotImplementedError
+    def name(self):
+        """Entity Name"""
+        return self._name
+
+class SchemaEntity(Entity):
+    """Entity that is owned directly by the schema"""
+    def __init__(self, name):
+        super().__init__(name=name)
+        self.table: Schema = null_schema()
 
 class Table(SchemaEntity):
     """Database Table"""
     def __init__(self, name: str):
-        self.schema: Optional[Schema] = None
+        super().__init__(name=name)
         self.columns: List['Column'] = []
         self.triggers: List['Trigger'] = []
-
-        self.name = name
-
-    def table_name(self):
-        return self.name
 
     @property
     def primary_key(self) -> Optional['Column']:
@@ -86,108 +68,62 @@ class Table(SchemaEntity):
             return None
         return candidates[0]
 
-    @property
-    def canonical_name(self):
-        return self.name
-
 def null_table() -> Table:
     """Table Null Object"""
     return Table('')
 
-class Trigger(SchemaEntity):
-    """Table Trigger"""
-    def __init__(self, name: str, hook: str):
+class TableEntity(Entity):
+    """Entity directly related to a Table"""
+    def __init__(self, name):
+        super().__init__(name=name)
         self.table: Table = null_table()
 
-        self.name = name
+class Trigger(TableEntity):
+    """Table Trigger"""
+    def __init__(self, name: str, hook: str):
+        super().__init__(name=name)
         self.hook = hook.upper() # AFTER CREATE, AFTER UPDATE, AFTER DELETE
 
-    def table_name(self):
-        return self.table.name
-
-    @property
-    def canonical_name(self):
-        return f'{self.table.canonical_name}.{self.name}'
-
-class Column(SchemaEntity):
+class Column(TableEntity):
     """Table Column"""
     def __init__(
             self, name: str, col_type: str, primary_key: bool = False, references: 'Table' = None):
         if references is not None and primary_key is True:
             raise TypeError
-        self.table: Table = null_table()
+        super().__init__(name=name)
         self.index: Optional['Index'] = None
         self.constraints: List['Constraint'] = []
 
-        self.name: str = name
         self.type: str = col_type
         self.primary_key = primary_key
         self.references: Optional['Table'] = references
-
-    def table_name(self):
-        return self.table.name
-
-    @property
-    def canonical_name(self):
-        return f'{self.table.canonical_name}.{self.name}'
 
 def null_column() -> Column:
     """Column Null Object"""
     return Column('', '')
 
-class Index(SchemaEntity):
+class ColumnEntity(Entity):
+    """ Entity directly related to a column """
+    def __init__(self, name):
+        super().__init__(name=name)
+        self.column: Column = null_column()
+
+class Index(ColumnEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
-        self.column: Column = null_column()
-
-        self.name: str = name
+        super().__init__(name=name)
         self.unique: bool = unique
 
-
-    def table_name(self):
-        return self.column.table.name
-
-    @property
-    def canonical_name(self):
-        return f'{self.column.canonical_name}.{self.name}'
-
-class Constraint(SchemaEntity):
+class Constraint(ColumnEntity):
     """ Column Constraint """
     def __init__(self, name: str, cons_type: str):
-        self.column: Column = null_column()
-
-        self.name = name
+        super().__init__(name=name)
         self.type = cons_type
-
-    def table_name(self):
-        return self.column.table.name
-
-    @property
-    def canonical_name(self):
-        return f'{self.column.canonical_name}.{self.name}'
 
 class Function(SchemaEntity):
     """ Schema Function """
-    def __init__(self, name):
-        self.name = name
-        self.schema: Schema = null_schema()
-
-    def table_name(self):
-        return 'sjnkjrnreojnregojrebnreojgbreogjbrnegorueb'
-
-    @property
-    def canonical_name(self):
-        return self.name
+    pass
 
 class Procedure(SchemaEntity):
     """ Schema Procedure """
-    def __init__(self, name):
-        self.name = name
-        self.schema: Schema = null_schema()
-
-    def table_name(self):
-        return ''
-
-    @property
-    def canonical_name(self):
-        return self.name
+    pass
