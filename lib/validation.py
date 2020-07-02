@@ -13,9 +13,6 @@ class Configuration:
 
 def validate_entity(entity: Union[Table, Column], validations: List[Callable]) -> List[str]:
     """ Run a list of validations for an entity """
-    if entity is None:
-        raise TypeError
-
     raw_messages = [val(entity) for val in validations]
     return [message for message in raw_messages if message is not None]
 
@@ -35,8 +32,6 @@ def needs_to_be_validated(entity: SchemaEntity, config: Configuration) -> bool:
 def entities_to_validate(
         entity_group: str, schema: Schema, config: Configuration) -> List[SchemaEntity]:
     """ Filter in the entities of a certain group that are meant to run the validations """
-    if schema is None or config is None:
-        raise TypeError
     return [
         entity for entity in schema.entities[entity_group]
         if needs_to_be_validated(entity, config)
