@@ -1,8 +1,10 @@
+""" Schema Decorators to use in validations """
 from dataclasses import dataclass
 from typing import Callable
 from .schema import Schema, Entity, TableEntity, ColumnEntity
 from .validation import Configuration
 class MetaSchema:
+    """Schema Decorator to group entities in hash"""
     def __init__(self, schema: Schema):
         self.schema = schema
 
@@ -13,6 +15,7 @@ class MetaSchema:
         ]
 
     def entities(self):
+        """ the entities in the schema serialized to run the validations """
         return {
             'Tables': self._entity(self.schema.tables, _report_self, _validate_self),
             'Functions': self._entity(self.schema.functions, _report_self, _validate_self),
@@ -23,19 +26,19 @@ class MetaSchema:
             'Constraints': self._entity(self.schema.constraints, _report_column, _validate_column),
         }
 
-    def entity_groups(self):
-        return self.entities().keys()
-
 @dataclass
 class MetaEntity:
+    """Entity decorator to give it properties used in validation"""
     entity: Entity
     report: Callable
     validate: Callable
 
     def canonical_name(self):
+        """ Name used in report """
         return self.report(self.entity)
 
     def needs_validation(self, config: Configuration):
+        """ Condition met to be validated """
         return self.validate(self.entity, config)
 
 def _report_self(entity: Entity):

@@ -36,7 +36,7 @@ def null_schema():
     """ Schema Null Object """
     return Schema()
 
-class Entity:
+class Entity: #pylint: disable=too-few-public-methods
     """Generic Schema Entity of a Database"""
     def __init__(self, name: str):
         self._name = name
@@ -46,11 +46,11 @@ class Entity:
         """Entity Name"""
         return self._name
 
-class SchemaEntity(Entity):
+class SchemaEntity(Entity): #pylint: disable=too-few-public-methods
     """Entity that is owned directly by the schema"""
     def __init__(self, name):
         super().__init__(name=name)
-        self.table: Schema = null_schema()
+        self.schema: Schema = null_schema()
 
 class Table(SchemaEntity):
     """Database Table"""
@@ -72,7 +72,7 @@ def null_table() -> Table:
     """Table Null Object"""
     return Table('')
 
-class TableEntity(Entity):
+class TableEntity(Entity): #pylint: disable=too-few-public-methods
     """Entity directly related to a Table"""
     def __init__(self, name):
         super().__init__(name=name)
@@ -82,7 +82,12 @@ class Trigger(TableEntity):
     """Table Trigger"""
     def __init__(self, name: str, hook: str):
         super().__init__(name=name)
-        self.hook = hook.upper() # AFTER CREATE, AFTER UPDATE, AFTER DELETE
+        self._hook = hook.upper()
+
+    @property
+    def hook(self):
+        """The moment the trigger is invoked (BEFORE INSERT, AFTER INSERT, BEFORE UPDATE, etc.)"""
+        return self._hook
 
 class Column(TableEntity):
     """Table Column"""
@@ -93,16 +98,26 @@ class Column(TableEntity):
         super().__init__(name=name)
         self.index: Optional['Index'] = None
         self.constraints: List['Constraint'] = []
-
-        self.type: str = col_type
-        self.primary_key = primary_key
         self.references: Optional['Table'] = references
+
+        self._type: str = col_type
+        self._primary_key = primary_key
+
+    @property
+    def type(self):
+        """Column Data Type (varchar, numeric, date, etc.)"""
+        return self._type
+
+    @property
+    def primary_key(self) -> bool:
+        """The Column is the primary key of the table"""
+        return self._primary_key
 
 def null_column() -> Column:
     """Column Null Object"""
     return Column('', '')
 
-class ColumnEntity(Entity):
+class ColumnEntity(Entity): #pylint: disable=too-few-public-methods
     """ Entity directly related to a column """
     def __init__(self, name):
         super().__init__(name=name)
@@ -112,18 +127,20 @@ class Index(ColumnEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
         super().__init__(name=name)
-        self.unique: bool = unique
+        self._unique: bool = unique
+
+    @property
+    def unique(self):
+        """The index constraints the column to be a unique one"""
+        return self._unique
 
 class Constraint(ColumnEntity):
     """ Column Constraint """
     def __init__(self, name: str, cons_type: str):
         super().__init__(name=name)
-        self.type = cons_type
+        self._type = cons_type
 
-class Function(SchemaEntity):
-    """ Schema Function """
-    pass
-
-class Procedure(SchemaEntity):
-    """ Schema Procedure """
-    pass
+    @property
+    def type(self):
+        """Constraint Type (unique, primary key, foreign key, etc.)"""
+        return self._type

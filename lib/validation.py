@@ -1,7 +1,7 @@
 """ Validations """
 from dataclasses import dataclass, field
-from typing import Callable, List, Tuple, Union, Dict
-from .schema import Table, Schema, Column, Entity
+from typing import Callable, List, Union, Dict
+from .schema import Table, Column
 from .adapter import DBAdapter
 
 @dataclass

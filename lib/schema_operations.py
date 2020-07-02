@@ -1,5 +1,5 @@
 """ Operations that alter the Schema in order to represent the adapter source """
-from .schema import Schema, Table, Column, Index, Constraint, Trigger, Function, Procedure
+from .schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
 
 def add_table_to_schema(schema: Schema, table: Table) -> None:
     """ Add a Table to the Schema """
@@ -26,12 +26,12 @@ def add_constraint_to_column(column: Column, constraint: Constraint) -> None:
     column.constraints.append(constraint)
     constraint.column = column
 
-def add_function_to_schema(schema: Schema, function: Function) -> None:
+def add_function_to_schema(schema: Schema, function: SchemaEntity) -> None:
     """ Add a function to a Schema """
     schema.functions.append(function)
     function.schema = schema
 
-def add_procedure_to_schema(schema: Schema, procedure: Procedure) -> None:
+def add_procedure_to_schema(schema: Schema, procedure: SchemaEntity) -> None:
     """ Add a procedure to a Schema """
     schema.procedures.append(procedure)
     procedure.schema = schema

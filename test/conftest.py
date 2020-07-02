@@ -2,7 +2,7 @@
 # pylint: disable=redefined-outer-name
 import sqlite3
 import pytest
-from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, Function, Procedure
+from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
 from lib.schema_operations import add_table_to_schema, add_column_to_table
 from lib.adapter import DBAdapter
 from lib.validation import Configuration
@@ -89,12 +89,12 @@ def trigger():
 @pytest.fixture
 def function():
     """ Basic function """
-    return Function('function')
+    return SchemaEntity('function')
 
 @pytest.fixture
 def procedure():
     """ Basic Procedure """
-    return Procedure('procedure')
+    return SchemaEntity('procedure')
 
 # validation.ValidationConfig
 @pytest.fixture
