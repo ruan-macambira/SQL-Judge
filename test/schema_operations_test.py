@@ -1,5 +1,9 @@
-import pytest
-from lib.schema_operations import (add_column_to_table, add_table_to_schema, add_index_to_column, add_trigger_to_table, add_constraint_to_column)
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+from lib.schema_operations import (
+    add_column_to_table, add_table_to_schema, add_index_to_column,
+    add_trigger_to_table, add_constraint_to_column
+)
 
 # add_table_to_schema
 def test_add_table_assigns_schema_to_table(schema, table):
@@ -27,13 +31,6 @@ def test_add_column_with_primary_key(table, primary_key_column):
     add_column_to_table(table=table, column=primary_key_column)
 
     assert table.primary_key == primary_key_column
-
-def test_add_column_cannot_reassign_primary_key(table, build_column):
-    column = build_column(primary_key=True)
-    add_column_to_table(table=table, column=build_column(primary_key=True))
-
-    assert add_column_to_table(table=table, column=column) is False
-    assert column not in table.columns
 
 # add_index_to_column
 def test_add_index_assigns_column_to_index(column, index):
