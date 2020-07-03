@@ -28,7 +28,7 @@ def main():
         validations={
             'Tables': [table_has_valid_initials, table_starts_with_t],
             'Columns': [columm_starts_with_c],
-            'Triggers': [], 'Indexes': [], 'Constraints': []
+            'Triggers': [], 'Indexes': [], 'Constraints': [], 'Functions': [], 'Procedures': []
         },
         connection=SQLiteAdapter('./example_schema')
         )

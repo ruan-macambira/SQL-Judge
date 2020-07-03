@@ -60,3 +60,9 @@ class SQLiteAdapter(DBAdapter):
 
     def constraints(self, table_name, column_name) -> Dict[str, str]:
         return {}
+
+    def functions(self):
+        return []
+
+    def procedures(self):
+        return []
