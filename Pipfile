@@ -7,7 +7,6 @@ verify_ssl = true
 pylint = "*"
 pytest = "*"
 mypy = "*"
-faker = "*"
 pytest-cov = "*"
 
 [packages]
