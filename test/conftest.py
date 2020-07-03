@@ -3,7 +3,7 @@
 import sqlite3
 import pytest
 from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
-from lib.schema_operations import add_table_to_schema, add_column_to_table
+from lib.generate_schema import add_entity_to_schema, add_subentity_to_entity
 from lib.adapter import DBAdapter
 from lib.validation import Configuration
 from adapters.mock_adapter import MockAdapter
@@ -22,7 +22,7 @@ def build_schema(build_table):
     def _build_schema(tables: int = 0):
         at_schema = Schema()
         for i in range(tables):
-            add_table_to_schema(at_schema, build_table(name=f'table_{i}'))
+            add_entity_to_schema(at_schema, build_table(name=f'table_{i}'), 'tables')
         return at_schema
     return _build_schema
 
@@ -39,7 +39,7 @@ def build_table(build_column):
     def _build_table(name: str = 'table_name', columns: int = 0):
         at_table = Table(name)
         for _ in range(columns):
-            add_column_to_table(at_table, build_column())
+            add_subentity_to_entity(at_table, 'table', build_column(), 'columns')
         return at_table
     return _build_table
 

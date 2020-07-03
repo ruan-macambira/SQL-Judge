@@ -1,15 +1,15 @@
 #pylint: disable=missing-module-docstring
 #pylint: disable=missing-function-docstring
 import pytest
-from lib.schema_operations import add_table_to_schema
+from lib.generate_schema import add_entity_to_schema
 
 # Schema
 def test_columns_returns_every_column_from_every_table(schema, build_table):
     table1 = build_table(columns=1)
     table2 = build_table(columns=1)
 
-    add_table_to_schema(schema, table1)
-    add_table_to_schema(schema, table2)
+    add_entity_to_schema(schema, table1, 'tables')
+    add_entity_to_schema(schema, table2, 'tables')
 
     assert schema.columns == table1.columns + table2.columns
 

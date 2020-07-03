@@ -1,9 +1,5 @@
 """ Use the database connection to adapt its schema to the applications objects """
-from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
-from lib.schema_operations import (
-    add_table_to_schema, add_column_to_table, add_trigger_to_table,
-    add_index_to_column, add_constraint_to_column, add_function_to_schema, add_procedure_to_schema
-)
+from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity, Entity
 from lib.adapter import DBAdapter
 
 def generate_schema(conn: DBAdapter) -> Schema:
@@ -13,7 +9,7 @@ def generate_schema(conn: DBAdapter) -> Schema:
         table: Table = Table(table_name)
         _insert_columns_to_table(table, conn)
         _insert_triggers_to_table(table, conn)
-        add_table_to_schema(schema, table)
+        add_entity_to_schema(schema, table, 'tables')
 
     for column in schema.columns:
         _insert_references_to_column(column, schema, conn)
@@ -22,24 +18,36 @@ def generate_schema(conn: DBAdapter) -> Schema:
 
     for function_name in conn.functions():
         function: SchemaEntity = SchemaEntity(function_name)
-        add_function_to_schema(schema, function)
+        add_entity_to_schema(schema, function, 'functions')
 
     for procedure_name in conn.procedures():
         procedure: SchemaEntity = SchemaEntity(procedure_name)
-        add_procedure_to_schema(schema, procedure)
+        add_entity_to_schema(schema, procedure, 'procedures')
 
     return schema
+
+def add_subentity_to_entity(entity, ref_entity: str, subentity: Entity, ref_subentity: str):
+    getattr(entity, ref_subentity).append(subentity)
+    setattr(subentity, ref_entity, entity)
+
+def add_entity_to_schema(schema: Schema, entity: Entity, ref_entity: str):
+    add_subentity_to_entity(schema, 'schema', entity, ref_entity)
+
+def add_index_to_column(column: Column, index: Index) -> None:
+    """ Add an Index to a Column """
+    setattr(column, 'index', index)
+    setattr(index, 'column', column)
 
 def _insert_columns_to_table(table: Table, conn: DBAdapter) -> None:
     for name, col_type in conn.columns(table.name).items():
         column = Column(name=name, col_type=col_type,
                         primary_key=conn.primary_key(table.name, name))
-        add_column_to_table(table, column)
+        add_subentity_to_entity(table, 'table', column, 'columns')
 
 def _insert_triggers_to_table(table: Table, conn: DBAdapter) -> None:
     for name, hook in conn.triggers(table.name).items():
         trigger = Trigger(name=name, hook=hook)
-        add_trigger_to_table(table, trigger)
+        add_subentity_to_entity(table, 'table', trigger, 'triggers')
 
 def _insert_references_to_column(column: Column, schema: Schema, conn: DBAdapter) -> None:
     for table in schema.tables:
@@ -54,4 +62,4 @@ def _insert_index_to_column(column: Column, conn: DBAdapter) -> None:
 def _insert_constraints_to_column(column: Column, conn: DBAdapter) -> None:
     for (cons_name, cons_type) in conn.constraints(column.table.name, column.name).items():
         constraint = Constraint(name=cons_name, cons_type=cons_type)
-        add_constraint_to_column(column, constraint)
+        add_subentity_to_entity(column, 'column', constraint, 'constraints')

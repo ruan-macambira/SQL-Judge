@@ -23,7 +23,7 @@ Columns:
 """
 from typing import List, Dict
 
-def entity_report(entity_name: str, messages: List[str]) -> List[str]:
+def _entity_report(entity_name: str, messages: List[str]) -> List[str]:
     """ Serializes the messages of a given entity to the Report
 
     It generates a list that translates as:
@@ -33,11 +33,11 @@ def entity_report(entity_name: str, messages: List[str]) -> List[str]:
        + message two"""
     return [f' + {entity_name}'] + [f'   + {message}' for message in messages]
 
-def entities_report(entity_group: str, entities: Dict[str, List[str]]) -> List[str]:
+def _entities_report(entity_group: str, entities: Dict[str, List[str]]) -> List[str]:
     """ Serializes the messages to a group of entities to the Report """
     output = [f'{entity_group}:', '=' * 50]
     for entity, messages in entities.items():
-        output += entity_report(entity, messages)
+        output += _entity_report(entity, messages)
         output.append('-' * 40)
     return output
 
@@ -51,5 +51,5 @@ def generate_report(report_hash: Dict[str, Dict[str, List[str]]]) -> List[str]:
     output = ['REPORT', '=' * 50]
 
     for entity_group, entities in report_hash.items():
-        output += entities_report(entity_group, entities)
+        output += _entities_report(entity_group, entities)
     return output

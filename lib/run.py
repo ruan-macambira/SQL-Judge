@@ -29,14 +29,3 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
             reports[entity.canonical_name()] = messages
 
     return reports
-
-def _group_validations_by_report_name(validations: List[tuple]) -> dict:
-    grouped: dict = {}
-
-    for validation in validations:
-        if validation[0] not in grouped:
-            grouped[validation[0]] = []
-
-        grouped[validation[0]].append(validation[1])
-
-    return grouped

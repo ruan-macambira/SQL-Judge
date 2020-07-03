@@ -2,14 +2,14 @@
 # pylint: disable = missing-function-docstring
 
 from lib.report import generate_report
-from lib.report import entity_report
+from lib.report import _entity_report
 
 def test_generate_entity_report_one_message():
-    assert entity_report('table_one', ['message one']) == \
+    assert _entity_report('table_one', ['message one']) == \
         [' + table_one', '   + message one']
 
 def test_generate_entity_report_two_messages():
-    assert entity_report('table_one.column_one', ['message one', 'message two']) == \
+    assert _entity_report('table_one.column_one', ['message one', 'message two']) == \
         [' + table_one.column_one', '   + message one', '   + message two']
 
 def test_generate_report_one_entity():

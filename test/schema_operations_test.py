@@ -1,34 +1,33 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-from lib.schema_operations import (
-    add_column_to_table, add_table_to_schema, add_index_to_column,
-    add_trigger_to_table, add_constraint_to_column
+from lib.generate_schema import (
+    add_index_to_column, add_entity_to_schema, add_subentity_to_entity
 )
 
-# add_table_to_schema
-def test_add_table_assigns_schema_to_table(schema, table):
-    add_table_to_schema(schema, table)
+# add_entity_to_schema
+def test_add_entity_assigns_schema_to_entity(schema, table):
+    add_entity_to_schema(schema, table, 'tables')
 
     assert table.schema == schema
 
-def test_add_table_adds_the_table_to_schema(schema, table):
-    add_table_to_schema(schema, table)
+def test_add_entity_adds_the_entity_to_schema(schema, table):
+    add_entity_to_schema(schema, table, 'tables')
 
     assert table in schema.tables
 
-# add_column_to_table
-def test_add_column_assigns_table_to_column(table, column):
-    add_column_to_table(table, column)
+# add_subentity_to_entity
+def test_add_subentity_assigns_entity_to_subentity(table, column):
+    add_subentity_to_entity(table, 'table', column, 'columns')
 
     assert column.table == table
 
-def test_add_column_adds_the_column_to_table(table, column):
-    add_column_to_table(table, column)
+def test_add_subentity_assigns_subentity_to_entity(table, column):
+    add_subentity_to_entity(table, 'table', column, 'columns')
 
     assert column in table.columns
 
 def test_add_column_with_primary_key(table, primary_key_column):
-    add_column_to_table(table=table, column=primary_key_column)
+    add_subentity_to_entity(table, 'table', primary_key_column, 'columns')
 
     assert table.primary_key == primary_key_column
 
@@ -42,25 +41,3 @@ def test_add_index_assigns_index_to_column(column, index):
     add_index_to_column(column, index)
 
     assert index.column == column
-
-# add_constraint_to_column
-def test_add_constraint_assigns_constraints_to_column(column, constraint):
-    add_constraint_to_column(column, constraint)
-
-    assert constraint in column.constraints
-
-def test_add_constraint_assigns_column_to_constraint(column, constraint):
-    add_constraint_to_column(column, constraint)
-
-    assert constraint.column == column
-
-# add_trigger_to_table
-def test_add_trigger_assigns_trigger_to_table(table, trigger):
-    add_trigger_to_table(table, trigger)
-
-    assert trigger in table.triggers
-
-def test_add_trigger_assigns_table_to_trigger(table, trigger):
-    add_trigger_to_table(table, trigger)
-
-    assert trigger.table == table
