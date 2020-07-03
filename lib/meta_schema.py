@@ -3,28 +3,18 @@ from dataclasses import dataclass
 from typing import Callable
 from .schema import Schema, Entity, TableEntity, ColumnEntity
 from .validation import Configuration
-class MetaSchema:
-    """Schema Decorator to group entities in hash"""
-    def __init__(self, schema: Schema):
-        self.schema = schema
 
-    def _entity(self, entities, report, validate):
-        return [
-            MetaEntity(entity=entity, report=report, validate=validate)
-            for entity in entities
-        ]
-
-    def entities(self):
-        """ the entities in the schema serialized to run the validations """
-        return {
-            'Tables': self._entity(self.schema.tables, _report_self, _validate_self),
-            'Functions': self._entity(self.schema.functions, _report_self, _validate_self),
-            'Procedures': self._entity(self.schema.procedures, _report_self, _validate_self),
-            'Columns': self._entity(self.schema.columns, _report_table, _validate_table),
-            'Triggers': self._entity(self.schema.triggers, _report_table, _validate_table),
-            'Indexes': self._entity(self.schema.indexes, _report_column, _validate_column),
-            'Constraints': self._entity(self.schema.constraints, _report_column, _validate_column),
-        }
+def schema_entities(schema: Schema):
+    """ the entities in the schema serialized to run the validations """
+    return {
+        'Tables': _list_entities(schema.tables, _report_self, _validate_self),
+        'Functions': _list_entities(schema.functions, _report_self, _validate_self),
+        'Procedures': _list_entities(schema.procedures, _report_self, _validate_self),
+        'Columns': _list_entities(schema.columns, _report_table, _validate_table),
+        'Triggers': _list_entities(schema.triggers, _report_table, _validate_table),
+        'Indexes': _list_entities(schema.indexes, _report_column, _validate_column),
+        'Constraints': _list_entities(schema.constraints, _report_column, _validate_column),
+    }
 
 @dataclass
 class MetaEntity:
@@ -40,6 +30,12 @@ class MetaEntity:
     def needs_validation(self, config: Configuration):
         """ Condition met to be validated """
         return self.validate(self.entity, config)
+
+def _list_entities(entity_list, report, validate):
+    return [
+        MetaEntity(entity=entity, report=report, validate=validate)
+        for entity in entity_list
+    ]
 
 def _report_self(entity: Entity):
     return entity.name

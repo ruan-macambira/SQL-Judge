@@ -1,6 +1,5 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
-import pytest
 from lib.validation import validate_entity
 
 def pass_validation(_table):

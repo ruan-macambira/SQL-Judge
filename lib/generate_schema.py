@@ -27,10 +27,12 @@ def generate_schema(conn: DBAdapter) -> Schema:
     return schema
 
 def add_subentity_to_entity(entity, ref_entity: str, subentity: Entity, ref_subentity: str):
+    """ Add SubEntity to Entity """
     getattr(entity, ref_subentity).append(subentity)
     setattr(subentity, ref_entity, entity)
 
 def add_entity_to_schema(schema: Schema, entity: Entity, ref_entity: str):
+    """ Add Entity to Schema """
     add_subentity_to_entity(schema, 'schema', entity, ref_entity)
 
 def add_index_to_column(column: Column, index: Index) -> None:

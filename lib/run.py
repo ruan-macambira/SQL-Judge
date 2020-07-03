@@ -2,15 +2,14 @@
 from typing import List, Dict, Callable
 from lib.validation import Configuration, validate_entity
 from lib.generate_schema import generate_schema
-from lib.meta_schema import MetaSchema
+from lib.meta_schema import schema_entities
 from lib.report import generate_report
 
 def run(config: Configuration) -> List[str]:
     """ Run the schema validation and return a report """
     schema = generate_schema(config.connection)
-    meta_schema = MetaSchema(schema)
     report = {}
-    for group, entities in meta_schema.entities().items():
+    for group, entities in schema_entities(schema).items():
         report[group] = _validate(
             [entity for entity in entities if entity.needs_validation(config)],
             config.validations[group])
