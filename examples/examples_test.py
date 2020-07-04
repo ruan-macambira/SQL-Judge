@@ -1,33 +1,42 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
-from lib.schema import Table
+from lib.schema import Table, Column, Trigger
 from . import examples
 
 def table(name):
     return Table(name)
 
-# table_starts_with_t
-def test_start_with_t_validation():
-    assert examples.table_starts_with_t(table('TCONTATO')) is True
+# table_starts_with_tbl
+def test_starts_with_tbl():
+    assert examples.table_starts_with_tbl(table('TBL_TABLE')) is None
 
-def test_not_start_with_t_validation():
-    assert examples.table_starts_with_t(table('CONTATO')) is False
+def test_does_not_start_with_tbl():
+    assert examples.table_starts_with_tbl(table('TABLE')) == 'Table should start with "TBL_"'
 
-# table_has_valid_initials
-def test_table_has_one_word_initials():
-    assert examples.table_has_valid_initials(table('TPESS_PESSOA')) is True
+# referenced_table_is_named_after_its_reference
+def test_table_is_names_after_its_reference():
+    column = Column(name='TABLE_ID', col_type='', references=Table('TABLE'))
+    assert examples.referenced_table_is_named_after_its_reference(column) is None
 
-def test_table_has_two_words_initials():
-    assert examples.table_has_valid_initials(table('TPELU_PESSOA_LUGAR')) is True
+def test_Table_is_not_named_after_its_reference():
+    column = Column(name='COL_TABLE', col_type='', references=Table('TABLE'))
+    assert examples.referenced_table_is_named_after_its_reference(column) == \
+        'Since it\' a foreign key, column should be named "TABLE_ID"'
 
-def test_table_has_three_words_initials():
-    assert examples.table_has_valid_initials(table('TPELO_PESSOA_LUGAR_OBJETO')) is True
+# column_name_matches_type
+def test_name_matches_type():
+    column = Column(name='RL_REAL', col_type='REAL')
+    assert examples.column_name_matches_type(column) is None
 
-def test_table_has_four_words_initials():
-    assert examples.table_has_valid_initials(table('TPLOC_PESSOA_LUGAR_OBJETO_COR'))
+def test_name_does_not_match_type():
+    column = Column(name='REAL', col_type='REAL')
+    assert examples.column_name_matches_type(column) == \
+        'REAL column should start with RL_'
 
-def test_table_has_four_plus_words_initials():
-    assert examples.table_has_valid_initials(table('TPLOC_PESSOA_LUGAR_OBJETO_COR_CARRO'))
+# trigger_starts_with_tg
+def test_starts_with_tg():
+    assert examples.trigger_starts_with_tg(Trigger('TG_TRIGGER', 'BEFORE UPDATE')) is None
 
-def test_table_has_no_initials():
-    assert examples.table_has_valid_initials(table('TCONTATO')) is False
+def test_does_not_start_with_tg():
+    assert examples.trigger_starts_with_tg(Trigger('TRIGGER', 'AFTER UPDATE')) == \
+        'Trigger name should start with "TG_"'

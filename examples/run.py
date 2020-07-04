@@ -14,11 +14,12 @@ def main():
         shell=True, check=True, text=True, capture_output=True
     ).stdout.strip()
     config = Configuration(
-        ignore_tables=['METADATA_INFO'],
+        ignore_tables=['METAINFO'],
         validations={
-            'Tables': [table_has_valid_initials, table_starts_with_t],
-            'Columns': [columm_starts_with_c],
-            'Triggers': [], 'Indexes': [], 'Constraints': [], 'Functions': [], 'Procedures': []
+            'Tables': [table_starts_with_tbl],
+            'Columns': [referenced_table_is_named_after_its_reference, column_name_matches_type],
+            'Triggers': [trigger_starts_with_tg],
+            'Indexes': [], 'Constraints': [], 'Functions': [], 'Procedures': []
         },
         connection=SQLiteAdapter(schema)
     )
