@@ -3,11 +3,11 @@
 
 def _stripped_table_name(table):
     if table_starts_with_tbl(table) is None:
-        return table.name[4:]
+        return table.name[4:].upper()
     return table.name
 
 def table_starts_with_tbl(table):
-    if table.name[0:4] == 'TBL_':
+    if table.name[0:4].upper() == 'TBL_':
         return None
     return 'Table should start with "TBL_"'
 
@@ -22,16 +22,17 @@ def column_name_matches_type(column):
     if column.primary_key or column.references:
         return None
     expected_prefix = {
-        'DATETIME': 'DT',
+        'DATETIME': 'DT_',
         'REAL': 'RL_',
         'VARCHAR': 'VC_',
-        '': ''
+        '': '',
+        'INT': 'NM_'
     }
-    if expected_prefix[column.type] == column.name[0:3]:
+    if expected_prefix[column.type.upper()] == column.name[0:3].upper():
         return None
-    return f'{column.type} column should start with {expected_prefix[column.type]}'
+    return f'{column.type} column should start with {expected_prefix[column.type.upper()]}'
 
 def trigger_starts_with_tg(trigger):
-    if trigger.name[0:3] == 'TG_':
+    if trigger.name[0:3].upper() == 'TG_':
         return None
     return 'Trigger name should start with "TG_"'

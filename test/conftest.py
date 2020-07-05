@@ -1,13 +1,11 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
-import sqlite3
 import pytest
 from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
 from lib.generate_schema import add_entity_to_schema, add_subentity_to_entity
 from lib.adapter import DBAdapter
 from lib.validation import Configuration
-from adapters.mock_adapter import MockAdapter
-from adapters.sqlite_adapter import SQLiteAdapter
+from lib.mock_adapter import MockAdapter
 
 # adapter.DBAdapter
 @pytest.fixture
@@ -111,36 +109,6 @@ def build_validation_config():
 def validation_config(build_validation_config, mock_conn):
     """ Basic validation Configuration File """
     return build_validation_config(validations={}, connection=mock_conn, ignore_tables=[])
-
-# connection.SQLiteConnection
-@pytest.fixture
-def sqlite_conn():
-    """ A Connection with a Database containing two tables
-        - products: Empty Table
-        - contacts: Containting one element """
-    with sqlite3.connect(':memory:') as conn:
-        conn.execute('CREATE TABLE products(name TEXT)')
-
-        conn.execute('CREATE TABLE contacts(first_name TEXT, last_name TEXT)')
-        conn.execute("INSERT INTO contacts(first_name, last_name) VALUES('Alan', 'Turing')")
-        conn.commit()
-
-        yield SQLiteAdapter(connection=conn)
-
-
-@pytest.fixture
-def sqlite_conn_fk():
-    """ A Connection with a Database containing two tables
-        - products: Empty Table
-        - contacts: Containting one element """
-    with sqlite3.connect(':memory:') as conn:
-        conn.execute('CREATE TABLE contacts(ID INTEGER PRIMARY KEY AUTOINCREMENT,'\
-            'first_name TEXT, last_name TEXT)')
-        conn.execute('CREATE TABLE services(ID integer PRIMARY KEY,' \
-            'CONTACT_ID integer references contacts(id))')
-        conn.commit()
-
-        yield SQLiteAdapter(connection=conn)
 
 @pytest.fixture
 def build_mock_conn():
