@@ -3,7 +3,7 @@ from typing import List, Dict, Callable
 from lib.validation import Configuration, validate_entity
 from lib.generate_schema import generate_schema
 from lib.meta_schema import schema_entities
-from lib.report import generate_report
+from lib import report as cli_report, csv_report
 
 def run(config: Configuration) -> List[str]:
     """ Run the schema validation and return a report """
@@ -14,7 +14,7 @@ def run(config: Configuration) -> List[str]:
             [entity for entity in entities if entity.needs_validation(config)],
             config.validations[group])
 
-    return generate_report(report)
+    return _generate_report(config, report)
 
 def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str]]:
     """ run the validations for the entity group and return in a format
@@ -28,3 +28,10 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
             reports[entity.canonical_name()] = messages
 
     return reports
+
+def _generate_report(config: Configuration, report_hash: dict) -> List[str]:
+    return {
+        # None: cli_report.generate_report,
+        'CLI': cli_report.generate_report,
+        'CSV': csv_report.generate_report
+    }[config.export](report_hash)

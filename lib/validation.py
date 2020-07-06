@@ -10,6 +10,7 @@ class Configuration:
     connection: DBAdapter
     validations: Dict[str, List[Callable]] = field(default_factory=dict)
     ignore_tables: List[str] = field(default_factory=list)
+    export: str = 'CLI'
 
 def validate_entity(entity: Entity, validations: List[Callable]) -> List[str]:
     """ Run a list of validations for an entity """

@@ -84,3 +84,23 @@ def tests_validate_run(build_mock_conn):
     assert " + tblProduct.id.id_primary_key" in actual_report
     assert " + tblProduct.wrong_name_trigger" in actual_report
     assert " + wrong_name_function" in actual_report
+
+def test_validate_csv(build_mock_conn):
+    tables_info = {
+        'Table': {
+            'columns': {'id': 'numeric'}
+        }
+    }
+
+    config = Configuration(
+        ignore_tables=[],
+        validations={
+            'Tables': [lambda _: 'Validation'],
+            'Columns': [], 'Indexes': [], 'Constraints': [],
+            'Triggers': [], 'Functions':[], 'Procedures': []
+        },
+        connection=build_mock_conn(tables_info, [], []),
+        export='CSV')
+    actual_report = run(config)
+
+    assert 'Tables, Table, Validation' in actual_report
