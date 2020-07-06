@@ -1,6 +1,6 @@
 #pylint: disable=missing-function-docstring
 """ Test for running the main flow of the system """
-from lib.validation import Configuration
+from lib.configuration import Configuration
 from lib.run import run
 
 def table_has_tbl_as_prefix(table):

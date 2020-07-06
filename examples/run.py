@@ -1,6 +1,6 @@
 #pylint: disable=missing-module-docstring
 from lib.run import run
-from lib.validation import Configuration
+from lib.configuration import Configuration
 from lib.mock_adapter import MockAdapter
 from .examples import * #pylint: disable=wildcard-import
 

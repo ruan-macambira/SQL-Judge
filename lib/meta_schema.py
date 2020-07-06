@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Callable
 from .schema import Schema, Entity, TableEntity, ColumnEntity
-from .validation import Configuration
+from .configuration import Configuration
 
 def schema_entities(schema: Schema):
     """ the entities in the schema serialized to run the validations """

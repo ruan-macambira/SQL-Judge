@@ -1,6 +1,7 @@
 """ Run the application """
 from typing import List, Dict, Callable
-from lib.validation import Configuration, validate_entity
+from lib.schema import Entity
+from lib.configuration import Configuration
 from lib.generate_schema import generate_schema
 from lib.meta_schema import schema_entities
 from lib import export
@@ -28,6 +29,12 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
             reports[entity.canonical_name()] = messages
 
     return reports
+
+def validate_entity(entity: Entity, validations: List[Callable]) -> List[str]:
+    """ Run a list of validations for an entity """
+    raw_messages = [val(entity) for val in validations]
+    return [message for message in raw_messages if message is not None]
+
 
 def _generate_report(config: Configuration, report_hash: dict) -> List[str]:
     return {

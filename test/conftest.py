@@ -4,7 +4,7 @@ import pytest
 from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
 from lib.generate_schema import add_entity_to_schema, add_subentity_to_entity
 from lib.adapter import DBAdapter
-from lib.validation import Configuration
+from lib.configuration import Configuration
 from lib.mock_adapter import MockAdapter
 
 # adapter.DBAdapter
