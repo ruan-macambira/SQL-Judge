@@ -1,8 +1,8 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
 
-from lib.report import generate_report
-from lib.report import _entity_report
+from lib.export.cli import export_cli
+from lib.export.cli import _entity_report
 
 def test_generate_entity_report_one_message():
     assert _entity_report('table_one', ['message one']) == \
@@ -17,7 +17,7 @@ def test_generate_report_one_entity():
         'table_one': ['message one']
     }}
 
-    assert generate_report(report) == [
+    assert export_cli(report) == [
         'REPORT', '=' * 50, 'Tables:', '=' * 50,
         ' + table_one', '   + message one', '-' * 40
     ]
@@ -28,7 +28,7 @@ def test_generate_report_two_entities():
         'table_one.column_two': ['message two']
     }}
 
-    assert generate_report(report) == [
+    assert export_cli(report) == [
         'REPORT', '=' * 50, 'Columns:', '=' * 50,
         ' + table_one.column_one', '   + message one', '-' * 40,
         ' + table_one.column_two', '   + message two', '-' * 40
@@ -41,7 +41,7 @@ def test_generate_report_two_distinct_entities():
         'table_one.column_one': ['message one']
     }}
 
-    assert generate_report(report) == [
+    assert export_cli(report) == [
         'REPORT', '=' * 50,
         'Tables:', '=' * 50,
         ' + table_one', '   + message one', '-' * 40,

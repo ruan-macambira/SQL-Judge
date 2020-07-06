@@ -4,3 +4,4 @@ temp/
 *.py,cover
 .coverage
 *.db
+*.pyc

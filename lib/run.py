@@ -3,7 +3,7 @@ from typing import List, Dict, Callable
 from lib.validation import Configuration, validate_entity
 from lib.generate_schema import generate_schema
 from lib.meta_schema import schema_entities
-from lib import report as cli_report, csv_report
+from lib import export
 
 def run(config: Configuration) -> List[str]:
     """ Run the schema validation and return a report """
@@ -31,7 +31,6 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
 
 def _generate_report(config: Configuration, report_hash: dict) -> List[str]:
     return {
-        # None: cli_report.generate_report,
-        'CLI': cli_report.generate_report,
-        'CSV': csv_report.generate_report
+        'CLI': export.export_cli,
+        'CSV': export.export_csv
     }[config.export](report_hash)

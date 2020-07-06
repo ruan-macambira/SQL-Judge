@@ -42,7 +42,7 @@ def _entities_report(entity_group: str, entities: Dict[str, List[str]]) -> List[
     return output
 
 # entities_report: { 'entity_group': { 'entity': ['message'] } }
-def generate_report(report_hash: Dict[str, Dict[str, List[str]]]) -> List[str]:
+def export_cli(report_hash: Dict[str, Dict[str, List[str]]]) -> List[str]:
     """ Receives an Dict containing the Report info, divided in:
         key -> The Entity Group (Ex.: Table, Columns)
         value -> A Dict containing the Entities and its messages
