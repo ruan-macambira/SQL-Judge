@@ -1,13 +1,10 @@
 #pylint: disable=missing-module-docstring
-from lib.run import run
-from lib.configuration import Configuration
+#pylint: disable=missing-function-docstring
 from lib.mock_adapter import MockAdapter
 from .examples import * #pylint: disable=wildcard-import
 
-
-def main():
-    """ run the example """
-    adapter = MockAdapter({
+def adapter():
+    return MockAdapter({
         'metainfo': {
             'columns':{'alter_hash': 'text', 'comment': 'text'},
             'primary_key': 'id',
@@ -32,20 +29,17 @@ def main():
             'triggers': {'alter_product_price': 'after update'}
         },
     })
-    config = Configuration(
-        ignore_tables=['metainfo'],
-        validations={
-            'Tables': [table_starts_with_tbl],
-            'Columns': [referenced_table_is_named_after_its_reference, column_name_matches_type],
-            'Triggers': [trigger_starts_with_tg],
-            'Indexes': [], 'Constraints': [], 'Functions': [], 'Procedures': []
-        },
-        connection=adapter
-    )
-    report_rows = run(config)
-    for row in report_rows:
-        print(row)
 
+def ignore_tables():
+    return ['metainfo']
 
-if __name__ == '__main__':
-    main()
+def validations():
+    return {
+        'Tables': [table_starts_with_tbl],
+        'Columns': [referenced_table_is_named_after_its_reference, column_name_matches_type],
+        'Triggers': [trigger_starts_with_tg],
+        'Indexes': [], 'Constraints': [], 'Functions': [], 'Procedures': []
+    }
+
+def export():
+    return 'CLI'
