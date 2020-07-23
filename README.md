@@ -11,7 +11,61 @@ Fez-se necessário que fossem desenvolvidos uma série de validações automatiz
  - Não havia um modo confiável de gerar testes e fazer debug das validações, uma vez que o único output possível eram as mensagens das validações que retornavam falso, não havendo um REPL que nos permitisse executar comandos como console.log(mais um agravante ao ponto anterior)
 
 ## Como utilizar
- ~ Em Construção ~
+_Aviso: A seção a seguir é um esboço, baseado em uma solução provisória de execução do programa. Tudo que estiver aqui pode já estar desatualizado, e assim se manterá até o momento em que esse aviso for retirado_
+
+Para utilizar a validação, crie um arquivo .py contendo no mínimo 4 funções:
+
+ - adapter(): Retorna a interface implementada do banco de dados
+ - validations(): Dict contendo as validações a serem feitas no schema
+ - ignore_tables(): Lista contendo os nomes das tabelas, em string, no qual a validação é ignorada
+ - export(): retorna uma string dizendo o formato de exportação (atualmente: CLI, CSV)
+
+No momento, não há valores padrões, ou verificação de erros. Todas as funções devem ser implementadas corretamente para que o programa execute.
+
+Execute, então, validate_schema.py com o módulo do arquivo como argumento (python validate_schema.py NOME_DO_ARQUIVO, se o arquivo for NOME_DO_ARQUIVO.py e estiver na pasta raiz). No momento, não há como especificar o caminho do arquivo.
+
+O output é enviado para stdout, independente do formato em que é definido a exportação, mudando apenas a formatação da saída. Caso execute:
+
+``` python validate_schema.py examples.config ```
+
+O output será:
+
+```
+REPORT
+==================================================
+Tables:
+==================================================
+ + purchases
+   + Table should start with "TBL_"
+----------------------------------------
+Functions:
+==================================================
+Procedures:
+==================================================
+Columns:
+==================================================
+ + tbl_product.product_name
+   + varchar column should start with VC_
+----------------------------------------
+ + purchases.product_id
+   + Since it' a foreign key, column should be named "PRODUCT_ID"
+----------------------------------------
+ + tbl_price_history.product_id
+   + Since it' a foreign key, column should be named "PRODUCT_ID"
+----------------------------------------
+ + tbl_price_history.history_price
+   + real column should start with RL_
+----------------------------------------
+Triggers:
+==================================================
+ + tbl_price_history.alter_product_price
+   + Trigger name should start with "TG_"
+----------------------------------------
+Indexes:
+==================================================
+Constraints:
+==================================================
+```
 
 ## API das entidades do Schema
  ~ Em Construção ~
