@@ -1,7 +1,7 @@
 #pylint: disable=missing-module-docstring
 #pylint: disable=missing-function-docstring
-from lib.mock_adapter import MockAdapter
-from .examples import * #pylint: disable=wildcard-import
+from validate_schema.mock_adapter import MockAdapter
+from examples import * #pylint: disable=wildcard-import
 
 def adapter():
     return MockAdapter({
