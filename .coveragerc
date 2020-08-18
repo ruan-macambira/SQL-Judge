@@ -1,7 +1,7 @@
 [run]
 branch = True
 cover_pylib = False
-source = lib/
+source = validate_schema/
 
 [report]
 fail_under=90

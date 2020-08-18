@@ -1,6 +1,6 @@
 """ A Mock for a Database Adapter, used to run tests """
 import functools
-from lib.adapter import DBAdapter
+from .adapter import DBAdapter
 
 def _none_if_key_error(method):
     @functools.wraps(method)

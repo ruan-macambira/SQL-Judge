@@ -1,11 +1,11 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
 import pytest
-from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
-from lib.generate_schema import add_entity_to_schema, add_subentity_to_entity
-from lib.adapter import DBAdapter
-from lib.configuration import Configuration
-from lib.mock_adapter import MockAdapter
+from validate_schema.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
+from validate_schema.generate_schema import add_entity_to_schema, add_subentity_to_entity
+from validate_schema.adapter import DBAdapter
+from validate_schema.configuration import Configuration
+from validate_schema.mock_adapter import MockAdapter
 
 # adapter.DBAdapter
 @pytest.fixture

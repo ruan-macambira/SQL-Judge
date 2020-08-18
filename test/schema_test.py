@@ -1,7 +1,7 @@
 #pylint: disable=missing-module-docstring
 #pylint: disable=missing-function-docstring
 import pytest
-from lib.generate_schema import add_entity_to_schema
+from validate_schema.generate_schema import add_entity_to_schema
 
 # Schema
 def test_columns_returns_every_column_from_every_table(schema, build_table):

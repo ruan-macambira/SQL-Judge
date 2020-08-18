@@ -1,6 +1,6 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
-from lib.schema import Table, Column, Trigger
+from validate_schema.schema import Table, Column, Trigger
 from . import examples
 
 def table(name):

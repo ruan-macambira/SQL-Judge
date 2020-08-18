@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-from lib.export.csv import export_csv
+from validate_schema.export.csv import export_csv
 
 def test_generate_report():
     report = {

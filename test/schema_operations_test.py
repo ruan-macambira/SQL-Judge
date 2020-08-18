@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-from lib.generate_schema import (
+from validate_schema.generate_schema import (
     add_index_to_column, add_entity_to_schema, add_subentity_to_entity
 )
 

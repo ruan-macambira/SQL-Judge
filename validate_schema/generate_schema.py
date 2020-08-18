@@ -1,6 +1,6 @@
 """ Use the database connection to adapt its schema to the applications objects """
-from lib.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity, Entity
-from lib.adapter import DBAdapter
+from .schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity, Entity
+from .adapter import DBAdapter
 
 def generate_schema(conn: DBAdapter) -> Schema:
     """ Generate an Schema objects containing the schema contained in the provided database """

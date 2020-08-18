@@ -1,10 +1,10 @@
 """ Run the application """
 from typing import List, Dict, Callable
-from lib.schema import Entity
-from lib.configuration import Configuration
-from lib.generate_schema import generate_schema
-from lib.meta_schema import schema_entities
-from lib import export
+from .schema import Entity
+from .configuration import Configuration
+from .generate_schema import generate_schema
+from .meta_schema import schema_entities
+from . import export
 
 def run(config: Configuration) -> List[str]:
     """ Run the schema validation and return a report """
