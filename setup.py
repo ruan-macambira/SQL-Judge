@@ -5,6 +5,5 @@ setup(
     version='0.alpha',
     description='Validate SQL database Schemas using Python',
     author='MxBromelia',
-    packages=['validate_schema', 'validate_schema.export'],
-    scripts=['validate_schema.py']
+    packages=['validate_schema', 'validate_schema.export']
 )
