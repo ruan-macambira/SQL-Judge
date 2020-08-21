@@ -10,6 +10,12 @@ Fez-se necessário que fossem desenvolvidos uma série de validações automatiz
  - A falta de uma documentação própria não permitiu definir se certas entidades podiam ser diretamente validadas pela ferramenta, causando várias gambiarras ao longo do caminho - Por exemplo: Criar uma validações para uma tabela que na verdade valida todas as Restrições do Schema
  - Não havia um modo confiável de gerar testes e fazer debug das validações, uma vez que o único output possível eram as mensagens das validações que retornavam falso, não havendo um REPL que nos permitisse executar comandos como console.log(mais um agravante ao ponto anterior)
 
+
+## Instação
+ - Faça o clone do repositório
+ - No terminal escreva ```python setup.py bdist_wheel```
+ - Novamente no terminal ```pip install dist/[ARQUIVO_WHEEL].whl```, onde ARQUIVO_WHEEL é o nome do arquivo que foi criado na pasta dist/
+
 ## Como utilizar
 _Aviso: A seção a seguir é um esboço, baseado em uma solução provisória de execução do programa. Tudo que estiver aqui pode já estar desatualizado, e assim se manterá até o momento em que esse aviso for retirado_
 
@@ -26,7 +32,7 @@ Execute, então, validate_schema.py com o módulo do arquivo como argumento (pyt
 
 O output é enviado para stdout, independente do formato em que é definido a exportação, mudando apenas a formatação da saída. Caso execute:
 
-``` python validate_schema.py examples.config ```
+``` cd examples; python -m validate_schema config ```
 
 O output será:
 
