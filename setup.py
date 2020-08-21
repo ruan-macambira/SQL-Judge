@@ -1,3 +1,4 @@
+"""Setup File"""
 from setuptools import setup
 
 setup(
