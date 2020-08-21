@@ -67,5 +67,94 @@ Constraints:
 ==================================================
 ```
 
+## Desenvolvendo um adaptador de banco de Dados
+A ferramenta de validação do Schema é meramente uma maneira de validar um schema de banco de dados SQL. Ele não possui nativamente uma maneira de se comunicar com um banco de Dados, ficando para o usuário a tarefa de providenciar um meio do programa obter o schema. Para isso, a função adapter() dentro do arquivo de configuração deve conter uma instância de um objeto adaptador, que implementa corretamente a interface presente em validate_schema/adapter.py. O sistema não assume nada sobre a fonte dos dados, não precisando nem mesmo ser extraído de um banco de dados real. Contanto que ele implemente corretamente a interface do objeto, todas as entidades do schema hão de ser reproduzidas no sistema. Mais informações de como implementar um adaptador no arquivo contendo sua interface (validate_schema/adapter.py)
+
+
 ## API das entidades do Schema
- ~ Em Construção ~
+O montador de Schema tem suporte para as seguintes entidades de um banco de Dados do SQL:
+ - Tabela;
+ - Função;
+ - Procedimento;
+ - Coluna;
+ - Trigger;
+ - Índice (atualmente ligado a colunas);
+ - Restrição.
+
+Está em planos para ter suporte:
+ - Visões;
+ - Visões Materializadas;
+ - Sequências.
+
+Cada Entidade do schema possui suas propriedades próprias (especificadas abaixo), bem como as relações que esta possui com outras entidades. Por Exemplo, a Entidade tabela possui acesso às colunas que lhe pertencem, bastando apenas que seja utilizadas ```table.columns```, sendo ```table``` o objeto que representaria a tabela em questão. Todas as propriedades das entidades são definidas como properties do objeto, portanto devem ser invocadas apenas pelo seu nome, sem utilizar a sintaxe de invocação de método, i.e ao invés de utilizar ```entity.name()```, utilizar ```entity.name```. Essa regra vale para todas as propriedades apresentadas abaixo.
+
+### Schema
+|Propriedade|Classe            |Descrição                       |  
+|-----------|------------------|--------------------------------|  
+|tables*    |List[Table]       |Tabelas do Schema               |  
+|functions* |List[SchemaEntity]|Funções do Schema               |  
+|procedures*|List[SchemaEntity]|Procedimentos do Schema         |  
+|triggers   |List[Trigger]     |Triggers das Tabelas do Schema  |  
+|indexes    |List[Index]       |Índices das colunas do Schema   |  
+|constraints|List[Constraint]  |Restrições das colunas do Schema|  
+
+### Propriedades Comuns a Todas as Entidades (Entity)
+|Propriedade|Classe|Descrição         |  
+|-----------|------|------------------|  
+|name       |str   |Nome da Entidade  |  
+
+### Propriedades Comuns a Table, Function e Procedure(SchemaEntity)
+|Propriedade|Classe|Descrição                                                    |  
+|-----------|------|-------------------------------------------------------------|  
+|schema     |Schema| Objeto principal, do qual se pode acessar todas as entidades|  
+
+### Table
+|Propriedade|Classe      |Descrição                                                    |  
+|-----------|------------|-------------------------------------------------------------|  
+|columns*   |List[Column]| Colunas da tabela                                           |  
+|primary_key|Column      | Coluna da tabela na qual está a restrição de chave primária |  
+
+
+### Function
+Não possui propriedades além das que compartilha com SchemaEntity
+
+### Procedure
+Não possui propriedades além das que compartilha com SchemaEntity
+
+### Propriedades Comuns a Column e Trigger(TableEntity)
+|Propriedade|Classe|Descrição                   |  
+|-----------|------|----------------------------|  
+|table      |Table | Tabela associada à Entidade|  
+
+### Trigger
+|Propriedade|Classe|Descrição                                           |  
+|-----------|------|----------------------------------------------------|  
+|hook       |str   | Momento de ativação da trigger (ex.: BEFORE UPDATE)|
+
+
+### Column
+|Propriedade|Classe          |Descrição                                              |  
+|-----------|----------------|-------------------------------------------------------|  
+|index*     |Index           | Índice associado à coluna                             |  
+|constraints|List[Constraint]| Restrições associadas à coluna                        |  
+|references |Table           | Tabela no qual esta coluna referencia, caso ela o faça|  
+|type       |str             | Tipo de valor presente na coluna (ex.: NUMBER, TEXT)  |
+|primary_key|bool            | True se é a chave primária. False, caso contrário     |
+
+### Propriedades Comuns a Index e Constraint(ColumnEntity)
+|Propriedade|Classe|Descrição                  |  
+|-----------|------|---------------------------|  
+|column     |column|Coluna associada à entidade|
+
+### Index
+|Propriedade|Classe|Descrição                                                   |  
+|-----------|------|------------------------------------------------------------|
+|unique     |bool  | True se for um index que está ligado a uma restrição unique|
+
+### Constraint
+|Propriedade|Classe|Descrição                                                    |  
+|-----------|------|-------------------------------------------------------------|  
+|type       |str   | O tipo da restrição da coluna (Ex.: UNIQUE, NOT NULL, CHECK)|  
+
+
+ \*Propriedades marcadas com um asterisco(*) são, no momento atual, elementos diretamente acessáveis, podendo portanto ter seu valor alterado. Recomenda-se cuidado quando for se utilizar dessas propriedades, pois reescrevê-las afetará as validações seguintes. Isso está planejado pra ser consertado em um futuro próximo.
