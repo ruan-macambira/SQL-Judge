@@ -1,10 +1,18 @@
 """ Run the application """
+import functools
 from typing import List, Dict, Callable
 from .schema import Entity
 from .configuration import Configuration
 from .generate_schema import generate_schema
 from .meta_schema import schema_entities
 from . import export
+
+def validates(entity):
+    """ Sets Entity to which the validation will run """
+    def _validates(validation):
+        validation.validates = entity
+        return validation
+    return _validates
 
 def run(config: Configuration) -> List[str]:
     """ Run the schema validation and return a report """
