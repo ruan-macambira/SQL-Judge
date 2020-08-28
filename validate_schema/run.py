@@ -1,5 +1,4 @@
 """ Run the application """
-import functools
 from typing import List, Dict, Callable
 from .schema import Entity
 from .configuration import Configuration
