@@ -1,7 +1,7 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
 
-from validate_schema.run import validates
+from validate_schema import validates
 
 def _stripped_table_name(table):
     if table_starts_with_tbl(table) is None:

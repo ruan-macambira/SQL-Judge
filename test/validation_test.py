@@ -1,6 +1,7 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
-from validate_schema.run import validate_entity, validates
+from validate_schema.run import validate_entity
+from validate_schema import validates
 
 def pass_validation(_table):
     return None
