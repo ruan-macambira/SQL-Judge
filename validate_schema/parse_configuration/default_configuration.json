@@ -1,0 +1,15 @@
+{
+    "adapter": {
+        "module": "adapter",
+        "class": "Adapter",
+        "args": {}
+    },
+    "validations": {
+        "module": "validations"
+    },
+    "ignore_tables": [],
+    "export": {
+        "format": "CLI",
+        "output": "stdout"
+    }
+}
