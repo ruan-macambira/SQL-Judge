@@ -2,17 +2,12 @@
 import sys
 import importlib
 from .run import run
-from .configuration import Configuration
+from .configuration import configuration_from_module
 
 def validate_schema(filename):
     options = importlib.import_module(filename)
 
-    config = Configuration(
-        connection=options.adapter(),
-        validations=options.validations(),
-        ignore_tables=options.ignore_tables(),
-        export=options.export()
-    )
+    config = configuration_from_module(options)
     return run(config)
 
 if __name__ == '__main__':
