@@ -34,12 +34,7 @@ def ignore_tables():
     return ['metainfo']
 
 def validations():
-    return {
-        'Tables': [table_starts_with_tbl],
-        'Columns': [referenced_table_is_named_after_its_reference, column_name_matches_type],
-        'Triggers': [trigger_starts_with_tg],
-        'Indexes': [], 'Constraints': [], 'Functions': [], 'Procedures': []
-    }
+    return examples
 
 def export():
     return 'CLI'

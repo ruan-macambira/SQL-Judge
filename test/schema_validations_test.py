@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-from validate_schema.schema_validations import (
+from validate_schema.parse_configuration.schema_validations import (
     extract_validations_from_module,
     inspect_validations,
     to_configuration

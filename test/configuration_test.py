@@ -3,14 +3,15 @@
 
 from collections import namedtuple
 import pytest
-from validate_schema.configuration import configuration_from_module
+from validate_schema.parse_configuration import configuration_from_module
+from . import validations
 
 @pytest.fixture
 def configuration():
     mockule = namedtuple('mockule', ['adapter', 'validations', 'ignore_tables', 'export'])
     mock_module = mockule(
         adapter=lambda: 'adapter',
-        validations=lambda: 'validations',
+        validations=lambda: validations,
         ignore_tables=lambda: 'ignore_tables',
         export=lambda: 'export'
     )
@@ -20,7 +21,10 @@ def test_configuration_has_adapter(configuration): #pylint: disable=redefined-ou
     assert configuration.connection == 'adapter'
 
 def test_configuration_has_validations(configuration): #pylint: disable=redefined-outer-name
-    assert configuration.validations == 'validations'
+    assert configuration.validations == {
+        'table': [validations.validate_table], 'column': [validations.validate_column],
+        'invalid_entity': [validations.validate_invalid_entity]
+    }
 
 def test_configuration_has_ignore_tables(configuration): #pylint: disable=redefined-outer-name
     assert configuration.ignore_tables == 'ignore_tables'
