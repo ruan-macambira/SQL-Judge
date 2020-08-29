@@ -6,6 +6,31 @@ from validate_schema.generate_schema import add_entity_to_schema, add_subentity_
 from validate_schema.adapter import DBAdapter
 from validate_schema.configuration import Configuration
 from validate_schema.mock_adapter import MockAdapter
+from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
+
+@pytest.fixture
+def build_configuration_builder():
+    """ Configuration Builder Factory """
+    def _build(adapter_module='adapter', adapter_class='Adapter',
+               validations_module='validations', ignore_tables=None, export_format='CLI'):
+        return ConfigurationBuilder(
+            adapter_module=adapter_module,
+            adapter_class=adapter_class,
+            validations_module=validations_module,
+            ignore_tables=ignore_tables or [],
+            export_format=export_format
+        )
+    return _build
+
+@pytest.fixture
+def configuration_builder(build_configuration_builder):
+    """ Basic Configuration Builder """
+    return build_configuration_builder()
+
+@pytest.fixture
+def empty_configuration_builder():
+    """ Empty Configuration Builder """
+    return ConfigurationBuilder()
 
 # adapter.DBAdapter
 @pytest.fixture
