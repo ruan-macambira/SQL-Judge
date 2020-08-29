@@ -1,7 +1,9 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
+import json
 import pytest
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
+from ..test_modules import adapter
 
 # ConfigurationBuilder.is_valid
 def test_empty_builder_is_invalid(empty_configuration_builder):
@@ -76,7 +78,31 @@ def test_build_configuration_sends_ignore_tables_as_is(build_configuration_build
         .build().ignore_tables == ['metainfo']
 
 def test_build_configuration_loads_adapter(build_configuration_builder):
-    from ..test_modules import adapter
     assert build_configuration_builder(
         adapter_module='test.test_modules.adapter', adapter_class='Adapter'
     ).build().connection == adapter.Adapter
+
+# from_json
+def test_from_json_parses_json_string_and_generates_a_configuration_builder():
+    json_str = json.dumps({
+        'adapter': {'module': 'adapter', 'class': 'Adapter'},
+        'ignore_tables':['metainfo'], 'validations': {'module': 'validations'}
+    })
+    assert ConfigurationBuilder.from_json(json_str) == \
+        ConfigurationBuilder(
+            adapter_module='adapter', adapter_class='Adapter',
+            ignore_tables=['metainfo'], validations_module='validations'
+        )
+
+def test_from_json_succeeds_even_with_an_empty_config():
+    json_str = json.dumps({})
+    assert ConfigurationBuilder.from_json(json_str) == ConfigurationBuilder()
+
+def test_default_configuration_is_a_valid_json_config():
+    # TODO: remover teste dos unitários e fazê-lo carregar o JSON das configurações padrões
+    json_str = r"""{
+        "adapter": {"module": "adapter","class": "Adapter","args": {}},
+        "validations": {"module": "validations"},
+        "ignore_tables": [],
+        "export": {"format": "CLI","output": "stdout"}}"""
+    assert ConfigurationBuilder.from_json(json_str).is_valid() is True

@@ -2,6 +2,7 @@
 options from various sources, merge them, and build a valid Configuration
 Object to use in the rest of the proccess """
 import importlib
+import json
 from dataclasses import dataclass, field
 from typing import List, Optional
 from .. import Configuration
@@ -16,6 +17,21 @@ class ConfigurationBuilder:
     ignore_tables: List[str] = field(default_factory=list)
     export_format: Optional[str] = None
     export_output: Optional[str] = None
+
+    @classmethod
+    def from_json(cls, json_str):
+        """Generates an instance based from a JSON string"""
+        options = json.loads(json_str)
+        adapter_options = options.get('adapter', {})
+        validation_options = options.get('validations', {})
+        export_options = options.get('export', {})
+        return cls(
+            adapter_module=adapter_options.get('module'),
+            adapter_class=adapter_options.get('class'),
+            ignore_tables=options.get('ignore_tables', []),
+            validations_module=validation_options.get('module'),
+            export_format=export_options.get('format')
+        )
 
     def merge(self, builder: 'ConfigurationBuilder'):
         """ Combine two builders """
