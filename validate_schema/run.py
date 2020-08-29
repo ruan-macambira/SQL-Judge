@@ -1,7 +1,7 @@
 """ Run the application """
 from typing import List, Dict, Callable
 from .schema import Entity
-from .configuration import Configuration
+from . import Configuration
 from .generate_schema import generate_schema
 from .meta_schema import schema_entities
 from . import export

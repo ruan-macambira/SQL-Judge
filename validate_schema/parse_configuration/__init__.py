@@ -1,6 +1,6 @@
 """ Package responsible for transform the different ways of
 inputting the configuration in a single Configuration Object """
-from validate_schema.configuration import Configuration
+from validate_schema import Configuration
 from .schema_validations import module_validations, to_configuration
 
 def configuration_from_module(options):

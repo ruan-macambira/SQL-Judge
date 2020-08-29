@@ -4,7 +4,7 @@ import pytest
 from validate_schema.schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity
 from validate_schema.generate_schema import add_entity_to_schema, add_subentity_to_entity
 from validate_schema.adapter import DBAdapter
-from validate_schema.configuration import Configuration
+from validate_schema import Configuration
 from validate_schema.mock_adapter import MockAdapter
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
 

@@ -4,7 +4,7 @@ Object to use in the rest of the proccess """
 import importlib
 from dataclasses import dataclass, field
 from typing import List, Optional
-from ..configuration import Configuration
+from .. import Configuration
 from . import schema_validations
 
 @dataclass
