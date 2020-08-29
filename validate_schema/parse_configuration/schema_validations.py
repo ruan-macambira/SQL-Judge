@@ -7,13 +7,13 @@ VALID_ENTITITES = [
     'table', 'column', 'trigger', 'constraint', 'function', 'procedure', 'index'
 ]
 
-def _extract_function_from_module(module):
-    return (element for (_, element) in inspect.getmembers(module) if inspect.isfunction(element))
+def _module_functions(module):
+    return (element for (_, element) in inspect.getmembers(module, predicate=inspect.isfunction))
 
-def extract_validations_from_module(module):
+def module_validations(module):
     """ Extracts methods decorated as validations from the module """
     return [
-        function for function in _extract_function_from_module(module)
+        function for function in _module_functions(module)
         if getattr(function, 'validates', None) is not None
     ]
 

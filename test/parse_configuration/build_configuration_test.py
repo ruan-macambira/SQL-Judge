@@ -1,5 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
+import pytest
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
 
 # ConfigurationBuilder.is_valid
@@ -63,3 +64,19 @@ def test_merging_a_builder_overwrites_validations_module_if_present(build_config
         .validations_module == 'overwritten_module'
 
 # ConfigurationBuilder.build
+def test_trying_to_build_an_invalid_configuration_raises_value_error(build_configuration_builder):
+    with pytest.raises(ValueError):
+        build_configuration_builder(adapter_module=None).build()
+
+def test_build_configuration_sends_export_format_as_is(build_configuration_builder):
+    assert build_configuration_builder(export_format='CLI').build().export == 'CLI'
+
+def test_build_configuration_sends_ignore_tables_as_is(build_configuration_builder):
+    assert build_configuration_builder(ignore_tables=['metainfo']) \
+        .build().ignore_tables == ['metainfo']
+
+def test_build_configuration_loads_adapter(build_configuration_builder):
+    from ..test_modules import adapter
+    assert build_configuration_builder(
+        adapter_module='test.test_modules.adapter', adapter_class='Adapter'
+    ).build().connection == adapter.Adapter

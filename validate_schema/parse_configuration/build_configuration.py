@@ -1,6 +1,11 @@
+""" Sets ConfigurationBuilder, a class responsible to merge configuration
+options from various sources, merge them, and build a valid Configuration
+Object to use in the rest of the proccess """
+import importlib
 from dataclasses import dataclass, field
 from typing import List, Optional
-from collections import namedtuple
+from ..configuration import Configuration
+from . import schema_validations
 
 @dataclass
 class ConfigurationBuilder:
@@ -33,3 +38,23 @@ class ConfigurationBuilder:
         if self.export_format is None:
             return False
         return True
+
+    def _adapter(self):
+        adapter_module = importlib.import_module(self.adapter_module)
+        return getattr(adapter_module, self.adapter_class)
+
+    def _validations(self):
+        validations_module = importlib.import_module(self.validations_module)
+        validations = schema_validations.module_validations(validations_module)
+        return schema_validations.to_configuration(validations)
+
+    def build(self) -> Configuration:
+        """Use the internal parameters to generate a Configuration Instance"""
+        if not self.is_valid():
+            raise ValueError
+        return Configuration(
+            connection=self._adapter(),
+            validations=self._validations(),
+            export=self.export_format, #type: ignore
+            ignore_tables=self.ignore_tables
+        )

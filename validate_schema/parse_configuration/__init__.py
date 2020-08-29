@@ -1,7 +1,7 @@
 """ Package responsible for transform the different ways of
 inputting the configuration in a single Configuration Object """
 from validate_schema.configuration import Configuration
-from .schema_validations import extract_validations_from_module, to_configuration
+from .schema_validations import module_validations, to_configuration
 
 def configuration_from_module(options):
     """ Constrct Configuration file from module """
@@ -13,5 +13,5 @@ def configuration_from_module(options):
     )
 
 def _module_validations(module):
-    validations = extract_validations_from_module(module)
+    validations = module_validations(module)
     return to_configuration(validations)

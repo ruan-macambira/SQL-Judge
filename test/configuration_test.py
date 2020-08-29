@@ -4,7 +4,7 @@
 from collections import namedtuple
 import pytest
 from validate_schema.parse_configuration import configuration_from_module
-from . import validations
+from .test_modules import validations
 
 @pytest.fixture
 def configuration():

@@ -11,8 +11,8 @@ from validate_schema.parse_configuration.build_configuration import Configuratio
 @pytest.fixture
 def build_configuration_builder():
     """ Configuration Builder Factory """
-    def _build(adapter_module='adapter', adapter_class='Adapter',
-               validations_module='validations', ignore_tables=None, export_format='CLI'):
+    def _build(adapter_module='test.test_modules.adapter', adapter_class='Adapter',
+               validations_module='test.test_modules.validations', ignore_tables=None, export_format='CLI'):
         return ConfigurationBuilder(
             adapter_module=adapter_module,
             adapter_class=adapter_class,

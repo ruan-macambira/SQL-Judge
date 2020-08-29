@@ -1,14 +1,14 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
 from validate_schema.parse_configuration.schema_validations import (
-    extract_validations_from_module,
+    module_validations,
     inspect_validations,
     to_configuration
 )
-from . import validations
+from ..test_modules import validations
 
 def extracted_validations():
-    return extract_validations_from_module(validations)
+    return module_validations(validations)
 
 def test_extract_validations():
     assert set(extracted_validations()) == set([
