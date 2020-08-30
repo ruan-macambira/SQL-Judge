@@ -1,12 +1,12 @@
 #! /usr/bin/python3
 """ Main Module """
 import sys
+import pkg_resources
 from .run import run
 from .parse_configuration.build_configuration import ConfigurationBuilder
 
 def default_config():
-    with open('validate_schema/parse_configuration/default_configuration.json') as f:
-        return f.read(None)
+    return pkg_resources.resource_string('validate_schema.parse_configuration', 'default_configuration.json')
 
 def user_config(filename):
     with open(filename) as f:

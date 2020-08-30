@@ -7,4 +7,4 @@ temp/
 *.pyc
 build/
 dist/
-sql_schema_validator.egg-info
+validate_schema.egg-info
