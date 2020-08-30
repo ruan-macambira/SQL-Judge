@@ -57,7 +57,7 @@ class ConfigurationBuilder:
 
     def _adapter(self):
         adapter_module = importlib.import_module(self.adapter_module)
-        return getattr(adapter_module, self.adapter_class)
+        return getattr(adapter_module, self.adapter_class)()
 
     def _validations(self):
         validations_module = importlib.import_module(self.validations_module)

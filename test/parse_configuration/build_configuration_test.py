@@ -77,10 +77,10 @@ def test_build_configuration_sends_ignore_tables_as_is(build_configuration_build
     assert build_configuration_builder(ignore_tables=['metainfo']) \
         .build().ignore_tables == ['metainfo']
 
-def test_build_configuration_loads_adapter(build_configuration_builder):
+def test_build_configuration_loads_adapter_instance(build_configuration_builder):
     assert build_configuration_builder(
         adapter_module='test.test_modules.adapter', adapter_class='Adapter'
-    ).build().connection == adapter.Adapter
+    ).build().connection == adapter.Adapter()
 
 # from_json
 def test_from_json_parses_json_string_and_generates_a_configuration_builder():
