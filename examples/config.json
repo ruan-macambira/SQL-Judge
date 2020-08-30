@@ -1,0 +1,13 @@
+{
+    "adapter": {
+        "module": "examples.adapter",
+        "class": "Adapter"
+    },
+    "validations": {
+        "module": "examples.examples"
+    },
+    "ignore_tables": ["metainfo"],
+    "export": {
+        "format": "CLI"
+    }
+}
