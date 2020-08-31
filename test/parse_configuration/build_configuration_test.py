@@ -98,12 +98,15 @@ def test_build_configuration_loads_adapter_instance(build_configuration_builder)
 # from_json
 def test_from_json_parses_json_string_and_generates_a_configuration_builder():
     json_str = json.dumps({
-        'adapter': {'module': 'adapter', 'class': 'Adapter'},
+        'adapter': {
+            'module': 'adapter', 'class': 'Adapter',
+            'params': ['foo'], 'named_params': {'foo': 'bar'}},
         'ignore_tables':['metainfo'], 'validations': {'module': 'validations'}
     })
     assert ConfigurationBuilder.from_json(json_str) == \
         ConfigurationBuilder(
             adapter_module='adapter', adapter_class='Adapter',
+            adapter_params=['foo'], adapter_named_params={'foo':'bar'},
             ignore_tables=['metainfo'], validations_module='validations'
         )
 
@@ -114,7 +117,7 @@ def test_from_json_succeeds_even_with_an_empty_config():
 def test_default_configuration_is_a_valid_json_config():
     # TODO: remover teste dos unitários e fazê-lo carregar o JSON das configurações padrões
     json_str = r"""{
-        "adapter": {"module": "adapter","class": "Adapter","args": {}},
+        "adapter": {"module": "adapter","class": "Adapter","params": [], "named_params": {}},
         "validations": {"module": "validations"},
         "ignore_tables": [],
         "export": {"format": "CLI","output": "stdout"}}"""

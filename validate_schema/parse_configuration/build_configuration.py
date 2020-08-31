@@ -30,6 +30,8 @@ class ConfigurationBuilder:
         return cls(
             adapter_module=adapter_options.get('module'),
             adapter_class=adapter_options.get('class'),
+            adapter_params=adapter_options.get('params', []),
+            adapter_named_params=adapter_options.get('named_params', {}),
             ignore_tables=options.get('ignore_tables', []),
             validations_module=validation_options.get('module'),
             export_format=export_options.get('format')

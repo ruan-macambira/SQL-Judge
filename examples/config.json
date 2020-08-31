@@ -1,7 +1,8 @@
 {
     "adapter": {
         "module": "adapter",
-        "class": "Adapter"
+        "class": "JSONAdapter",
+        "params": ["schema.json"]
     },
     "validations": {
         "module": "examples"
