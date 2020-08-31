@@ -11,11 +11,16 @@ from validate_schema.parse_configuration.build_configuration import Configuratio
 @pytest.fixture
 def build_configuration_builder():
     """ Configuration Builder Factory """
-    def _build(adapter_module='test.test_modules.adapter', adapter_class='Adapter',
-               validations_module='test.test_modules.validations', ignore_tables=None, export_format='CLI'):
+    def _build(
+        adapter_module='test.test_modules.adapter', adapter_class='Adapter',
+        adapter_params=None, adapter_named_params=None,
+        validations_module='test.test_modules.validations',
+        ignore_tables=None, export_format='CLI'):
         return ConfigurationBuilder(
             adapter_module=adapter_module,
             adapter_class=adapter_class,
+            adapter_params=adapter_params or [],
+            adapter_named_params=adapter_named_params or {},
             validations_module=validations_module,
             ignore_tables=ignore_tables or [],
             export_format=export_format

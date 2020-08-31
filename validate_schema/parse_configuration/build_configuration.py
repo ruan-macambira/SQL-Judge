@@ -4,7 +4,7 @@ Object to use in the rest of the proccess """
 import importlib
 import json
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict
 from .. import Configuration
 from . import schema_validations
 
@@ -13,6 +13,8 @@ class ConfigurationBuilder:
     """Group, Validate and Build the Configurations parameters"""
     adapter_module: Optional[str] = None
     adapter_class: Optional[str] = None
+    adapter_params: List[str] = field(default_factory=list)
+    adapter_named_params: Dict[str, str] = field(default_factory=dict)
     validations_module: Optional[str] = None
     ignore_tables: List[str] = field(default_factory=list)
     export_format: Optional[str] = None
@@ -38,6 +40,8 @@ class ConfigurationBuilder:
         return ConfigurationBuilder(
             adapter_module=builder.adapter_module or self.adapter_module,
             adapter_class=builder.adapter_class or self.adapter_class,
+            adapter_params=self.adapter_params + builder.adapter_params,
+            adapter_named_params={**self.adapter_named_params, **builder.adapter_named_params},
             validations_module=builder.validations_module or self.validations_module,
             ignore_tables=self.ignore_tables + builder.ignore_tables,
             export_format=builder.export_format or self.export_format
@@ -57,7 +61,7 @@ class ConfigurationBuilder:
 
     def _adapter(self):
         adapter_module = importlib.import_module(self.adapter_module)
-        return getattr(adapter_module, self.adapter_class)()
+        return getattr(adapter_module, self.adapter_class)(*self.adapter_params, **self.adapter_named_params)
 
     def _validations(self):
         validations_module = importlib.import_module(self.validations_module)

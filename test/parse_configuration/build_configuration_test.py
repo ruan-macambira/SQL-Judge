@@ -50,6 +50,11 @@ def test_merging_a_builder_overwrites_adapter_class_if_present(build_configurati
         .merge(build_configuration_builder(adapter_class='overwritten_class')) \
         .adapter_class == 'overwritten_class'
 
+def test_merging_a_build_concatenate_adapter_params(build_configuration_builder):
+    assert build_configuration_builder(adapter_params=['foo']) \
+        .merge(build_configuration_builder(adapter_params=['bar'])) \
+        .adapter_params == ['foo', 'bar']
+
 def test_merging_two_builders_concatenate_their_ignored_tables(build_configuration_builder):
     builder_one = build_configuration_builder(ignore_tables=['foo'])
     builder_two = build_configuration_builder(ignore_tables=['bar'])
@@ -72,6 +77,14 @@ def test_trying_to_build_an_invalid_configuration_raises_value_error(build_confi
 
 def test_build_configuration_sends_export_format_as_is(build_configuration_builder):
     assert build_configuration_builder(export_format='CLI').build().export == 'CLI'
+
+def test_build_configuration_passes_unnamed_params(build_configuration_builder):
+    assert build_configuration_builder(adapter_params=['foo']) \
+        .build().connection.args == ('foo',)
+
+def test_build_configuration_passes_named_params(build_configuration_builder):
+    assert build_configuration_builder(adapter_named_params={'foo':'bar'}) \
+        .build().connection.kwargs == {'foo': 'bar'}
 
 def test_build_configuration_sends_ignore_tables_as_is(build_configuration_builder):
     assert build_configuration_builder(ignore_tables=['metainfo']) \

@@ -2,7 +2,8 @@
     "adapter": {
         "module": "adapter",
         "class": "Adapter",
-        "args": {}
+        "params": [],
+        "named_params": {}
     },
     "validations": {
         "module": "validations"

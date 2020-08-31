@@ -3,6 +3,10 @@
 from validate_schema.adapter import DBAdapter
 
 class Adapter(DBAdapter):
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+
     def tables(self):
         return []
 
