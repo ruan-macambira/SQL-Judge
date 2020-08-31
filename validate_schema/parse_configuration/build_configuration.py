@@ -42,7 +42,7 @@ class ConfigurationBuilder:
         return ConfigurationBuilder(
             adapter_module=builder.adapter_module or self.adapter_module,
             adapter_class=builder.adapter_class or self.adapter_class,
-            adapter_params=self.adapter_params + builder.adapter_params,
+            adapter_params= builder.adapter_params or self.adapter_params,
             adapter_named_params={**self.adapter_named_params, **builder.adapter_named_params},
             validations_module=builder.validations_module or self.validations_module,
             ignore_tables=self.ignore_tables + builder.ignore_tables,
