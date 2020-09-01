@@ -5,6 +5,7 @@ import pkg_resources
 from .run import run
 from .parse_configuration.build_configuration import ConfigurationBuilder
 from .generate_schema import generate_schema
+from .export import formatted_output
 
 def default_config():
     return pkg_resources.resource_string(
@@ -21,11 +22,12 @@ def validate_schema(filenames):
         config_builder = config_builder.merge(ConfigurationBuilder.from_json(user_config(filename)))
     config = config_builder.build()
     schema = generate_schema(config.connection)
+    report: dict = run(config, schema)
+    return formatted_output(report, config.export)
 
-    return run(config, schema)
 
 if __name__ == '__main__':
-    report = validate_schema(sys.argv[1:])
+    output = validate_schema(sys.argv[1:])
 
-    for line in report:
+    for line in output:
         print(line)

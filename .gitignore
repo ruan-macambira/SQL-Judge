@@ -9,3 +9,5 @@ build/
 dist/
 validate_schema.egg-info
 coverage.xml
+.mypy_cache
+.pytest_cache
