@@ -1,3 +1,5 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
 import pytest
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
 

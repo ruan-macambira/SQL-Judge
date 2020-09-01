@@ -1,7 +1,13 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
 import pytest
-from . import adapter, validations
+
 from validate_schema.mock_adapter import MockAdapter
-from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
+from validate_schema.parse_configuration.build_configuration import \
+    ConfigurationBuilder
+
+from . import adapter, validations
+
 
 @pytest.fixture
 def adapter_module():
@@ -18,6 +24,7 @@ def build_mock_conn():
         return MockAdapter(tables_info, functions_info, procedures_info)
     return _build_mock_conn
 
+# pylint: disable=redefined-outer-name
 @pytest.fixture
 def build_configuration_builder():
     """ Configuration Builder Factory """
