@@ -1,6 +1,7 @@
 #pylint: disable=missing-function-docstring
 """ Test for running the main flow of the system """
 from validate_schema import Configuration
+from validate_schema.generate_schema import generate_schema
 from validate_schema.run import run
 
 def table_has_tbl_as_prefix(table):
@@ -75,7 +76,8 @@ def tests_validate_run(build_mock_conn):
         },
         connection=build_mock_conn(tables_info, functions_info, procedures_info)
     )
-    actual_report = run(config)
+    schema = generate_schema(config.connection)
+    actual_report = run(config, schema)
 
     assert ' + tblProduct' not in actual_report
     assert ' + metadata_info' not in actual_report
@@ -101,6 +103,7 @@ def test_validate_csv(build_mock_conn):
         },
         connection=build_mock_conn(tables_info, [], []),
         export='CSV')
-    actual_report = run(config)
+    schema = generate_schema(config.connection)
+    actual_report = run(config, schema)
 
     assert 'Tables, Table, Validation' in actual_report

@@ -1,14 +1,12 @@
 """ Run the application """
-from typing import List, Dict, Callable
-from .schema import Entity
-from . import Configuration
-from .generate_schema import generate_schema
-from .meta_schema import schema_entities
-from . import export
+from typing import Callable, Dict, List
 
-def run(config: Configuration) -> List[str]:
+from . import Configuration, export
+from .meta_schema import schema_entities
+from .schema import Entity, Schema
+
+def run(config: Configuration, schema: Schema) -> List[str]:
     """ Run the schema validation and return a report """
-    schema = generate_schema(config.connection)
     report = {}
     for group, entities in schema_entities(schema).items():
         report[group] = _validate(

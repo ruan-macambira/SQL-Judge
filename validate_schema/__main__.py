@@ -4,6 +4,7 @@ import sys
 import pkg_resources
 from .run import run
 from .parse_configuration.build_configuration import ConfigurationBuilder
+from .generate_schema import generate_schema
 
 def default_config():
     return pkg_resources.resource_string(
@@ -19,8 +20,9 @@ def validate_schema(filenames):
     for filename in filenames:
         config_builder = config_builder.merge(ConfigurationBuilder.from_json(user_config(filename)))
     config = config_builder.build()
+    schema = generate_schema(config.connection)
 
-    return run(config)
+    return run(config, schema)
 
 if __name__ == '__main__':
     report = validate_schema(sys.argv[1:])
