@@ -52,8 +52,9 @@ def _insert_triggers_to_table(table: Table, conn: DBAdapter) -> None:
         add_subentity_to_entity(table, 'table', trigger, 'triggers')
 
 def _insert_references_to_column(column: Column, schema: Schema, conn: DBAdapter) -> None:
+    references = conn.references(column.table.name, column.name)
     for table in schema.tables:
-        if conn.references(column.table.name, column.name) == table.name:
+        if references == table.name:
             column.references = table
 
 def _insert_index_to_column(column: Column, conn: DBAdapter) -> None:
