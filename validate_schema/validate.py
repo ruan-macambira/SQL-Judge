@@ -5,7 +5,7 @@ from . import Configuration
 from .meta_schema import schema_entities
 from .schema import Entity, Schema
 
-def run(config: Configuration, schema: Schema) -> dict:
+def validate_entities(config: Configuration, schema: Schema) -> dict:
     """ Run the schema validation and return a report """
     report = {}
     for group, entities in schema_entities(schema).items():

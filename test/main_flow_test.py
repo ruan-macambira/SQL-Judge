@@ -2,7 +2,8 @@
 """ Test for running the main flow of the system """
 from validate_schema import Configuration
 from validate_schema.generate_schema import generate_schema
-from validate_schema.run import run
+from validate_schema.validate import validate_entities
+from validate_schema.export import formatted_output
 
 def table_has_tbl_as_prefix(table):
     if table.name[0:3] != 'tbl':
@@ -77,7 +78,8 @@ def tests_validate_run(build_mock_conn):
         connection=build_mock_conn(tables_info, functions_info, procedures_info)
     )
     schema = generate_schema(config.connection)
-    actual_report = run(config, schema)
+    validations_result = validate_entities(config, schema)
+    actual_report = formatted_output(validations_result, 'CLI')
 
     assert ' + tblProduct' not in actual_report
     assert ' + metadata_info' not in actual_report
@@ -104,6 +106,7 @@ def test_validate_csv(build_mock_conn):
         connection=build_mock_conn(tables_info, [], []),
         export='CSV')
     schema = generate_schema(config.connection)
-    actual_report = run(config, schema)
+    validations_result = validate_entities(config, schema)
+    actual_report = formatted_output(validations_result, 'CSV')
 
     assert 'Tables, Table, Validation' in actual_report
