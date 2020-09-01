@@ -82,7 +82,7 @@ class Trigger(TableEntity):
     """Table Trigger"""
     def __init__(self, name: str, hook: str):
         super().__init__(name=name)
-        self._hook = hook.upper()
+        self._hook = hook
 
     @property
     def hook(self):

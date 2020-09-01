@@ -3,6 +3,7 @@
 import json
 import pytest
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
+from unittest import mock
 
 # ConfigurationBuilder.is_valid
 def test_empty_builder_is_invalid(empty_configuration_builder):
@@ -79,7 +80,14 @@ def test_merging_a_builder_overwrites_validations_module_if_present(build_config
         .merge(build_configuration_builder(validations_module='overwritten_module')) \
         .validations_module == 'overwritten_module'
 
+# ConfigurationBuilder.build
+def test_trying_to_build_an_invalid_configuration_raises_value_error(build_configuration_builder):
+    with pytest.raises(ValueError):
+        build_configuration_builder(adapter_module=None).build()
 
+@mock.patch('validate_schema.parse_configuration.build_configuration.importlib')
+def test_build_a_configuration(build_configuration_builder):
+    assert ConfigurationBuilder.build(build_configuration_builder())
 
 # from_json
 def test_from_json_parses_json_string_and_generates_a_configuration_builder():

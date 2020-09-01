@@ -124,21 +124,20 @@ def procedure():
     """ Basic Procedure """
     return SchemaEntity('procedure')
 
-# validation.ValidationConfig
 @pytest.fixture
-def build_validation_config():
-    """ Validation Configuration object Factory """
-    def _build_validation_config(validations=None, connection=None, ignore_tables=None):
+def configuration():
+    VALIDATIONS = {
+        'Tables': [], 'Functions': [], 'Procedures': [],
+        'Columns': [], 'Triggers': [], 'Constraints': [], 'Indexes': []
+    }
+    def _configuration(connection=None, validations=None, ignore_tables=None, export='CLI'):
         return Configuration(
-            connection=connection, validations=validations or {},
-            ignore_tables=ignore_tables or []
+            connection=connection,
+            validations=validations or VALIDATIONS,
+            ignore_tables=ignore_tables or [],
+            export=export
         )
-    return _build_validation_config
-
-@pytest.fixture
-def validation_config(build_validation_config, mock_conn):
-    """ Basic validation Configuration File """
-    return build_validation_config(validations={}, connection=mock_conn, ignore_tables=[])
+    return _configuration
 
 @pytest.fixture
 def build_mock_conn():
