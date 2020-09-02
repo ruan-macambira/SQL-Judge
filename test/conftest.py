@@ -7,6 +7,7 @@ from validate_schema.adapter import DBAdapter
 from validate_schema import Configuration
 from validate_schema.mock_adapter import MockAdapter
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
+from validate_schema.query_adapter import QueryAdapter
 
 @pytest.fixture
 def build_configuration_builder():
@@ -142,7 +143,7 @@ def configuration():
 @pytest.fixture
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
-    def _build_mock_conn(tables_info, functions_info=None, procedures_info=None):
+    def _build_mock_conn(tables_info=None, functions_info=None, procedures_info=None):
         return MockAdapter(tables_info, functions_info, procedures_info)
     return _build_mock_conn
 
@@ -156,3 +157,7 @@ def mock_conn(build_mock_conn):
             'columns': {'column_1': 'int', 'column_2': 'int'}
         }
     })
+
+@pytest.fixture
+def query_adapter(build_mock_conn):
+    return lambda schema: QueryAdapter(build_mock_conn(schema))

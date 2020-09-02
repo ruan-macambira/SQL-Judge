@@ -1,9 +1,13 @@
 """ Use the database connection to adapt its schema to the applications objects """
 from .schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity, Entity
 from .adapter import DBAdapter
+from .query_adapter import QueryAdapter
 
 def generate_schema(conn: DBAdapter) -> Schema:
     """ Generate an Schema objects containing the schema contained in the provided database """
+    return _generate_schema(QueryAdapter(conn))
+
+def _generate_schema(conn: QueryAdapter) -> Schema:
     schema = Schema()
     for table_name in conn.tables():
         table: Table = Table(table_name)
@@ -40,29 +44,29 @@ def add_index_to_column(column: Column, index: Index) -> None:
     setattr(column, 'index', index)
     setattr(index, 'column', column)
 
-def _insert_columns_to_table(table: Table, conn: DBAdapter) -> None:
+def _insert_columns_to_table(table: Table, conn: QueryAdapter) -> None:
     for name, col_type in conn.columns(table.name).items():
         column = Column(name=name, col_type=col_type,
                         primary_key=conn.primary_key(table.name, name))
         add_subentity_to_entity(table, 'table', column, 'columns')
 
-def _insert_triggers_to_table(table: Table, conn: DBAdapter) -> None:
+def _insert_triggers_to_table(table: Table, conn: QueryAdapter) -> None:
     for name, hook in conn.triggers(table.name).items():
         trigger = Trigger(name=name, hook=hook)
         add_subentity_to_entity(table, 'table', trigger, 'triggers')
 
-def _insert_references_to_column(column: Column, schema: Schema, conn: DBAdapter) -> None:
+def _insert_references_to_column(column: Column, schema: Schema, conn: QueryAdapter) -> None:
     references = conn.references(column.table.name, column.name)
     for table in schema.tables:
         if references == table.name:
             column.references = table
 
-def _insert_index_to_column(column: Column, conn: DBAdapter) -> None:
+def _insert_index_to_column(column: Column, conn: QueryAdapter) -> None:
     index_name = conn.index(column.table.name, column.name)
     if index_name is not None:
         add_index_to_column(column, Index(name=index_name))
 
-def _insert_constraints_to_column(column: Column, conn: DBAdapter) -> None:
+def _insert_constraints_to_column(column: Column, conn: QueryAdapter) -> None:
     for (cons_name, cons_type) in conn.constraints(column.table.name, column.name).items():
         constraint = Constraint(name=cons_name, cons_type=cons_type)
         add_subentity_to_entity(column, 'column', constraint, 'constraints')

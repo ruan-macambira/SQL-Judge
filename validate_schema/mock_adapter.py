@@ -1,58 +1,64 @@
 """ A Mock for a Database Adapter, used to run tests """
-import functools
 from .adapter import DBAdapter
-
-def _none_if_key_error(method):
-    @functools.wraps(method)
-    def wrapper(*args, **kwargs):
-        try:
-            return method(*args, **kwargs)
-        except KeyError:
-            return None
-
-    return wrapper
-
-def _empty_dict_if_key_error(function):
-    @functools.wraps(function)
-    def wrapper(*args, **kwargs):
-        try:
-            return function(*args, **kwargs)
-        except KeyError:
-            return {}
-    return wrapper
 
 class MockAdapter(DBAdapter):
     """ Mock classes to generate the return values of a connection object """
-    def __init__(self, tables_info, functions_info=None, procedures_info=None):
-        self.tables_info = tables_info
+    def __init__(self, tables_info=None, functions_info=None, procedures_info=None):
+        self.tables_info = tables_info or {}
         self.functions_info = functions_info or []
         self.procedures_info = procedures_info or []
 
     def tables(self):
         return list(self.tables_info.keys())
 
-    def columns(self, table_name):
-        return self.tables_info[table_name]['columns']
+    def columns(self):
+        table_columns = ((table, props['columns']) for table, props in self.tables_info.items())
+        result = []
+        for table, columns in table_columns:
+            for cname, ctype in columns.items():
+                result.append((table, cname, ctype))
+        return result
 
-    @_none_if_key_error
-    def primary_key(self, table_name, column_name):
-        return column_name in self.tables_info[table_name]['primary_key']
+    def primary_keys(self):
+        first_or_none = lambda lst: lst[0] if len(lst) > 0 else None
+        return [
+            (table, first_or_none(props.get('primary_key', [])))
+            for table, props in self.tables_info.items()
+            if first_or_none(props.get('primary_key', [])) is not None
+        ]
 
-    @_none_if_key_error
-    def references(self, table_name, column_name):
-        return self.tables_info[table_name]['references'][column_name]
+    def references(self):
+        table_references = ((table, props.get('references', {})) for table, props in self.tables_info.items())
+        result = []
+        for table, references in table_references:
+            for column, referenced_table in references.items():
+                result.append((table, column, referenced_table))
+        return result
 
-    @_none_if_key_error
-    def index(self, table_name, column_name):
-        return self.tables_info[table_name]['indexes'][column_name]
+    def indexes(self):
+        table_indexes = ((table, props.get('indexes', {})) for table, props in self.tables_info.items())
+        result = []
+        for table, indexes in table_indexes:
+            for column, index in indexes.items():
+                result.append((table, column, index))
+        return result
 
-    @_empty_dict_if_key_error
-    def constraints(self, table_name, column_name):
-        return self.tables_info[table_name]['constraints'][column_name]
+    def constraints(self):
+        table_constraints = ((table, props.get('constraints', {})) for table, props in self.tables_info.items())
+        result = []
+        for table, constraints in table_constraints:
+            for column, constraint in constraints.items():
+                cname, ctype = list(constraint.items())[0]
+                result.append((table, column, cname, ctype))
+        return result
 
-    @_empty_dict_if_key_error
-    def triggers(self, table_name):
-        return self.tables_info[table_name]['triggers']
+    def triggers(self):
+        table_triggers = ((table, props.get('triggers', {})) for table, props in self.tables_info.items())
+        result = []
+        for table, triggers in table_triggers:
+            for trigger, hook in triggers.items():
+                result.append((table, trigger, hook))
+        return result
 
     def functions(self):
         return self.functions_info
