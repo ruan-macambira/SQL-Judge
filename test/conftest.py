@@ -143,8 +143,8 @@ def configuration():
 @pytest.fixture
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
-    def _build_mock_conn(tables_info=None, functions_info=None, procedures_info=None):
-        return MockAdapter(tables_info, functions_info, procedures_info)
+    def _build_mock_conn(tables_info=None, functions_info=None, procedures_info=None, sequences_info=None):
+        return MockAdapter(tables_info, functions_info, procedures_info, sequences_info)
     return _build_mock_conn
 
 @pytest.fixture

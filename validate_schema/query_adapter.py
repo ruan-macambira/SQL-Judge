@@ -49,3 +49,6 @@ class QueryAdapter:
 
     def procedures(self) -> List[str]:
         return self._adapter.procedures()
+
+    def sequences(self) -> List[str]:
+        return self._adapter.sequences()
