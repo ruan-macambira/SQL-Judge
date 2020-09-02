@@ -1,9 +1,13 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
 import json
-import pytest
-from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
 from unittest import mock
+
+import pytest
+
+from validate_schema.parse_configuration.build_configuration import \
+    ConfigurationBuilder
+
 
 # ConfigurationBuilder.is_valid
 def test_empty_builder_is_invalid(empty_configuration_builder):

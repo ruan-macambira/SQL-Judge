@@ -30,5 +30,11 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
 
 def validate_entity(entity: Entity, validations: List[Callable]) -> List[str]:
     """ Run a list of validations for an entity """
-    raw_messages = [val(entity) for val in validations]
+    raw_messages = (_guard_validation(val,entity) for val in validations)
     return [message for message in raw_messages if message is not None]
+
+def _guard_validation(validation: Callable, entity: Entity):
+    try:
+        return validation(entity)
+    except Exception as err:
+        return f'validation "{validation.__name__}" raised a {type(err).__name__} with the message "{err}"'

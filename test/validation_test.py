@@ -10,12 +10,19 @@ def pass_validation(_table):
 def fail_validation(_table):
     return 'ERROR'
 
+def raise_validation(_table):
+    raise Exception('something wrong happened')
+
 # validate_entity
 def test_validate_entity_returns_a_list(table):
     assert validate_entity(table, [pass_validation, fail_validation]) == ['ERROR']
 
 def test_validate_entity_no_messages_returns_empty_list(table):
     assert validate_entity(table, [pass_validation]) == []
+
+def test_validate_entity_captures_exceptions_and_passes_to_messages(table):
+    assert validate_entity(table, [raise_validation]) == \
+        ['validation "raise_validation" raised a Exception with the message "something wrong happened"']
 
 # validate
 def test_validate_entities(build_mock_conn, configuration):
