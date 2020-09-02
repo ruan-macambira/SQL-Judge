@@ -21,6 +21,13 @@ def test_generate_schema_adds_procedures_to_schema(build_mock_conn):
 
     assert [procedure.name for procedure in schema.procedures] == procedures
 
+def test_generate_schema_adds_sequences_to_schema(build_mock_conn):
+    sequences = ['sequence_one']
+    mock_adapter = build_mock_conn(tables_info={}, sequences_info=sequences)
+    schema = generate_schema(mock_adapter)
+
+    assert [sequence.name for sequence in schema.sequences] == sequences
+
 def test_generate_schema_adds_triggers_to_table(build_mock_conn):
     tables_info= {'table_one': {'columns': {}, 'triggers': {'trigger_one': 'hook_one'}}}
     mock_adapter = build_mock_conn(tables_info)

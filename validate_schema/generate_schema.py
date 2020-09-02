@@ -24,6 +24,10 @@ def generate_schema(conn: DBAdapter) -> Schema:
         procedure: SchemaEntity = SchemaEntity(procedure_name)
         add_entity_to_schema(schema, procedure, 'procedures')
 
+    for sequence_name in conn.sequences():
+        sequence: SchemaEntity = SchemaEntity(sequence_name)
+        add_entity_to_schema(schema, sequence, 'sequences')
+
     return schema
 
 def add_subentity_to_entity(entity, ref_entity: str, subentity: Entity, ref_subentity: str):

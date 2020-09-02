@@ -8,6 +8,7 @@ class Schema:
         self.tables: List['Table'] = []
         self.functions: List['Function'] = []
         self.procedures: List['Procedure'] = []
+        self.sequences: List['SchemaEntity'] = []
 
     @property
     def triggers(self) -> List['Trigger']:

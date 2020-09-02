@@ -66,9 +66,13 @@ class DBAdapter:
         raise NotImplementedError
 
     def functions(self) -> List[str]:
-        """Should return a List of string the names of the functions in the schema"""
+        """Should return a List of string with the names of the functions in the schema"""
         raise NotImplementedError
 
     def procedures(self) -> List[str]:
-        """Should return a List of string the names of the procedures in the schema"""
+        """Should return a List of string with the names of the procedures in the schema"""
+        raise NotImplementedError
+
+    def sequences(self) -> List[str]:
+        """Should return a List of strings with the names of the sequences in the schema"""
         raise NotImplementedError
