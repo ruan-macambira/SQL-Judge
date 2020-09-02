@@ -28,24 +28,24 @@ class MockAdapter(DBAdapter):
             if first_or_none(props.get('primary_key', [])) is not None
         ]
 
-    def references(self):
-        table_references = ((table, props.get('references', {})) for table, props in self.tables_info.items())
+    def _table_entities(self, entity_name):
+        table_entities = ((table, props.get(entity_name, {}))
+                          for table, props in self.tables_info.items())
         result = []
-        for table, references in table_references:
-            for column, referenced_table in references.items():
-                result.append((table, column, referenced_table))
+        for table, entities in table_entities:
+            for column, entity in entities.items():
+                result.append((table, column, entity))
         return result
+
+    def references(self):
+        return self._table_entities('references')
 
     def indexes(self):
-        table_indexes = ((table, props.get('indexes', {})) for table, props in self.tables_info.items())
-        result = []
-        for table, indexes in table_indexes:
-            for column, index in indexes.items():
-                result.append((table, column, index))
-        return result
+        return self._table_entities('indexes')
 
     def constraints(self):
-        table_constraints = ((table, props.get('constraints', {})) for table, props in self.tables_info.items())
+        table_constraints = ((table, props.get('constraints', {}))
+                             for table, props in self.tables_info.items())
         result = []
         for table, constraints in table_constraints:
             for column, constraint in constraints.items():
@@ -54,12 +54,7 @@ class MockAdapter(DBAdapter):
         return result
 
     def triggers(self):
-        table_triggers = ((table, props.get('triggers', {})) for table, props in self.tables_info.items())
-        result = []
-        for table, triggers in table_triggers:
-            for trigger, hook in triggers.items():
-                result.append((table, trigger, hook))
-        return result
+        return self._table_entities('triggers')
 
     def functions(self):
         return self.functions_info
