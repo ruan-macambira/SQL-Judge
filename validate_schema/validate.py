@@ -36,5 +36,5 @@ def validate_entity(entity: Entity, validations: List[Callable]) -> List[str]:
 def _guard_validation(validation: Callable, entity: Entity):
     try:
         return validation(entity)
-    except Exception as err:
+    except Exception as err: # pylint: disable=broad-except
         return f'validation "{validation.__name__}" raised a {type(err).__name__} with the message "{err}"'

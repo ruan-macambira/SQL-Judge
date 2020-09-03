@@ -27,10 +27,12 @@ def test_validate_entity_captures_exceptions_and_passes_to_messages(table):
 # validate
 def test_validate_entities(build_mock_conn, configuration):
     mock_adapter = build_mock_conn({'table_one': {'columns':{}}})
-    config = configuration()
+
+    config = configuration(validations={'Tables': [fail_validation], 'Columns': [pass_validation]})
     schema = generate_schema(mock_adapter)
+
     assert validate_entities(config, schema) == {
-        'Tables': {}, 'Functions': {}, 'Procedures': {},
+        'Tables': {'table_one': ['ERROR']}, 'Functions': {}, 'Procedures': {},
         'Columns': {}, 'Triggers': {}, 'Indexes': {}, 'Constraints': {}
     }
 

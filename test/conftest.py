@@ -134,7 +134,7 @@ def configuration():
     def _configuration(connection=None, validations=None, ignore_tables=None, export='CLI'):
         return Configuration(
             connection=connection,
-            validations=validations or VALIDATIONS,
+            validations={**VALIDATIONS, **(validations or {})},
             ignore_tables=ignore_tables or [],
             export=export
         )
