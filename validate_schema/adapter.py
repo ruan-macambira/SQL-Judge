@@ -1,5 +1,5 @@
 """ Database adapters """
-from typing import List, Dict, Optional, Tuple
+from typing import List, Tuple
 class DBAdapter:
     """ Specify the methods a Database Connection must have.
     In order to the Schema Builder work properly, every function
