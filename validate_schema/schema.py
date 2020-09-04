@@ -33,6 +33,17 @@ class Schema:
         column_constraints = [column.constraints for column in self.columns]
         return list(chain(*column_constraints))
 
+    def entities(self):
+        return {
+            'Tables': self.tables,
+            'Functions': self.functions,
+            'Procedures': self.procedures,
+            'Columns': self.columns,
+            'Triggers': self.triggers,
+            'Indexes': self.indexes,
+            'Constraints': self.constraints,
+        }
+
 def null_schema():
     """ Schema Null Object """
     return Schema()
@@ -47,11 +58,23 @@ class Entity: #pylint: disable=too-few-public-methods
         """Entity Name"""
         return self._name
 
+    def canonical_name(self):
+        raise NotImplementedError
+
+    def needs_validation(self, ignore_tables=None):
+        raise NotImplementedError
+
 class SchemaEntity(Entity): #pylint: disable=too-few-public-methods
     """Entity that is owned directly by the schema"""
     def __init__(self, name):
         super().__init__(name=name)
         self.schema: Schema = null_schema()
+
+    def canonical_name(self):
+        return self.name
+
+    def needs_validation(self, _ignore_tables=None):
+        return True
 
 class Table(SchemaEntity):
     """Database Table"""
@@ -69,6 +92,9 @@ class Table(SchemaEntity):
             return None
         return candidates[0]
 
+    def needs_validation(self, ignore_tables=None):
+        return not self.name in (ignore_tables or [])
+
 def null_table() -> Table:
     """Table Null Object"""
     return Table('')
@@ -78,6 +104,12 @@ class TableEntity(Entity): #pylint: disable=too-few-public-methods
     def __init__(self, name):
         super().__init__(name=name)
         self.table: Table = null_table()
+
+    def canonical_name(self):
+        return '{}.{}'.format(self.table.canonical_name(), self.name)
+
+    def needs_validation(self, ignore_tables=None):
+        return self.table.needs_validation(ignore_tables)
 
 class Trigger(TableEntity):
     """Table Trigger"""
@@ -123,6 +155,12 @@ class ColumnEntity(Entity): #pylint: disable=too-few-public-methods
     def __init__(self, name):
         super().__init__(name=name)
         self.column: Column = null_column()
+
+    def canonical_name(self):
+        return '{}.{}'.format(self.column.canonical_name(), self.name)
+
+    def needs_validation(self, ignore_tables=None):
+        return self.column.needs_validation(ignore_tables)
 
 class Index(ColumnEntity):
     """Column Index"""

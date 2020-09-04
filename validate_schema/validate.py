@@ -2,15 +2,14 @@
 from typing import Callable, Dict, List
 
 from . import Configuration
-from .meta_schema import schema_entities
 from .schema import Entity, Schema
 
 def validate_entities(config: Configuration, schema: Schema) -> dict:
     """ Run the schema validation and return a report """
     report = {}
-    for group, entities in schema_entities(schema).items():
+    for group, entities in schema.entities().items():
         report[group] = _validate(
-            [entity for entity in entities if entity.needs_validation(config)],
+            [entity for entity in entities if entity.needs_validation(config.ignore_tables)],
             config.validations[group])
 
     return report
@@ -20,11 +19,10 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
     compatible to the report generator
 
     return format: {'entity': ['message']}"""
-    reports = {}
-    for entity in entities:
-        messages = validate_entity(entity.entity, validations)
-        if messages != []:
-            reports[entity.canonical_name()] = messages
+    entity_validations = (
+        (entity.canonical_name(), validate_entity(entity, validations))
+        for entity in entities)
+    reports = {entity:message for (entity, message) in entity_validations if message != []}
 
     return reports
 
