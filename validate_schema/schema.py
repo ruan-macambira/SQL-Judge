@@ -1,6 +1,7 @@
 """ Database Schema-Related objects and fucntions """
 from typing import List, Optional
 from itertools import chain
+from .freeze import freeze
 
 class Schema:
     """Database Schema"""
@@ -34,7 +35,7 @@ class Schema:
         return list(chain(*column_constraints))
 
     def entities(self):
-        return {
+        return freeze({
             'Tables': self.tables,
             'Functions': self.functions,
             'Procedures': self.procedures,
@@ -42,7 +43,8 @@ class Schema:
             'Triggers': self.triggers,
             'Indexes': self.indexes,
             'Constraints': self.constraints,
-        }
+        })
+
 
 def null_schema():
     """ Schema Null Object """
@@ -51,12 +53,7 @@ def null_schema():
 class Entity: #pylint: disable=too-few-public-methods
     """Generic Schema Entity of a Database"""
     def __init__(self, name: str):
-        self._name = name
-
-    @property
-    def name(self):
-        """Entity Name"""
-        return self._name
+        self.name = name
 
     def canonical_name(self):
         raise NotImplementedError
@@ -115,12 +112,7 @@ class Trigger(TableEntity):
     """Table Trigger"""
     def __init__(self, name: str, hook: str):
         super().__init__(name=name)
-        self._hook = hook
-
-    @property
-    def hook(self):
-        """The moment the trigger is invoked (BEFORE INSERT, AFTER INSERT, BEFORE UPDATE, etc.)"""
-        return self._hook
+        self.hook = hook
 
 class Column(TableEntity):
     """Table Column"""
@@ -133,18 +125,8 @@ class Column(TableEntity):
         self.constraints: List['Constraint'] = []
         self.references: Optional['Table'] = references
 
-        self._type: str = col_type
-        self._primary_key = primary_key
-
-    @property
-    def type(self):
-        """Column Data Type (varchar, numeric, date, etc.)"""
-        return self._type
-
-    @property
-    def primary_key(self) -> bool:
-        """The Column is the primary key of the table"""
-        return self._primary_key
+        self.type: str = col_type
+        self.primary_key = primary_key
 
 def null_column() -> Column:
     """Column Null Object"""
@@ -166,20 +148,10 @@ class Index(ColumnEntity):
     """Column Index"""
     def __init__(self, name: str, unique: bool = False):
         super().__init__(name=name)
-        self._unique: bool = unique
-
-    @property
-    def unique(self):
-        """The index constraints the column to be a unique one"""
-        return self._unique
+        self.unique: bool = unique
 
 class Constraint(ColumnEntity):
     """ Column Constraint """
     def __init__(self, name: str, cons_type: str):
         super().__init__(name=name)
-        self._type = cons_type
-
-    @property
-    def type(self):
-        """Constraint Type (unique, primary key, foreign key, etc.)"""
-        return self._type
+        self.type = cons_type

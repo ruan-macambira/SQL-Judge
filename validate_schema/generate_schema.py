@@ -64,6 +64,7 @@ def _insert_references_to_column(column: Column, schema: Schema, conn: QueryAdap
     for table in schema.tables:
         if references == table.name:
             column.references = table
+            return
 
 def _insert_index_to_column(column: Column, conn: QueryAdapter) -> None:
     index_name = conn.index(column.table.name, column.name)
