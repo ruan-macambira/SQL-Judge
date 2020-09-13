@@ -11,7 +11,7 @@ Fez-se necessário que fossem desenvolvidos uma série de validações automatiz
  - Não havia um modo confiável de gerar testes e fazer debug das validações, uma vez que o único output possível eram as mensagens das validações que retornavam falso, não havendo um REPL que nos permitisse executar comandos como console.log(mais um agravante ao ponto anterior)
 
 
-## Instação
+## Instalação
  - Faça o clone do repositório
  - No terminal escreva ```python setup.py bdist_wheel```
  - Novamente no terminal ```pip install dist/[ARQUIVO_WHEEL].whl```, onde ARQUIVO_WHEEL é o nome do arquivo que foi criado na pasta dist/
@@ -19,20 +19,46 @@ Fez-se necessário que fossem desenvolvidos uma série de validações automatiz
 ## Como utilizar
 _Aviso: A seção a seguir é um esboço, baseado em uma solução provisória de execução do programa. Tudo que estiver aqui pode já estar desatualizado, e assim se manterá até o momento em que esse aviso for retirado_
 
-Para utilizar a validação, crie um arquivo .py contendo no mínimo 4 funções:
+As configurações de utilização são passadas através de arquivos no formato JSON, que seguem o padrão abaixo:
 
- - adapter(): Retorna a interface implementada do banco de dados
- - validations(): Dict contendo as validações a serem feitas no schema
- - ignore_tables(): Lista contendo os nomes das tabelas, em string, no qual a validação é ignorada
- - export(): retorna uma string dizendo o formato de exportação (atualmente: CLI, CSV)
+```json
+{
+  "adapter": {
+    "module": "adapter_module",
+    "class": "AdapterClass",
+    "params": ["posarg1"],
+    "named_params": { "namedarg1": "value1"}
+  },
+  "validations": {
+    "module": "validations_module"
+  },
+  "ignore_tables": ["ignored_table"],
+  "export": {
+    "format": "'CLI' or 'CSV'"
+  }
+}
+```
 
-No momento, não há valores padrões, ou verificação de erros. Todas as funções devem ser implementadas corretamente para que o programa execute.
+**adapter**: Recebe informações relacionadas ao Adaptador, i.e a classe que informa o dicionário de dados do schema, para montar o schema. Instruções de como criar um adaptador mais abaixo.
 
-Execute, então, validate_schema.py com o módulo do arquivo como argumento (python validate_schema.py NOME_DO_ARQUIVO, se o arquivo for NOME_DO_ARQUIVO.py e estiver na pasta raiz). No momento, não há como especificar o caminho do arquivo.
+ - module *(obrigatório)*: Nome do módulo em que a classe do adaptador se encontra. *Planeja-se no futuro que o usuário possa passar um arquivo qualquer, que independa do sys.path do interpretador*
+ - class *(obrigatório)*: Nome da classe do adaptador
+ - params *(opcional)*: Lista de argumentos posicionais para serem enviadas ao construtor do adaptador
+ - named_params *(opcionais)*: Hash com argumentos para serem enviados como argumentos nomeados ao construtor do adaptador
+
+**validations**: Opções relacionadas às validações. Instruções de como criar as validações mais abaixo.
+ - module *(obrigatório)*: Módulo em que as validações se encontra.
+
+**ignore_tables** (*opcional, padrão:* []): Array com todas as tabelas no schema que serão ignoradas pelas validações
+
+**export**: Formato de exportação do relatório. *No momento ele sempre exporta em stdout*
+ - format (*opcional, possível: [CLI, CSV], padrão: CLI*)
+
+É possível utilizar múltiplos arquivos de configuração. Se houver um conflito entre dois arquivos atribuem um valor para a mesma opção, a prioridade é do arquivo que foi especificado por último.
 
 O output é enviado para stdout, independente do formato em que é definido a exportação, mudando apenas a formatação da saída. Caso execute:
 
-``` cd examples; python -m validate_schema config ```
+``` cd examples; python -m validate_schema config.json special_config.json ```
 
 O output será:
 
@@ -74,8 +100,31 @@ Constraints:
 ```
 
 ## Desenvolvendo um adaptador de banco de Dados
-A ferramenta de validação do Schema é meramente uma maneira de validar um schema de banco de dados SQL. Ele não possui nativamente uma maneira de se comunicar com um banco de Dados, ficando para o usuário a tarefa de providenciar um meio do programa obter o schema. Para isso, a função adapter() dentro do arquivo de configuração deve conter uma instância de um objeto adaptador, que implementa corretamente a interface presente em validate_schema/adapter.py. O sistema não assume nada sobre a fonte dos dados, não precisando nem mesmo ser extraído de um banco de dados real. Contanto que ele implemente corretamente a interface do objeto, todas as entidades do schema hão de ser reproduzidas no sistema. Mais informações de como implementar um adaptador no arquivo contendo sua interface (validate_schema/adapter.py)
+A ferramenta de validação do Schema é meramente uma maneira de validar um schema de banco de dados SQL. Ele não possui nativamente uma maneira de se comunicar com um banco de Dados, ficando para o usuário a tarefa de providenciar um meio do programa obter o schema. O sistema não assume nada sobre a fonte dos dados, não precisando nem mesmo ser extraído de um banco de dados real. Contanto que ele implemente corretamente a interface do objeto, todas as entidades do schema hão de ser reproduzidas no sistema. Mais informações de como implementar um adaptador no arquivo contendo sua interface (validate_schema/adapter.py)
 
+## Criando validações
+O validador não possui nenhuma validação que ele execute por padrão. O usuário precisa, portanto, definir todas as validações em um único arquivo.
+
+O validador não asssume que nenhuma função do módulo passado é uma validação, ele precisa ser explicitamente definido como tal através utilizando o *decorator* ```validates``` especificando o grupo de entidades no qual aquela validação ocorre. Ex.:
+
+```python
+from validate_schema import validates # Decorator que marca as funções
+
+def not_a_validation(): # Validador não reconhece como uma validação
+  pass
+
+@validates('Tables') # Define que a função irá validar tabelas
+def table_must_start_with_tbl(table):
+  if table[0:4] == 'tbl_':
+    return None # Válida
+  return "Table must start with 'tbl_'" # Inválida
+```
+
+Cada função que é define uma validação precisa seguir algumas regras:
+ - Precisa ser marcada com o decorator ```validates```, passando, como argumento, o grupo de entidades (Tables, Columns, Indexes, Constraints, Triggers, Functions, Procedures) no plural e com a primeira letra em maiúsculo;
+ - Precisa possuir um, e apenas um, argumento, pelo qual a entidade será referenciada. É recomendado, mas não obrigatório, que o argumento possua o nome da entidade no qual ela valide;
+ - Para que uma entidade seja considerada válida em uma dada validação, a validação executada na entidade deve retornar None;
+ - Se uma validação retorna uma string, é considerada uma falha de validação, e o seu valor de retorno é utilizado como a mensagem explicando o porque da validação ter falhado, que será adicionado ao relatório.
 
 ## API das entidades do Schema
 O montador de Schema tem suporte para as seguintes entidades de um banco de Dados do SQL:
@@ -86,11 +135,11 @@ O montador de Schema tem suporte para as seguintes entidades de um banco de Dado
  - Trigger;
  - Índice (atualmente ligado a colunas);
  - Restrição.
+ - Sequências
 
 Está em planos para ter suporte:
  - Visões;
  - Visões Materializadas;
- - Sequências.
 
 Cada Entidade do schema possui suas propriedades próprias (especificadas abaixo), bem como as relações que esta possui com outras entidades. Por Exemplo, a Entidade tabela possui acesso às colunas que lhe pertencem, bastando apenas que seja utilizadas ```table.columns```, sendo ```table``` o objeto que representaria a tabela em questão. Todas as propriedades das entidades são definidas como properties do objeto, portanto devem ser invocadas apenas pelo seu nome, sem utilizar a sintaxe de invocação de método, i.e ao invés de utilizar ```entity.name()```, utilizar ```entity.name```. Essa regra vale para todas as propriedades apresentadas abaixo.
 
