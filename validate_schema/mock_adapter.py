@@ -49,8 +49,8 @@ class MockAdapter(DBAdapter):
         result = []
         for table, constraints in table_constraints:
             for column, constraint in constraints.items():
-                cname, ctype = list(constraint.items())[0]
-                result.append((table, column, cname, ctype))
+                for cname, ctype in constraint.items():
+                    result.append((table, column, cname, ctype))
         return result
 
     def triggers(self):

@@ -9,7 +9,9 @@ def adapter(build_mock_conn):
             'columns': {'column_one': 'int', 'column_two': 'int'},
             'primary_key': ['column_one'],
             'references': {'column_two': 'table_two'},
-            'constraints': {'column_one': {'column_one_constraint': 'primary_key'}},
+            'constraints': {'column_one': {
+                'column_one_constraint': 'primary_key', 'column_one_constraint_2': 'not null'
+                }},
             'triggers': {'trigger_one': 'hook_one'}
         }, 'table_two': {
             'columns': {'column_three': 'int', 'column_four': 'int'},
@@ -54,7 +56,8 @@ def test_indexes(adapter):
 
 def test_constraints(adapter):
     assert adapter.constraints() == [
-        ('table_one', 'column_one', 'column_one_constraint', 'primary_key')
+        ('table_one', 'column_one', 'column_one_constraint', 'primary_key'),
+        ('table_one', 'column_one', 'column_one_constraint_2', 'not null')
     ]
 
 def test_triggers(adapter):
