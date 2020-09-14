@@ -1,4 +1,3 @@
-import itertools
 VALID_ENTITIES = ['table', 'sequence', 'function', 'procedure', 'column', 'trigger', 'constraint', 'index']
 def raise_if_invalid_entity(method):
     def wrapper(self, group, *args, **kwargs):
@@ -19,3 +18,33 @@ class QuerySchema:
     def select(self, group: str):
         return self.__entities[group]
 
+def query_schema_from_adapter(adapter):
+    query_schema = QuerySchema()
+
+    tables = ({'name': name} for name in adapter.tables())
+    query_schema.insert('table', tables)
+
+    functions = ({'name': name} for name in adapter.functions())
+    query_schema.insert('function', functions)
+
+    procedures = ({'name': name} for name in adapter.procedures())
+    query_schema.insert('procedure', procedures)
+
+    sequences = ({'name': name} for name in adapter.sequences())
+    query_schema.insert('sequence', sequences)
+
+    columns = ({'table_name': table, 'name': name} for (table, name, _) in adapter.columns())
+    query_schema.insert('column', columns)
+
+    triggers = ({'table_name': table, 'name': name} for (table, name, _) in adapter.triggers())
+    query_schema.insert('trigger', triggers)
+
+    indexes = ({'table_name': table, 'column_name': column, 'name': name} for (table, column, name) in adapter.indexes())
+    query_schema.insert('index', indexes)
+
+    constraints = (
+        {'table_name': table, 'column_name': column, 'name': name}
+        for (table, column, name, _) in adapter.constraints())
+    query_schema.insert('constraint', constraints)
+
+    return query_schema
