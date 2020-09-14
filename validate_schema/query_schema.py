@@ -1,3 +1,4 @@
+import itertools
 VALID_ENTITIES = ['table', 'sequence', 'function', 'procedure', 'column', 'trigger', 'constraint', 'index']
 def raise_if_invalid_entity(method):
     def wrapper(self, group, *args, **kwargs):
@@ -39,9 +40,9 @@ class QuerySchema:
         return self.__from_schema[group]
 
     @raise_if_invalid_entity
-    def select_from_table(self, group: str, table_name: str):
-        return self.__from_table[group][table_name]
+    def select_from_tables(self, group: str):
+        return list(itertools.chain(*self.__from_table[group].values()))
 
     @raise_if_invalid_entity
-    def select_from_column(self, group: str, table_name: str, column_name: str):
-        return self.__from_column[group][(table_name, column_name)]
+    def select_from_columns(self, group: str):
+        return list(itertools.chain(*self.__from_column[group].values()))
