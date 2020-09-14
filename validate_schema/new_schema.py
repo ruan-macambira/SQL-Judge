@@ -5,62 +5,50 @@ class Schema:
     @property
     def tables(self):
         return [
-            Table(query_schema=self, **params)
-            for params in self.__query_schema.select_from_schema('table')
+            Table(schema=self, **params)
+            for params in self.__query_schema.select('table')
         ]
 
     @property
     def columns(self):
         return [
-            Column(query_schema=self, **params)
-            for params in self.__query_schema.select_from_tables('column')
+            Column(schema=self, **params)
+            for params in self.__query_schema.select('column')
         ]
 
-    def __schema_entities(self, group):
+    def __entities(self, factory, group):
         return [
-            Entity(group, query_schema=self, **params)
-            for params in self.__query_schema.select_from_schema(group)
-        ]
-
-    def __table_entities(self, group):
-        return [
-            TableEntity(group=group, query_schema=self, **params)
-            for params in self.__query_schema.select_from_tables(group)
-        ]
-
-    def __column_entities(self, group):
-        return [
-            ColumnEntity(group=group, query_schema=self, **params)
-            for params in self.__query_schema.select_from_columns(group)
+            factory(group=group, schema=self, **params)
+            for params in self.__query_schema.select(group)
         ]
 
     @property
     def sequences(self):
-        return self.__schema_entities('sequence')
+        return self.__entities(Entity, 'sequence')
 
     @property
     def functions(self):
-        return self.__schema_entities('function')
+        return self.__entities(Entity, 'function')
 
     @property
     def procedures(self):
-        return self.__schema_entities('procedure')
+        return self.__entities(Entity, 'procedure')
 
     @property
     def triggers(self):
-        return self.__table_entities('trigger')
+        return self.__entities(TableEntity, 'trigger')
 
     @property
     def constraints(self):
-        return self.__column_entities('constraint')
+        return self.__entities(ColumnEntity, 'constraint')
 
     @property
     def indexes(self):
-        return self.__column_entities('index')
+        return self.__entities(ColumnEntity, 'index')
 
 class Entity:
-    def __init__(self, group, query_schema, name, **additional_params):
-        self._query_schema = query_schema
+    def __init__(self, group, schema, name, **additional_params):
+        self._schema = schema
         self.__name = name
         self.__group = group
         self.__additional_params = additional_params
@@ -75,7 +63,7 @@ class Entity:
 
     @property
     def schema(self):
-        return self._query_schema
+        return self._schema
 
     def __getattr__(self, item):
         if item in self.__additional_params:
@@ -83,12 +71,12 @@ class Entity:
         raise AttributeError('__getattribute__ returned None or raised an AttributeError')
 
 class Table(Entity):
-    def __init__(self, name, query_schema, **additional_params):
-        super().__init__(group='table', name=name, query_schema=query_schema, **additional_params)
+    def __init__(self, name, schema, **additional_params):
+        super().__init__(group='table', name=name, schema=schema, **additional_params)
     @property
     def columns(self):
         return [
-            column for column in self._query_schema.columns if column.table.name == self.name
+            column for column in self._schema.columns if column.table.name == self.name
         ]
 
     @property
@@ -98,34 +86,34 @@ class Table(Entity):
     @property
     def triggers(self):
         return [
-            trigger for trigger in self._query_schema.triggers if trigger.table.name == self.name
+            trigger for trigger in self._schema.triggers if trigger.table.name == self.name
         ]
 
 
 class TableEntity(Entity):
-    def __init__(self, group, name, table_name, query_schema, **additional_params):
-        super().__init__(group=group, name=name, query_schema=query_schema, **additional_params)
+    def __init__(self, group, name, table_name, schema, **additional_params):
+        super().__init__(group=group, name=name, schema=schema, **additional_params)
         self._table_name = table_name
 
     @property
     def table(self):
-        return _find(self._query_schema.tables, lambda el: el.name == self._table_name)
+        return _find(self._schema.tables, lambda el: el.name == self._table_name)
 
 class Column(TableEntity):
-    def __init__(self, name, table_name, query_schema, **additional_params):
-        super().__init__(group='column', name=name, table_name=table_name, query_schema=query_schema, **additional_params)
+    def __init__(self, name, table_name, schema, **additional_params):
+        super().__init__(group='column', name=name, table_name=table_name, schema=schema, **additional_params)
 
     @property
     def indexes(self):
         return [
-            index for index in self._query_schema.indexes
+            index for index in self._schema.indexes
             if index.table.name == self._table_name and index.column.name == self.name
         ]
 
     @property
     def constraints(self):
         return [
-            cons for cons in self._query_schema.constraints
+            cons for cons in self._schema.constraints
             if cons.table.name == self._table_name and cons.column.name == self.name
         ]
 
@@ -134,13 +122,13 @@ class Column(TableEntity):
         raise NotImplementedError
 
 class ColumnEntity(TableEntity):
-    def __init__(self, group, name, table_name, column_name, query_schema, **additional_params):
-        super().__init__(group=group, name=name, table_name=table_name, query_schema=query_schema, **additional_params)
+    def __init__(self, group, name, table_name, column_name, schema, **additional_params):
+        super().__init__(group=group, name=name, table_name=table_name, schema=schema, **additional_params)
         self._column_name = column_name
 
     @property
     def column(self) -> Column:
-        return _find(self._query_schema.columns, lambda el: el.table.name == self._table_name and el.name == self._column_name)
+        return _find(self._schema.columns, lambda el: el.table.name == self._table_name and el.name == self._column_name)
 
 def _find(collection, condition):
     return next((element for element in collection if condition(element)), None)

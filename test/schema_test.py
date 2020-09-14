@@ -6,22 +6,22 @@ from validate_schema.query_schema import QuerySchema
 @pytest.fixture
 def query_schema():
     query_schema = QuerySchema()
-    query_schema.insert_to_schema('sequence', [{'name': 'sequence_one'}])
-    query_schema.insert_to_schema('table', [
+    query_schema.insert('sequence', [{'name': 'sequence_one'}])
+    query_schema.insert('table', [
         {'name': 'table_one'}, {'name': 'table_two'}
     ])
-    query_schema.insert_to_table('column', [
+    query_schema.insert('column', [
         {'table_name': 'table_one', 'name': 'column_one'},
         {'table_name': 'table_one', 'name': 'column_two'},
         {'table_name': 'table_two', 'name': 'column_three'}
     ])
-    query_schema.insert_to_table('trigger', [
+    query_schema.insert('trigger', [
         {'table_name': 'table_one', 'name': 'trigger_one'}
     ])
-    query_schema.insert_to_column('constraint', [
+    query_schema.insert('constraint', [
         {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'constraint_one'}
     ])
-    query_schema.insert_to_column('index', [
+    query_schema.insert('index', [
         {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'index_one'}
     ])
     return query_schema
@@ -32,11 +32,11 @@ def schema(query_schema):
 
 @pytest.fixture
 def entity(schema):
-    return new_schema.Entity(group='entity', name='entity_one', query_schema=schema, param_one='foo')
+    return new_schema.Entity(group='entity', name='entity_one', schema=schema, param_one='foo')
 
 @pytest.fixture
 def table(schema):
-    return new_schema.Table(name='table_one', query_schema=schema)
+    return new_schema.Table(name='table_one', schema=schema)
 
 # Schema
 def test_schema_sequences_returns_schema_sequences(schema):
@@ -88,18 +88,18 @@ def test_table_triggers_returns_trigger_instances(table):
     assert table.triggers[0].name == 'trigger_one'
 
 def test_column_table_returns_table_instance(schema):
-    assert new_schema.Column(name='column_one', table_name='table_one', query_schema=schema).table.name == 'table_one'
+    assert new_schema.Column(name='column_one', table_name='table_one', schema=schema).table.name == 'table_one'
 
 def test_column_constraints_returns_constraint_instances(schema):
-    column =  new_schema.Column(name='column_one', table_name='table_one', query_schema=schema)
+    column =  new_schema.Column(name='column_one', table_name='table_one', schema=schema)
     assert column.constraints[0].name == 'constraint_one'
 
 def test_column_indexes_returns_index_instances(schema):
-    assert new_schema.Column(name='column_one', table_name='table_one', query_schema=schema).indexes[0].name == 'index_one'
+    assert new_schema.Column(name='column_one', table_name='table_one', schema=schema).indexes[0].name == 'index_one'
 
 def test_column_entity_column_returns_column_instance(schema):
     column_entity = new_schema.ColumnEntity(
         group='constraint', name='constraint_one', column_name='column_one',
-        table_name='table_one', query_schema=schema
+        table_name='table_one', schema=schema
     )
     assert column_entity.column.name == 'column_one'
