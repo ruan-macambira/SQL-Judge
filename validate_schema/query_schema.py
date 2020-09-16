@@ -1,4 +1,4 @@
-VALID_ENTITIES = ['table', 'sequence', 'function', 'procedure', 'column', 'trigger', 'constraint', 'index']
+VALID_ENTITIES = ['table', 'sequence', 'function', 'procedure', 'column', 'trigger', 'constraint', 'index', 'primary_key', 'reference']
 def raise_if_invalid_entity(method):
     def wrapper(self, group, *args, **kwargs):
         if group not in VALID_ENTITIES:
@@ -35,6 +35,14 @@ def query_schema_from_adapter(adapter):
 
     columns = ({'table_name': table, 'name': name} for (table, name, _) in adapter.columns())
     query_schema.insert('column', columns)
+
+    primary_keys = ({'table_name': table, 'name': name} for (table, name) in adapter.primary_keys())
+    query_schema.insert('primary_key', primary_keys)
+
+    references = (
+        {'table_name': table, 'column_name': column, 'references': references}
+        for (table, column, references) in adapter.references())
+    query_schema.insert('reference', references)
 
     triggers = ({'table_name': table, 'name': name} for (table, name, _) in adapter.triggers())
     query_schema.insert('trigger', triggers)

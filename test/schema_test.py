@@ -1,30 +1,25 @@
 #pylint: disable=missing-module-docstring, missing-function-docstring, redefined-outer-name
 import pytest
 from validate_schema import new_schema
-from validate_schema.query_schema import QuerySchema
+from validate_schema.query_schema import query_schema_from_adapter
 
 @pytest.fixture
-def query_schema():
-    query_schema = QuerySchema()
-    query_schema.insert('sequence', [{'name': 'sequence_one'}])
-    query_schema.insert('table', [
-        {'name': 'table_one'}, {'name': 'table_two'}
-    ])
-    query_schema.insert('column', [
-        {'table_name': 'table_one', 'name': 'column_one'},
-        {'table_name': 'table_one', 'name': 'column_two'},
-        {'table_name': 'table_two', 'name': 'column_three'}
-    ])
-    query_schema.insert('trigger', [
-        {'table_name': 'table_one', 'name': 'trigger_one'}
-    ])
-    query_schema.insert('constraint', [
-        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'constraint_one'}
-    ])
-    query_schema.insert('index', [
-        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'index_one'}
-    ])
-    return query_schema
+def query_schema(build_mock_conn):
+    return query_schema_from_adapter(build_mock_conn(
+        tables_info={
+            'table_one': {
+                'columns': {'column_one': None, 'column_two': None},
+                'triggers': {'trigger_one': None},
+                'indexes': {'column_one': 'index_one'},
+                'constraints': {'column_one': {'constraint_one': None}},
+                'primary_key': ['column_one'],
+                'references': {'column_two': 'table_two'}
+            },
+            'table_two': {
+                'columns': {'column_three': None}
+            }
+        }, sequences_info=['sequence_one']
+    ))
 
 @pytest.fixture
 def schema(query_schema):
@@ -57,6 +52,16 @@ def test_schema_columns_returns_column_entities(schema):
 
 def test_schema_triggers_returns_trigger_entities(schema):
     assert [trigger.name for trigger in schema.triggers] == ['trigger_one']
+
+def test_table_primary_key(schema):
+    assert schema.tables[0].primary_key.name == schema.tables[0].columns[0].name
+
+def test_column_primary_key(schema):
+    assert [col.primary_key for col in schema.tables[0].columns] == [True, False]
+
+@pytest.mark.xfail
+def test_column_references(schema):
+    assert schema.tables[0].columns[1].references == schema.tables[1]
 
 def test_schema_constraint_returns_constraint_entities(schema):
     assert [cons.name for cons in schema.constraints] == ['constraint_one']

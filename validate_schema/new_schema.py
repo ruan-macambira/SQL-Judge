@@ -9,10 +9,17 @@ class Schema:
             for params in self.__query_schema.select('table')
         ]
 
+    def __references(self, params):
+        ref = _find(self.__query_schema.select('reference'), lambda el: el['table_name'] == params['table_name'] and el['column_name'] == params['name'])
+        return None if not ref else ref['references']
+
     @property
     def columns(self):
+        is_primary_key = lambda col: col in self.__query_schema.select('primary_key')
         return [
-            Column(schema=self, **params)
+            Column(
+                schema=self, primary_key = is_primary_key(params),
+                references = self.__references(params), **params)
             for params in self.__query_schema.select('column')
         ]
 
@@ -81,7 +88,7 @@ class Table(Entity):
 
     @property
     def primary_key(self): # precisa adicionar a opção de adicionar no schema para ser implementado
-        raise NotImplementedError
+        return _find(self.columns, lambda col: col.primary_key)
 
     @property
     def triggers(self):
@@ -100,8 +107,20 @@ class TableEntity(Entity):
         return _find(self._schema.tables, lambda el: el.name == self._table_name)
 
 class Column(TableEntity):
-    def __init__(self, name, table_name, schema, **additional_params):
+    def __init__(self, name, table_name, schema, primary_key=False, references=None, **additional_params):
         super().__init__(group='column', name=name, table_name=table_name, schema=schema, **additional_params)
+        self.__primary_key = primary_key
+        self.__references = references
+
+    @property
+    def primary_key(self):
+        return self.__primary_key
+
+    @property
+    def references(self): # precisa adicionar a opção de adicionar no schema para ser implementado
+        if not self.__references:
+            return None
+        return None
 
     @property
     def indexes(self):
@@ -116,10 +135,6 @@ class Column(TableEntity):
             cons for cons in self._schema.constraints
             if cons.table.name == self._table_name and cons.column.name == self.name
         ]
-
-    @property
-    def references(self): # precisa adicionar a opção de adicionar no schema para ser implementado
-        raise NotImplementedError
 
 class ColumnEntity(TableEntity):
     def __init__(self, group, name, table_name, column_name, schema, **additional_params):
