@@ -69,6 +69,9 @@ def test_schema_indexes_returns_index_entities(schema):
     assert [index.name for index in schema.indexes] == ['index_one']
 
 # Entity
+def test_entity_name_is_its_group_capitalized():
+    assert new_schema.Entity(group='table', name='', schema=None).__name__ == 'Table'
+
 def test_entity_returns_additional_parameter(entity):
     assert entity.param_one == 'foo'
 
@@ -82,25 +85,27 @@ def test_entity_schema_returns_an_instance_of_schema(entity):
 def test_entity_name_returns_its_name(entity):
     assert entity.name == 'entity_one'
 
+# Table
 def test_table_columns_returns_column_instances(table):
     assert table.columns[0].name == 'column_one'
 
 def test_table_triggers_returns_trigger_instances(table):
     assert table.triggers[0].name == 'trigger_one'
 
+
+# Column
 def test_column_table_returns_table_instance(schema):
-    assert new_schema.Column(name='column_one', table_name='table_one', schema=schema).table.name == 'table_one'
+    assert schema.columns[0].table == schema.tables[0]
 
 def test_column_constraints_returns_constraint_instances(schema):
-    column =  new_schema.Column(name='column_one', table_name='table_one', schema=schema)
-    assert column.constraints[0].name == 'constraint_one'
+    assert schema.columns[0].constraints[0] == schema.constraints[0]
 
 def test_column_indexes_returns_index_instances(schema):
-    assert new_schema.Column(name='column_one', table_name='table_one', schema=schema).indexes[0].name == 'index_one'
+    assert schema.columns[0].indexes[0] == schema.indexes[0]
 
 def test_column_entity_column_returns_column_instance(schema):
     column_entity = new_schema.Constraint(
         name='constraint_one', column_name='column_one',
         table_name='table_one', schema=schema
     )
-    assert column_entity.column.name == 'column_one'
+    assert column_entity.column == schema.columns[0]
