@@ -1,8 +1,13 @@
+import functools
+
+def cached_property(method):
+    return property(functools.lru_cache()(method))
+
 class Schema:
     def __init__(self, query_schema):
         self.__query_schema = query_schema
 
-    @property
+    @cached_property
     def tables(self):
         return [
             Table(schema=self, **params)
@@ -13,7 +18,7 @@ class Schema:
         ref = _find(self.__query_schema.select('reference'), lambda el: el['table_name'] == params['table_name'] and el['column_name'] == params['name'])
         return None if not ref else ref['references']
 
-    @property
+    @cached_property
     def columns(self):
         is_primary_key = lambda col: col in self.__query_schema.select('primary_key')
         return [
@@ -29,27 +34,27 @@ class Schema:
             for params in self.__query_schema.select(group)
         ]
 
-    @property
+    @cached_property
     def sequences(self):
         return self.__entities(Entity, 'sequence')
 
-    @property
+    @cached_property
     def functions(self):
         return self.__entities(Entity, 'function')
 
-    @property
+    @cached_property
     def procedures(self):
         return self.__entities(Entity, 'procedure')
 
-    @property
+    @cached_property
     def triggers(self):
         return self.__entities(TableEntity, 'trigger')
 
-    @property
+    @cached_property
     def constraints(self):
         return self.__entities(ColumnEntity, 'constraint')
 
-    @property
+    @cached_property
     def indexes(self):
         return self.__entities(ColumnEntity, 'index')
 
@@ -58,7 +63,7 @@ class Entity:
         self._schema = schema
         self.__name = name
         self.__group = group
-        self.__additional_params = additional_params
+        self._additional_params = additional_params
 
     @property
     def name(self):
@@ -72,10 +77,10 @@ class Entity:
     def schema(self):
         return self._schema
 
-    def __getattr__(self, item):
-        if item in self.__additional_params:
-            return self.__additional_params[item]
-        raise AttributeError('__getattribute__ returned None or raised an AttributeError')
+    def __getattribute__(self, item):
+        if item in super().__getattribute__('_additional_params'):
+            return self._additional_params[item]
+        return super().__getattribute__(item)
 
 class Table(Entity):
     def __init__(self, name, schema, **additional_params):
@@ -101,16 +106,17 @@ class TableEntity(Entity):
     def __init__(self, group, name, table_name, schema, **additional_params):
         super().__init__(group=group, name=name, schema=schema, **additional_params)
         self._table_name = table_name
+        self._table = _find(self._schema.tables, lambda el: el.name == self._table_name)
 
     @property
     def table(self):
-        return _find(self._schema.tables, lambda el: el.name == self._table_name)
+        return self._table
 
 class Column(TableEntity):
     def __init__(self, name, table_name, schema, primary_key=False, references=None, **additional_params):
         super().__init__(group='column', name=name, table_name=table_name, schema=schema, **additional_params)
         self.__primary_key = primary_key
-        self.__references = references
+        self._references = references
 
     @property
     def primary_key(self):
@@ -118,9 +124,9 @@ class Column(TableEntity):
 
     @property
     def references(self): # precisa adicionar a opção de adicionar no schema para ser implementado
-        if not self.__references:
+        if not self._references:
             return None
-        return None
+        return _find(self._schema.tables, lambda el: el.name == self._references)
 
     @property
     def indexes(self):

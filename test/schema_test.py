@@ -54,12 +54,11 @@ def test_schema_triggers_returns_trigger_entities(schema):
     assert [trigger.name for trigger in schema.triggers] == ['trigger_one']
 
 def test_table_primary_key(schema):
-    assert schema.tables[0].primary_key.name == schema.tables[0].columns[0].name
+    assert schema.tables[0].primary_key == schema.tables[0].columns[0]
 
 def test_column_primary_key(schema):
     assert [col.primary_key for col in schema.tables[0].columns] == [True, False]
 
-@pytest.mark.xfail
 def test_column_references(schema):
     assert schema.tables[0].columns[1].references == schema.tables[1]
 
