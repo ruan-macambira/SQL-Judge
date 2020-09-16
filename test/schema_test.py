@@ -82,9 +82,6 @@ def test_entity_schema_returns_an_instance_of_schema(entity):
 def test_entity_name_returns_its_name(entity):
     assert entity.name == 'entity_one'
 
-def test_entity_group_returns_its_group(entity):
-    assert entity.group == 'entity'
-
 def test_table_columns_returns_column_instances(table):
     assert table.columns[0].name == 'column_one'
 
