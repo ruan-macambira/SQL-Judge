@@ -2,7 +2,7 @@
 # pylint: disable=missing-function-docstring
 import pytest
 
-from validate_schema.mock_adapter import MockAdapter
+from validate_schema.serialized_adapter import SerializedAdapter
 from validate_schema.parse_configuration.build_configuration import \
     ConfigurationBuilder
 
@@ -21,7 +21,7 @@ def validations_module():
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
     def _build_mock_conn(tables_info, functions_info=None, procedures_info=None):
-        return MockAdapter(tables_info, functions_info, procedures_info)
+        return SerializedAdapter(tables_info, functions_info, procedures_info)
     return _build_mock_conn
 
 # pylint: disable=redefined-outer-name

@@ -2,11 +2,11 @@
 #pylint: disable=missing-function-docstring
 import pytest
 from validate_schema.query_schema import query_schema_from_adapter
-from validate_schema.mock_adapter import MockAdapter
+from validate_schema.serialized_adapter import SerializedAdapter
 
 @pytest.fixture
 def query_schema():
-    return query_schema_from_adapter(MockAdapter({
+    return query_schema_from_adapter(SerializedAdapter({
         'table_one': {
             'columns': {
                 'column_one': 'type_one', 'column_two': 'type_two'
