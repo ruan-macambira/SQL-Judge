@@ -73,7 +73,7 @@ def tests_validate_run(build_mock_conn):
             'Indexes': [index_starts_with_index],
             'Constraints': [constraint_starts_with_table_name],
             'Triggers': [trigger_is_wrong],
-            'Functions': [trigger_is_wrong], 'Procedures': []
+            'Functions': [trigger_is_wrong], 'Procedures': [], 'Sequences': []
         },
         connection=build_mock_conn(tables_info, functions_info, procedures_info)
     )
@@ -101,7 +101,7 @@ def test_validate_csv(build_mock_conn):
         validations={
             'Tables': [lambda _: 'Validation'],
             'Columns': [], 'Indexes': [], 'Constraints': [],
-            'Triggers': [], 'Functions':[], 'Procedures': []
+            'Triggers': [], 'Functions':[], 'Procedures': [], 'Sequences': []
         },
         connection=build_mock_conn(tables_info, [], []),
         export='CSV')

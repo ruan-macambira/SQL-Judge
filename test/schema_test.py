@@ -101,7 +101,7 @@ def test_column_constraints_returns_constraint_instances(schema):
     assert schema.columns[0].constraints[0] == schema.constraints[0]
 
 def test_column_indexes_returns_index_instances(schema):
-    assert schema.columns[0].indexes[0] == schema.indexes[0]
+    assert schema.columns[0].index == schema.indexes[0]
 
 def test_column_entity_column_returns_column_instance(schema):
     column_entity = new_schema.Constraint(

@@ -10,6 +10,10 @@ class Schema:
         ref = find(self.__query_schema.select('reference'), lambda el: el['table_name'] == params['table_name'] and el['column_name'] == params['name'])
         return None if not ref else ref['references']
 
+    def __is_primary_key(self, params):
+        pkey = find(self.__query_schema.select('primary_key'), lambda el: el['table_name'] == params['table_name'] and el['name'] == params['name'])
+        return pkey is not None
+
     def __entities(self, factory):
         group = factory.__name__.lower()
         return [
@@ -25,10 +29,9 @@ class Schema:
     @cached_property
     def columns(self) -> List['Column']:
         """ Database Columns """
-        is_primary_key = lambda col: col in self.__query_schema.select('primary_key')
         return [
             Column(
-                schema=self, primary_key = is_primary_key(params),
+                schema=self, primary_key = self.__is_primary_key(params),
                 references = self.__references(params), **params)
             for params in self.__query_schema.select('column')
         ]
@@ -64,6 +67,18 @@ class Schema:
         """ Database Column Indexes """
         return self.__entities(Index)
 
+    def entities(self):
+        return {
+            'Tables': self.tables,
+            'Columns': self.columns,
+            'Triggers': self.triggers,
+            'Indexes': self.indexes,
+            'Constraints': self.constraints,
+            'Sequences': self.sequences,
+            'Functions': self.functions,
+            'Procedures': self.procedures
+        }
+
 class Entity:
     """ Generic Database Schema Entity """
     def __init__(self, group: str, schema: Schema, name: str, **additional_params):
@@ -86,6 +101,12 @@ class Entity:
         if item in super().__getattribute__('_additional_params'):
             return self._additional_params[item]
         return super().__getattribute__(item)
+
+    def needs_validation(self, _ignore_tables=None):
+        return True
+
+    def canonical_name(self):
+        return self.name
 
     @property
     def __name__(self):
@@ -132,6 +153,9 @@ class Table(Entity):
             trigger for trigger in self._schema.triggers if trigger.table.name == self.name
         ]
 
+    def needs_validation(self, ignore_tables=None):
+        return not self.name in (ignore_tables or [])
+
 class TableEntity(Entity):
     """ Entity That belongs to a Table """
     def __init__(self, group, name, table_name, schema, **additional_params):
@@ -142,6 +166,12 @@ class TableEntity(Entity):
     def table(self) -> Table:
         """ Table assigned to Entity """
         return self._table
+
+    def needs_validation(self, ignore_tables=None):
+        return self.table.needs_validation(ignore_tables)
+
+    def canonical_name(self):
+        return f'{self.table.canonical_name()}.{self.name}'
 
 def Trigger(**params): # pylint: disable=invalid-name
     """ Trigger Entity """
@@ -167,12 +197,13 @@ class Column(TableEntity):
         return find(self._schema.tables, lambda el: el.name == self._references)
 
     @property
-    def indexes(self) -> List['ColumnEntity']:
+    def index(self) -> Optional['ColumnEntity']:
         """ Column Indexes """
-        return [
+        x = [
             index for index in self._schema.indexes
             if index.table == self.table and index.column.name == self.name
         ]
+        return None if len(x) == 0 else x[0]
 
     @property
     def constraints(self) -> List['ColumnEntity']:
@@ -193,6 +224,9 @@ class ColumnEntity(TableEntity):
     def column(self) -> Column:
         """ Column Assigned to Entity """
         return self._column
+
+    def canonical_name(self):
+        return f'{self.column.canonical_name()}.{self.name}'
 
 def Index(*args, **kwargs): # pylint: disable=invalid-name
     """ Index Entity """

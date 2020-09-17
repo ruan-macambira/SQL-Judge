@@ -39,9 +39,9 @@ def test_batch_insert_and_select_tables(query_schema):
 
 def test_batch_insert_and_select_schema_column(query_schema):
     columns = [
-        {'table_name': 'table_one', 'name': 'column_one'},
-        {'table_name': 'table_one', 'name': 'column_two'},
-        {'table_name': 'table_two', 'name': 'column_three'}
+        {'table_name': 'table_one', 'name': 'column_one', 'type': 'type_one'},
+        {'table_name': 'table_one', 'name': 'column_two', 'type': 'type_two'},
+        {'table_name': 'table_two', 'name': 'column_three', 'type': 'type_three'}
     ]
     assert query_schema.select('column') == columns
 

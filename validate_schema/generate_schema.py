@@ -2,10 +2,13 @@
 from .schema import Schema, Table, Column, Index, Constraint, Trigger, SchemaEntity, Entity
 from .adapter import DBAdapter
 from .query_adapter import QueryAdapter
+from .query_schema import query_schema_from_adapter
+from .new_schema import Schema as NSchema
 
 def generate_schema(conn: DBAdapter) -> Schema:
     """ Generate an Schema objects containing the schema contained in the provided database """
-    return _generate_schema(QueryAdapter(conn))
+    # return _generate_schema(QueryAdapter(conn))
+    return NSchema(query_schema_from_adapter(conn))
 
 def _generate_schema(conn: QueryAdapter) -> Schema:
     schema = Schema()

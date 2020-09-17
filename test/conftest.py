@@ -128,7 +128,7 @@ def procedure():
 @pytest.fixture
 def configuration():
     VALIDATIONS = {
-        'Tables': [], 'Functions': [], 'Procedures': [],
+        'Tables': [], 'Functions': [], 'Procedures': [], 'Sequences': [],
         'Columns': [], 'Triggers': [], 'Constraints': [], 'Indexes': []
     }
     def _configuration(connection=None, validations=None, ignore_tables=None, export='CLI'):

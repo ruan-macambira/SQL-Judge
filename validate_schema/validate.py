@@ -23,7 +23,6 @@ def _validate(entities: list, validations: List[Callable]) -> Dict[str, List[str
         (entity.canonical_name(), validate_entity(entity, validations))
         for entity in entities)
     reports = {entity:message for (entity, message) in entity_validations if message != []}
-
     return reports
 
 def validate_entity(entity: Entity, validations: List[Callable]) -> List[str]:

@@ -33,7 +33,7 @@ def query_schema_from_adapter(adapter):
     sequences = ({'name': name} for name in adapter.sequences())
     query_schema.insert('sequence', sequences)
 
-    columns = ({'table_name': table, 'name': name} for (table, name, _) in adapter.columns())
+    columns = ({'table_name': table, 'name': name, 'type': ctype} for (table, name, ctype) in adapter.columns())
     query_schema.insert('column', columns)
 
     primary_keys = ({'table_name': table, 'name': name} for (table, name) in adapter.primary_keys())

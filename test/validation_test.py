@@ -30,10 +30,9 @@ def test_validate_entities(build_mock_conn, configuration):
 
     config = configuration(validations={'Tables': [fail_validation], 'Columns': [pass_validation]})
     schema = generate_schema(mock_adapter)
-
     assert validate_entities(config, schema) == {
         'Tables': {'table_one': ['ERROR']}, 'Functions': {}, 'Procedures': {},
-        'Columns': {}, 'Triggers': {}, 'Indexes': {}, 'Constraints': {}
+        'Columns': {}, 'Triggers': {}, 'Indexes': {}, 'Constraints': {}, 'Sequences': {}
     }
 
 # validates
