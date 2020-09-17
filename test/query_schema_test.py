@@ -47,9 +47,9 @@ def test_batch_insert_and_select_schema_column(query_schema):
 
 def test_batch_insert_and_select_schema_constraints(query_schema):
     constraints = [
-        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'constraint_one'},
-        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'constraint_two'},
-        {'table_name': 'table_one', 'column_name': 'column_two', 'name': 'constraint_three'},
-        {'table_name': 'table_two', 'column_name': 'column_three', 'name': 'constraint_four'}
+        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'constraint_one', 'type': 'ctype_one'},
+        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'constraint_two', 'type': 'ctype_two'},
+        {'table_name': 'table_one', 'column_name': 'column_two', 'name': 'constraint_three', 'type': 'ctype_three'},
+        {'table_name': 'table_two', 'column_name': 'column_three', 'name': 'constraint_four', 'type': 'ctype_four'}
     ]
     assert query_schema.select('constraint') == constraints

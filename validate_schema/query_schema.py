@@ -44,15 +44,15 @@ def query_schema_from_adapter(adapter):
         for (table, column, references) in adapter.references())
     query_schema.insert('reference', references)
 
-    triggers = ({'table_name': table, 'name': name} for (table, name, _) in adapter.triggers())
+    triggers = ({'table_name': table, 'name': name, 'hook': hook} for (table, name, hook) in adapter.triggers())
     query_schema.insert('trigger', triggers)
 
     indexes = ({'table_name': table, 'column_name': column, 'name': name} for (table, column, name) in adapter.indexes())
     query_schema.insert('index', indexes)
 
     constraints = (
-        {'table_name': table, 'column_name': column, 'name': name}
-        for (table, column, name, _) in adapter.constraints())
+        {'table_name': table, 'column_name': column, 'name': name, 'type': ctype}
+        for (table, column, name, ctype) in adapter.constraints())
     query_schema.insert('constraint', constraints)
 
     return query_schema
