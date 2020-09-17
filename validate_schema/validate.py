@@ -2,7 +2,7 @@
 from typing import Callable, Dict, List
 
 from . import Configuration
-from .schema import Entity, Schema
+from .new_schema import Entity, Schema
 
 def validate_entities(config: Configuration, schema: Schema) -> dict:
     """ Run the schema validation and return a report """
