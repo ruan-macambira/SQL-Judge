@@ -5,7 +5,7 @@ from validate_schema.adapter import DBAdapter
 from validate_schema import Configuration
 from validate_schema.mock_adapter import MockAdapter
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
-from validate_schema.new_schema import Table
+from validate_schema.schema import Table
 
 @pytest.fixture
 def build_configuration_builder():

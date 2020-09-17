@@ -1,5 +1,5 @@
 """ Use the database connection to adapt its schema to the applications objects """
-from .new_schema import Schema
+from .schema import Schema
 from .adapter import DBAdapter
 from .query_schema import query_schema_from_adapter
 

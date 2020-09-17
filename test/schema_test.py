@@ -1,6 +1,6 @@
 #pylint: disable=missing-module-docstring, missing-function-docstring, redefined-outer-name
 import pytest
-from validate_schema import new_schema
+from validate_schema import schema as mschema
 from validate_schema.query_schema import query_schema_from_adapter
 
 @pytest.fixture
@@ -23,15 +23,15 @@ def query_schema(build_mock_conn):
 
 @pytest.fixture
 def schema(query_schema):
-    return new_schema.Schema(query_schema)
+    return mschema.Schema(query_schema)
 
 @pytest.fixture
 def entity(schema):
-    return new_schema.Entity(group='entity', name='entity_one', schema=schema, param_one='foo')
+    return mschema.Entity(group='entity', name='entity_one', schema=schema, param_one='foo')
 
 @pytest.fixture
 def table(schema):
-    return new_schema.Table(name='table_one', schema=schema)
+    return mschema.Table(name='table_one', schema=schema)
 
 # Schema
 def test_schema_sequences_returns_schema_sequences(schema):
@@ -70,7 +70,7 @@ def test_schema_indexes_returns_index_entities(schema):
 
 # Entity
 def test_entity_name_is_its_group_capitalized():
-    assert new_schema.Entity(group='table', name='', schema=None).__name__ == 'Table'
+    assert mschema.Entity(group='table', name='', schema=None).__name__ == 'Table'
 
 def test_entity_returns_additional_parameter(entity):
     assert entity.param_one == 'foo'
@@ -80,7 +80,7 @@ def test_entity_raise_attribute_error_if_not_a_additional_parameter(entity):
         entity.param_two # pylint: disable=pointless-statement
 
 def test_entity_schema_returns_an_instance_of_schema(entity):
-    assert isinstance(entity, new_schema.Entity)
+    assert isinstance(entity, mschema.Entity)
 
 def test_entity_name_returns_its_name(entity):
     assert entity.name == 'entity_one'
@@ -104,7 +104,7 @@ def test_column_indexes_returns_index_instances(schema):
     assert schema.columns[0].index == schema.indexes[0]
 
 def test_column_entity_column_returns_column_instance(schema):
-    column_entity = new_schema.Constraint(
+    column_entity = mschema.Constraint(
         name='constraint_one', column_name='column_one',
         table_name='table_one', schema=schema
     )
