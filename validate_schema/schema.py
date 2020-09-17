@@ -199,11 +199,7 @@ class Column(TableEntity):
     @property
     def index(self) -> Optional['ColumnEntity']:
         """ Column Indexes """
-        x = [
-            index for index in self._schema.indexes
-            if index.table == self.table and index.column.name == self.name
-        ]
-        return None if len(x) == 0 else x[0]
+        return find(self._schema.indexes, lambda index: index.table == self.table and index.column.name == self.name)
 
     @property
     def constraints(self) -> List['ColumnEntity']:
@@ -217,8 +213,7 @@ class ColumnEntity(TableEntity):
     """ Entity that belongs to a Column """
     def __init__(self, group, name, table_name, column_name, schema, **additional_params):
         super().__init__(group=group, name=name, table_name=table_name, schema=schema, **additional_params)
-        self._column_name = column_name
-        self._column = find(self._schema.columns, lambda el: el.table == self.table and el.name == self._column_name)
+        self._column = find(self._schema.columns, lambda el: el.table == self.table and el.name == column_name)
 
     @property
     def column(self) -> Column:
