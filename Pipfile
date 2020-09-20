@@ -8,6 +8,7 @@ pylint = "*"
 pytest = "*"
 mypy = "*"
 pytest-cov = "*"
+pytest-icdiff = "*"
 
 [packages]
 
