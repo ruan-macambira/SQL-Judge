@@ -7,15 +7,17 @@ class Schema:
         self.__query_schema = query_schema
 
     def __references(self, params):
-        ref = find(self.__query_schema.select('reference'), lambda el: el['table_name'] == params['table_name'] and el['column_name'] == params['name'])
+        ref = find(self.__query_schema.select('references'), lambda el: el['table'] == params['table'] and el['column'] == params['name'])
         return None if not ref else ref['references']
 
     def __is_primary_key(self, params):
-        pkey = find(self.__query_schema.select('primary_key'), lambda el: el['table_name'] == params['table_name'] and el['name'] == params['name'])
+        pkey = find(self.__query_schema.select('primary_keys'), lambda el: el == (params['table'], params['name']))
         return pkey is not None
 
     def __entities(self, factory):
-        group = factory.__name__.lower()
+        group = factory.__name__.lower() + 's'
+        if group == 'indexs':
+            group = 'indexes'
         return [
             factory(schema=self, **params)
             for params in self.__query_schema.select(group)
@@ -33,7 +35,7 @@ class Schema:
             Column(
                 schema=self, primary_key = self.__is_primary_key(params),
                 references = self.__references(params), **params)
-            for params in self.__query_schema.select('column')
+            for params in self.__query_schema.select('columns')
         ]
 
 
@@ -158,9 +160,9 @@ class Table(Entity):
 
 class TableEntity(Entity):
     """ Entity That belongs to a Table """
-    def __init__(self, group, name, table_name, schema, **additional_params):
+    def __init__(self, group, name, table, schema, **additional_params):
         super().__init__(group=group, name=name, schema=schema, **additional_params)
-        self._table = find(self._schema.tables, lambda el: el.name == table_name)
+        self._table = find(self._schema.tables, lambda el: el.name == table)
 
     @property
     def table(self) -> Table:
@@ -179,8 +181,8 @@ def Trigger(**params): # pylint: disable=invalid-name
 
 class Column(TableEntity):
     """ Column Entity """
-    def __init__(self, name, table_name, schema, primary_key=False, references=None, **additional_params):
-        super().__init__(group='column', name=name, table_name=table_name, schema=schema, **additional_params)
+    def __init__(self, name, table, schema, primary_key=False, references=None, **additional_params):
+        super().__init__(group='column', name=name, table=table, schema=schema, **additional_params)
         self.__primary_key: bool = primary_key
         self._references: str = references
 
@@ -211,9 +213,9 @@ class Column(TableEntity):
 
 class ColumnEntity(TableEntity):
     """ Entity that belongs to a Column """
-    def __init__(self, group, name, table_name, column_name, schema, **additional_params):
-        super().__init__(group=group, name=name, table_name=table_name, schema=schema, **additional_params)
-        self._column = find(self._schema.columns, lambda el: el.table == self.table and el.name == column_name)
+    def __init__(self, group, name, table, column, schema, **additional_params):
+        super().__init__(group=group, name=name, table=table, schema=schema, **additional_params)
+        self._column = find(self._schema.columns, lambda el: el.table == self.table and el.name == column)
 
     @property
     def column(self) -> Column:

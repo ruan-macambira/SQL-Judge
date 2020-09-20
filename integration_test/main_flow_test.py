@@ -45,24 +45,21 @@ def trigger_is_wrong(_trigger):
 
 def tests_validate_run(build_mock_conn):
     # Setting Up Mock Database
-    tables_info = {
-        'tblProduct': {
-            'columns': {
-                'id': 'numeric', 'cl_name': 'varchar', 'cl_weight': 'numeric'
-            },
-            'indexes': {
-                'id': 'id_index'
-            }, 'constraints': {
-                'id': {'id_primary_key': 'primary_key'}
-            }, 'triggers': {
-                'wrong_name_trigger': 'AFTER INSERT'
+    info = {
+        'tables': {
+            'tblProduct': {
+                'columns': {
+                    'id': {'type': 'numeric',
+                        'indexes': {'id_index': {}},
+                        'constraints': {'id_primary_key': {'type': 'primary_key'}}
+                    },
+                    'cl_name': {'type': 'varchar'}, 'cl_weight': {'type': 'numeric'}},
+                'triggers': {'wrong_name_trigger': {'type': 'AFTER INSERT'}}
             }
-        }, 'metadata_info': {
-            'columns': {'version': 'varchar'}
-        }
+        },
+        'functions': {'wrong_name_function': {}},
+        'procedures': {'wrong_name_procedure': {}}
     }
-    functions_info = ['wrong_name_function']
-    procedures_info = ['wrong_name_procedure']
 
     # Setting Up Configuration
     config = Configuration(
@@ -75,7 +72,7 @@ def tests_validate_run(build_mock_conn):
             'Triggers': [trigger_is_wrong],
             'Functions': [trigger_is_wrong], 'Procedures': [], 'Sequences': []
         },
-        connection=build_mock_conn(tables_info, functions_info, procedures_info)
+        connection=build_mock_conn(info)
     )
     schema = generate_schema(config.connection)
     validations_result = validate_entities(config, schema)
@@ -95,6 +92,7 @@ def test_validate_csv(build_mock_conn):
             'columns': {'id': 'numeric'}
         }
     }
+    tables_info = {'tables': {'Table': {'columns': {'id': {'type': 'numeric'}}}}}
 
     config = Configuration(
         ignore_tables=[],
@@ -103,7 +101,7 @@ def test_validate_csv(build_mock_conn):
             'Columns': [], 'Indexes': [], 'Constraints': [],
             'Triggers': [], 'Functions':[], 'Procedures': [], 'Sequences': []
         },
-        connection=build_mock_conn(tables_info, [], []),
+        connection=build_mock_conn(tables_info),
         export='CSV')
     schema = generate_schema(config.connection)
     validations_result = validate_entities(config, schema)

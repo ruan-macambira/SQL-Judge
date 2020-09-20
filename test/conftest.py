@@ -64,17 +64,16 @@ def configuration():
 @pytest.fixture
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
-    def _build_mock_conn(tables_info=None, functions_info=None, procedures_info=None, sequences_info=None):
-        return SerializedAdapter(tables_info, functions_info, procedures_info, sequences_info)
+    def _build_mock_conn(info):
+        return SerializedAdapter(info)
     return _build_mock_conn
 
 @pytest.fixture
 def mock_conn(build_mock_conn):
     """ A basic mock database schema adapter """
     return build_mock_conn({
-        'table_one': {
-            'columns': {'column_one': 'text'},
-        }, 'table_two': {
-            'columns': {'column_1': 'int', 'column_2': 'int'}
+        'tables': {
+            'table_one': {'columns': {'column_one': {'type': 'text'}}},
+            'table_two': {'columns': {'column_1': {'type': 'int'}, 'column_2': {'type': 'int'}}}
         }
     })

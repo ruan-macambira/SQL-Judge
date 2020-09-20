@@ -9,28 +9,29 @@ def test_generate_schema_adds_tables_to_schema(mock_conn):
 
 def test_generate_schema_adds_functions_to_schema(build_mock_conn):
     functions = ['function_one']
-    mock_adapter = build_mock_conn(tables_info={}, functions_info=functions)
+    mock_adapter = build_mock_conn({'functions': {'function_one': {}}})
     schema = generate_schema(mock_adapter)
 
     assert [function.name for function in schema.functions] == functions
 
 def test_generate_schema_adds_procedures_to_schema(build_mock_conn):
     procedures = ['procedure_one']
-    mock_adapter = build_mock_conn(tables_info={}, procedures_info=procedures)
+    mock_adapter = build_mock_conn({'procedures': {'procedure_one': {}}})
     schema = generate_schema(mock_adapter)
 
     assert [procedure.name for procedure in schema.procedures] == procedures
 
 def test_generate_schema_adds_sequences_to_schema(build_mock_conn):
     sequences = ['sequence_one']
-    mock_adapter = build_mock_conn(tables_info={}, sequences_info=sequences)
+    mock_adapter = build_mock_conn({'sequences': {'sequence_one': {}}})
     schema = generate_schema(mock_adapter)
 
     assert [sequence.name for sequence in schema.sequences] == sequences
 
 def test_generate_schema_adds_triggers_to_table(build_mock_conn):
-    tables_info= {'table_one': {'columns': {}, 'triggers': {'trigger_one': 'hook_one'}}}
-    mock_adapter = build_mock_conn(tables_info)
+    mock_adapter = build_mock_conn({
+        'tables': {'table_one': {'triggers': {'trigger_one': {'hook': 'hook_one'}}}}
+    })
     schema = generate_schema(mock_adapter)
 
     assert schema.triggers[0].name == 'trigger_one'
@@ -44,12 +45,9 @@ def test_generate_schema_add_columns_to_schema(mock_conn):
 
 def test_generate_schema_add_constraints_to_column(build_mock_conn):
     tables_info = {
-        'table_one': {
-            'columns': {'column_one': 'type_one'},
-            'constraints': {'column_one': {'constraint_one': 'type_one'}
-            }
-        }
-    }
+        'tables': {'table_one': {'columns': {'column_one': {
+            'type': 'type_one', 'constraints': {'constraint_one': {'type': 'type_one'}}}
+    }}}}
     mock_adapter = build_mock_conn(tables_info)
     schema = generate_schema(mock_adapter)
 
@@ -63,10 +61,7 @@ def test_generate_schema_assigns_the_column_type_to_column(mock_conn):
 
 def test_generate_schema_assigns_the_primary_key_to_the_table(build_mock_conn):
     mock_conn = build_mock_conn({
-        'table_primary_key': {
-            'columns': {'primary_column': 'integer'},
-            'primary_key': ['primary_column']
-        }
+        'tables': {'table_primary_key': {'columns': {'primary_column': {'type': 'integer', 'primary_key': True}}}}
     })
     schema = generate_schema(mock_conn)
 
@@ -74,13 +69,9 @@ def test_generate_schema_assigns_the_primary_key_to_the_table(build_mock_conn):
 
 def test_generate_schema_assigns_references_to_foreign_keys_columns(build_mock_conn):
     mock_conn = build_mock_conn({
-        'table': {
-            'columns': {'id': 'integer'},
-            'primary_key': ['id']
-        },
-        'foreign_key_table': {
-            'columns': {'table_id': 'integer'},
-            'references': {'table_id': 'table'}
+        'tables': {
+            'table': {'columns': {'id': {'primary_key': True}}},
+            'foreign_key_table': {'columns': {'table_id': {'references': 'table'}}}
         }
     })
     schema = generate_schema(mock_conn)
@@ -89,10 +80,7 @@ def test_generate_schema_assigns_references_to_foreign_keys_columns(build_mock_c
 
 def test_generate_schema_assigns_index(build_mock_conn):
     mock_conn = build_mock_conn({
-        'table': {
-            'columns': {'id': 'integer'},
-            'indexes': {'id': 'id_index'}
-        }
+        'tables': {'table': {'columns': {'id': {'type': 'integer', 'indexes': {'id_index': {}}}}}}
     })
     schema = generate_schema(mock_conn)
 

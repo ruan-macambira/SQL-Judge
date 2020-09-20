@@ -5,21 +5,20 @@ from validate_schema.query_schema import query_schema_from_adapter
 
 @pytest.fixture
 def query_schema(build_mock_conn):
-    return query_schema_from_adapter(build_mock_conn(
-        tables_info={
+    return query_schema_from_adapter(build_mock_conn({
+        'tables': {
             'table_one': {
-                'columns': {'column_one': None, 'column_two': None},
-                'triggers': {'trigger_one': None},
-                'indexes': {'column_one': 'index_one'},
-                'constraints': {'column_one': {'constraint_one': None}},
-                'primary_key': ['column_one'],
-                'references': {'column_two': 'table_two'}
-            },
-            'table_two': {
-                'columns': {'column_three': None}
-            }
-        }, sequences_info=['sequence_one']
-    ))
+                'columns': {
+                    'column_one': {
+                        'constraints': {'constraint_one': {}},
+                        'primary_key': True,
+                        'indexes': {'index_one': {}}
+                    },
+                    'column_two': { 'references': 'table_two'}},
+                'triggers': {'trigger_one': {}}
+            }, 'table_two': {'columns': {'column_three': {}}}
+        }, 'sequences': {'sequence_one': {}}
+    }))
 
 @pytest.fixture
 def schema(query_schema):
@@ -105,7 +104,7 @@ def test_column_indexes_returns_index_instances(schema):
 
 def test_column_entity_column_returns_column_instance(schema):
     column_entity = mschema.Constraint(
-        name='constraint_one', column_name='column_one',
-        table_name='table_one', schema=schema
+        name='constraint_one', column='column_one',
+        table='table_one', schema=schema
     )
     assert column_entity.column == schema.columns[0]

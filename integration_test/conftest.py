@@ -20,8 +20,8 @@ def validations_module():
 @pytest.fixture
 def build_mock_conn():
     """ Mock Database schema Adapter Factory """
-    def _build_mock_conn(tables_info, functions_info=None, procedures_info=None):
-        return SerializedAdapter(tables_info, functions_info, procedures_info)
+    def _build_mock_conn(info):
+        return SerializedAdapter(info)
     return _build_mock_conn
 
 # pylint: disable=redefined-outer-name

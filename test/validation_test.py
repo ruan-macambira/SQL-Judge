@@ -26,7 +26,7 @@ def test_validate_entity_captures_exceptions_and_passes_to_messages(table):
 
 # validate
 def test_validate_entities(build_mock_conn, configuration):
-    mock_adapter = build_mock_conn({'table_one': {'columns':{}}})
+    mock_adapter = build_mock_conn({'tables': {'table_one': {}}})
 
     config = configuration(validations={'Tables': [fail_validation], 'Columns': [pass_validation]})
     schema = generate_schema(mock_adapter)
