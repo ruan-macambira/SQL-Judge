@@ -1,8 +1,8 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
-from validate_schema.adapter import DBAdapter
+from validate_schema.adapter import AbstractAdapter
 
-class Adapter(DBAdapter):
+class Adapter(AbstractAdapter):
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs

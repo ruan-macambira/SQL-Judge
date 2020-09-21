@@ -1,6 +1,6 @@
 """ Database adapters """
-from typing import List, Tuple
-class DBAdapter:
+from typing import List, Dict, Tuple
+class AbstractAdapter:
     """ Specify the methods a Database Connection must have.
     In order to the Schema Builder work properly, every function
     in this class must be implemented as oriented by its docstring.
@@ -10,11 +10,11 @@ class DBAdapter:
     return types are in accordance with the abstract method, though it is not
     mandatory."""
 
-    def tables(self) -> List[str]:
+    def tables(self) -> List[Dict[str, str]]:
         """Should return a List of string the names of the tables in the schema"""
         raise NotImplementedError
 
-    def columns(self) -> List[Tuple[str,...]]:
+    def columns(self) -> List[Dict[str, str]]:
         """Should reveice as an argument one table name provided by
         self.tables, and return a Dict containing its columns.
         The Key of the dict should be the column name,
@@ -24,7 +24,7 @@ class DBAdapter:
         as an argument when calling this function"""
         raise NotImplementedError
 
-    def triggers(self) -> List[Tuple[str,...]]:
+    def triggers(self) -> List[Dict[str, str]]:
         """Should Receive as argument the table name, and returns a Dict with its
         associated triggers. The key should be its name, while the value should be the 'hook',
         i.e when that trigger is triggered (ex.: AFTER INSERT)
@@ -34,7 +34,7 @@ class DBAdapter:
         as an argument when calling this function"""
         raise NotImplementedError
 
-    def primary_keys(self) -> List[Tuple[str,...]]:
+    def primary_keys(self) -> List[Tuple[str, str]]:
         """Should receive as an argument a table name and one of its columns name, and return
         a boolean indicating if the specified table is a primary_key(True if yes, False if no).
 
@@ -42,7 +42,7 @@ class DBAdapter:
         self.tables will be used as an argument when calling this function"""
         raise NotImplementedError
 
-    def references(self) -> List[Tuple[str,...]]:
+    def references(self) -> List[Dict[str, str]]:
         """Should receive as an argument a table name and one of its column names, and return
         a the name of the table it references if there is one, and None if there is none. The
         table name must be one specified in self.tables.
@@ -51,11 +51,11 @@ class DBAdapter:
         self.tables will be used as an argument when calling this function"""
         raise NotImplementedError
 
-    def indexes(self) -> List[Tuple[str,...]]:
+    def indexes(self) -> List[Dict[str, str]]:
         """ Return the indexes assigned a column in a table """
         raise NotImplementedError
 
-    def constraints(self) -> List[Tuple[str,...]]:
+    def constraints(self) -> List[Dict[str, str]]:
         """Should receive as arguments a table nem and the name of one of its columns, and return
         a Dict with its associated Constraints. The Key shoulde be the name,
         while its value should be the type (ex.: NOT NULL, UNIQUE, CHECK).
@@ -65,14 +65,14 @@ class DBAdapter:
         self.tables will be used as an argument when calling this function"""
         raise NotImplementedError
 
-    def functions(self) -> List[str]:
+    def functions(self) -> List[Dict[str, str]]:
         """Should return a List of string with the names of the functions in the schema"""
         raise NotImplementedError
 
-    def procedures(self) -> List[str]:
+    def procedures(self) -> List[Dict[str, str]]:
         """Should return a List of string with the names of the procedures in the schema"""
         raise NotImplementedError
 
-    def sequences(self) -> List[str]:
+    def sequences(self) -> List[Dict[str, str]]:
         """Should return a List of strings with the names of the sequences in the schema"""
         raise NotImplementedError

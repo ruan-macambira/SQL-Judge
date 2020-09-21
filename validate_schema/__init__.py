@@ -1,7 +1,7 @@
 """Validates the Schema"""
 from dataclasses import dataclass, field
 from typing import Callable, List, Dict
-from .adapter import DBAdapter
+from .adapter import AbstractAdapter
 
 def validates(entity):
     """ Sets Entity to which the validation will run """
@@ -13,7 +13,7 @@ def validates(entity):
 @dataclass
 class Configuration:
     """ Stores and configuration options for running the validations """
-    connection: DBAdapter
+    connection: AbstractAdapter
     validations: Dict[str, List[Callable]] = field(default_factory=dict)
     ignore_tables: List[str] = field(default_factory=list)
     export: str = 'CLI'

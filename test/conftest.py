@@ -1,7 +1,7 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
 import pytest
-from validate_schema.adapter import DBAdapter
+from validate_schema.adapter import AbstractAdapter
 from validate_schema import Configuration
 from validate_schema.serialized_adapter import SerializedAdapter
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
@@ -44,7 +44,7 @@ def empty_configuration_builder():
 @pytest.fixture
 def db_adapter():
     """ Basic DB Adapter """
-    return DBAdapter()
+    return AbstractAdapter()
 
 @pytest.fixture
 def configuration():
