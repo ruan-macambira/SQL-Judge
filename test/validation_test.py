@@ -1,7 +1,7 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
 from validate_schema.validate import validate_entity, validate_entities
-from validate_schema.generate_schema import generate_schema
+from validate_schema.schema import Schema
 from validate_schema import validates
 
 def pass_validation(_table):
@@ -29,7 +29,7 @@ def test_validate_entities(build_mock_conn, configuration):
     mock_adapter = build_mock_conn({'tables': {'table_one': {}}})
 
     config = configuration(validations={'Tables': [fail_validation], 'Columns': [pass_validation]})
-    schema = generate_schema(mock_adapter)
+    schema = Schema(mock_adapter)
     assert validate_entities(config, schema) == {
         'Tables': {'table_one': ['ERROR']}, 'Functions': {}, 'Procedures': {},
         'Columns': {}, 'Triggers': {}, 'Indexes': {}, 'Constraints': {}, 'Sequences': {}

@@ -1,11 +1,10 @@
 #pylint: disable=missing-module-docstring, missing-function-docstring, redefined-outer-name
 import pytest
 from validate_schema import schema as mschema
-from validate_schema.query_schema import query_schema_from_adapter
 
 @pytest.fixture
 def query_schema(build_mock_conn):
-    return query_schema_from_adapter(build_mock_conn({
+    return build_mock_conn({
         'tables': {
             'table_one': {
                 'columns': {
@@ -18,7 +17,7 @@ def query_schema(build_mock_conn):
                 'triggers': {'trigger_one': {}}
             }, 'table_two': {'columns': {'column_three': {}}}
         }, 'sequences': {'sequence_one': {}}
-    }))
+    })
 
 @pytest.fixture
 def schema(query_schema):

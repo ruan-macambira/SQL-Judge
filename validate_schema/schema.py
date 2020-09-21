@@ -3,15 +3,21 @@ from typing import List, Optional
 
 class Schema:
     """Database Schema"""
-    def __init__(self, query_schema):
-        self.__query_schema = query_schema
+    def __init__(self, adapter):
+        self._adapter = adapter
 
     def __references(self, params):
-        ref = find(self.__query_schema.select('references'), lambda el: el['table'] == params['table'] and el['column'] == params['name'])
+        ref = find(
+            self._adapter.references(),
+            lambda el: el['table'] == params['table'] and el['column'] == params['name']
+        )
         return None if not ref else ref['references']
 
     def __is_primary_key(self, params):
-        pkey = find(self.__query_schema.select('primary_keys'), lambda el: el == (params['table'], params['name']))
+        pkey = find(
+            self._adapter.primary_keys(),
+            lambda el: el == (params['table'], params['name'])
+        )
         return pkey is not None
 
     def __entities(self, factory):
@@ -20,7 +26,7 @@ class Schema:
             group = 'indexes'
         return [
             factory(schema=self, **params)
-            for params in self.__query_schema.select(group)
+            for params in getattr(self._adapter, group)()
         ]
 
     @cached_property
@@ -35,7 +41,7 @@ class Schema:
             Column(
                 schema=self, primary_key = self.__is_primary_key(params),
                 references = self.__references(params), **params)
-            for params in self.__query_schema.select('columns')
+            for params in self._adapter.columns()
         ]
 
 

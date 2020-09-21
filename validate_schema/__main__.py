@@ -4,7 +4,7 @@ import sys
 import pkg_resources
 from .validate import validate_entities
 from .parse_configuration.build_configuration import ConfigurationBuilder
-from .generate_schema import generate_schema
+from .schema import Schema
 from .export import formatted_output
 
 def default_config():
@@ -22,7 +22,7 @@ def validate_schema(filenames):
         config_builder = config_builder.merge(ConfigurationBuilder.from_json(user_config(filename)))
 
     config = config_builder.build()
-    schema = generate_schema(config.connection)
+    schema = Schema(config.connection)
     report = validate_entities(config, schema)
     return formatted_output(report, config.export)
 
