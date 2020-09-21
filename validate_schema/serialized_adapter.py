@@ -23,6 +23,12 @@ class SerializedAdapter(AbstractAdapter):
             for column, column_params in table_params.get('columns', {}).items():
                 yield table, column, column_params
 
+    def _reference_columns(self):
+        for table, column, column_params in self._table_cols():
+            references = column_params.get('references')
+            if references:
+                yield table, column, references
+
     def columns(self) -> List[Dict[str, str]]:
         columns_info = []
         for table, column, column_params in self._table_cols():
@@ -31,19 +37,14 @@ class SerializedAdapter(AbstractAdapter):
         return columns_info
 
     def primary_keys(self) -> List[Tuple[str,str]]:
-        primary_keys = []
-        for table, column, params in self._table_cols():
-            if params.get('primary_key') is True:
-                primary_keys.append((table, column))
-        return primary_keys
+        return [
+            (table, column) for table, column, params in self._table_cols()
+            if params.get('primary_key')
+        ]
 
     def references(self) -> List[Dict[str, str]]:
-        references = []
-        for table, column, params in self._table_cols():
-            refs = params.get('references')
-            if refs is not None:
-                references.append({'table': table, 'column': column, 'references': refs})
-        return references
+        # return [{'table': table, 'column': column, 'references': refs} for table, column, refs in self._reference_columns()]
+        return [refs_info for refs_info in self._reference_columns()]
 
     def indexes(self) -> List[Dict[str, str]]:
         indexes = []

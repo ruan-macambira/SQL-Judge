@@ -54,7 +54,7 @@ def test_no_primary_key(build_mock_conn):
 
 def test_references(adapter):
     assert adapter.references() == [
-        {'table': 'table_one', 'column': 'column_two', 'references': 'table_two'}
+        ('table_one', 'column_two', 'table_two')
     ]
 
 def test_indexes(adapter):

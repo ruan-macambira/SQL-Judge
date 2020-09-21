@@ -1,5 +1,6 @@
 """Database Schema"""
 from typing import List, Optional
+from collections import namedtuple
 from .util import find, cached_property
 
 class Schema:
@@ -8,11 +9,10 @@ class Schema:
         self._adapter = adapter
 
     def __references(self, params):
-        ref = find(
-            self._adapter.references(),
-            lambda el: el['table'] == params['table'] and el['column'] == params['name']
-        )
-        return None if not ref else ref['references']
+        ref_tuple = namedtuple('Reference', ['table', 'column', 'references'])
+        references = (ref_tuple(*el) for el in self._adapter.references())
+        ref = find(references, lambda el: el.table == params['table'] and el.column == params['name'])
+        return ref.references if ref is not None else None
 
     def __is_primary_key(self, params):
         pkey = find(

@@ -42,7 +42,7 @@ class AbstractAdapter:
         self.tables will be used as an argument when calling this function"""
         raise NotImplementedError
 
-    def references(self) -> List[Dict[str, str]]:
+    def references(self) -> List[Tuple[str, str, str]]:
         """Should receive as an argument a table name and one of its column names, and return
         a the name of the table it references if there is one, and None if there is none. The
         table name must be one specified in self.tables.
