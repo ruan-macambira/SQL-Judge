@@ -1,25 +1,40 @@
 {
-    "metainfo": {
-        "columns":{"alter_hash": "text", "comment": "text"},
-        "primary_key": "id"
-    },
-    "tbl_user": {
-        "columns": {"id": "int", "vc_username": "varchar", "vc_password": "varchar"},
-        "primary_key": "id"
-    },
-    "tbl_product": {
-        "columns": {"id": "int", "product_name": "varchar", "rl_price": "real"},
-        "primary_key": "id"
-    },
-    "purchases": {
-        "columns":{"buyer": "int", "product_id": "int", "nm_quantity": "int"},
-        "primary_key": "buyer",
-        "references": {"product_id": "tbl_product"},
-        "triggers": {"tg_new_product_history": "after insert"}
-    },
-    "tbl_price_history": {
-        "columns": {"product_id": "int", "history_price": "real", "dt_since": "datetime"},
-        "references": {"product_id": "tbl_product"},
-        "triggers": {"alter_product_price": "after update"}
+    "tables": {
+        "metainfo": {
+            "columns":{
+                "id": {"type": "int", "primary_key": true},
+                "alter_hash": {"type": "text"},
+                "comment": {"type": "text"}
+            }
+        },
+        "tbl_user": {
+            "columns": {
+                "id": {"type": "int", "primary_key": true},
+                "vc_username": {"type": "varchar"},
+                "vc_password": {"type": "varchar"}
+            }
+        },
+        "tbl_product": {
+            "columns": {
+                "id": {"type": "int", "primary_key": true},
+                "product_name": {"type": "varchar"},
+                "rl_price": {"type": "real"}}
+        },
+        "purchases": {
+            "columns": {
+                "buyer": {"type": "int", "primary_key": true},
+                "product_id": {"type": "int", "references": "tbl_product"},
+                "nm_quantity": {"type": "int"}
+            },
+            "triggers": {"tg_new_product_history": {"hook":"after insert"}}
+        },
+        "tbl_price_history": {
+            "columns": {
+                "product_id": {"type": "int", "references": "tbl_product"},
+                "history_price": {"type": "real"},
+                "dt_since": {"type": "datetime"}
+            },
+            "triggers": {"alter_product_price": {"type":"after update"}}
+        }
     }
 }
