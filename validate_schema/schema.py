@@ -21,19 +21,15 @@ class Schema:
         )
         return pkey is not None
 
-    def __entities(self, factory):
-        group = factory.__name__.lower() + 's'
-        if group == 'indexs':
-            group = 'indexes'
+    def __entities(self, factory, group):
         return [
-            factory(schema=self, **params)
-            for params in getattr(self._adapter, group)()
+            factory(schema=self, **params) for params in getattr(self._adapter, group)()
         ]
 
     @cached_property
     def tables(self) -> List['Table']:
         """ Database Tables"""
-        return self.__entities(Table)
+        return self.__entities(Table, 'tables')
 
     @cached_property
     def columns(self) -> List['Column']:
@@ -49,32 +45,32 @@ class Schema:
     @cached_property
     def sequences(self) -> List['Entity']:
         """ Database Sequences """
-        return self.__entities(Sequence)
+        return self.__entities(Sequence, 'sequences')
 
     @cached_property
     def functions(self) -> List['Entity']:
         """ Database Functions """
-        return self.__entities(Function)
+        return self.__entities(Function, 'functions')
 
     @cached_property
     def procedures(self) -> List['Entity']:
         """ Database Procedures """
-        return self.__entities(Procedure)
+        return self.__entities(Procedure, 'procedures')
 
     @cached_property
     def triggers(self) -> List['TableEntity']:
         """ Database Table Triggers """
-        return self.__entities(Trigger)
+        return self.__entities(Trigger, 'triggers')
 
     @cached_property
     def constraints(self) -> List['ColumnEntity']:
         """ Database Column Constraints """
-        return self.__entities(Constraint)
+        return self.__entities(Constraint, 'constraints')
 
     @cached_property
     def indexes(self) -> List['ColumnEntity']:
         """ Database Column Indexes """
-        return self.__entities(Index)
+        return self.__entities(Index, 'indexes')
 
     def entities(self):
         """ Schema Entities """

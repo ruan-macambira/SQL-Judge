@@ -42,8 +42,7 @@ class SerializedAdapter(AbstractAdapter):
             if params.get('primary_key')
         ]
 
-    def references(self) -> List[Dict[str, str]]:
-        # return [{'table': table, 'column': column, 'references': refs} for table, column, refs in self._reference_columns()]
+    def references(self) -> List[Tuple[str, str, str]]:
         return [refs_info for refs_info in self._reference_columns()]
 
     def indexes(self) -> List[Dict[str, str]]:
