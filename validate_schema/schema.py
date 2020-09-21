@@ -1,5 +1,6 @@
-from .util import find, cached_property
+"""Database Schema"""
 from typing import List, Optional
+from .util import find, cached_property
 
 class Schema:
     """Database Schema"""
@@ -76,6 +77,7 @@ class Schema:
         return self.__entities(Index)
 
     def entities(self):
+        """ Schema Entities """
         return {
             'Tables': self.tables,
             'Columns': self.columns,
@@ -89,11 +91,11 @@ class Schema:
 
 class Entity:
     """ Generic Database Schema Entity """
-    def __init__(self, group: str, schema: Schema, name: str, **additional_params):
+    def __init__(self, group: str, schema: Schema, name: str, **custom_params):
         self._schema: Schema = schema
         self.__name: str = name
         self.__group: str = group
-        self._additional_params: dict = additional_params
+        self._custom_params: dict = custom_params
 
     @property
     def name(self) -> str:
@@ -106,14 +108,16 @@ class Entity:
         return self._schema
 
     def __getattribute__(self, item):
-        if item in super().__getattribute__('_additional_params'):
-            return self._additional_params[item]
+        if item in super().__getattribute__('_custom_params'):
+            return self._custom_params[item]
         return super().__getattribute__(item)
 
     def needs_validation(self, _ignore_tables=None):
+        """Checks if entity should be validated"""
         return True
 
     def canonical_name(self):
+        """Name in Report"""
         return self.name
 
     @property
@@ -139,8 +143,9 @@ def Sequence(*args, **kwargs): # pylint: disable=invalid-name
     return Entity(group='sequence', *args, **kwargs)
 
 class Table(Entity):
-    def __init__(self, name, schema, **additional_params):
-        super().__init__(group='table', name=name, schema=schema, **additional_params)
+    """Database Table"""
+    def __init__(self, name, schema, **custom_params):
+        super().__init__(group='table', name=name, schema=schema, **custom_params)
 
     @cached_property
     def columns(self) -> List['Column']:
@@ -166,8 +171,8 @@ class Table(Entity):
 
 class TableEntity(Entity):
     """ Entity That belongs to a Table """
-    def __init__(self, group, name, table, schema, **additional_params):
-        super().__init__(group=group, name=name, schema=schema, **additional_params)
+    def __init__(self, group, name, table, schema, **custom_params):
+        super().__init__(group=group, name=name, schema=schema, **custom_params)
         self._table = find(self._schema.tables, lambda el: el.name == table)
 
     @property
@@ -187,8 +192,8 @@ def Trigger(**params): # pylint: disable=invalid-name
 
 class Column(TableEntity):
     """ Column Entity """
-    def __init__(self, name, table, schema, primary_key=False, references=None, **additional_params):
-        super().__init__(group='column', name=name, table=table, schema=schema, **additional_params)
+    def __init__(self, name, table, schema, primary_key=False, references=None, **custom_params):
+        super().__init__(group='column', name=name, table=table, schema=schema, **custom_params)
         self.__primary_key: bool = primary_key
         self._references: str = references
 
@@ -207,7 +212,10 @@ class Column(TableEntity):
     @property
     def index(self) -> Optional['ColumnEntity']:
         """ Column Indexes """
-        return find(self._schema.indexes, lambda index: index.table == self.table and index.column.name == self.name)
+        return find(
+            self._schema.indexes,
+            lambda index: index.table == self.table and index.column.name == self.name
+        )
 
     @property
     def constraints(self) -> List['ColumnEntity']:
@@ -219,9 +227,12 @@ class Column(TableEntity):
 
 class ColumnEntity(TableEntity):
     """ Entity that belongs to a Column """
-    def __init__(self, group, name, table, column, schema, **additional_params):
-        super().__init__(group=group, name=name, table=table, schema=schema, **additional_params)
-        self._column = find(self._schema.columns, lambda el: el.table == self.table and el.name == column)
+    def __init__(self, group, name, table, column, schema, **custom_params):
+        super().__init__(group=group, name=name, table=table, schema=schema, **custom_params)
+        self._column = find(
+            self._schema.columns,
+            lambda el: el.table == self.table and el.name == column
+        )
 
     @property
     def column(self) -> Column:
