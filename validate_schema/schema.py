@@ -92,6 +92,7 @@ class Entity:
         self.__name: str = name
         self.__group: str = group
         self._custom_params: dict = custom_params
+        self.__name__ = group.capitalize()
 
     @property
     def name(self) -> str:
@@ -115,10 +116,6 @@ class Entity:
     def canonical_name(self):
         """Name in Report"""
         return self.name
-
-    @property
-    def __name__(self):
-        return self.__group.capitalize()
 
     def __str__(self):
         return f'<{self.__name__} "{self.name}">'

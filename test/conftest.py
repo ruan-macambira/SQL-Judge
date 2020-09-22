@@ -5,7 +5,7 @@ from validate_schema.adapter import AbstractAdapter
 from validate_schema import Configuration
 from validate_schema.serialized_adapter import SerializedAdapter
 from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
-from validate_schema.schema import Table
+from validate_schema.schema import Table, Schema
 
 @pytest.fixture
 def build_configuration_builder():
@@ -77,3 +77,9 @@ def mock_conn(build_mock_conn):
             'table_two': {'columns': {'column_1': {'type': 'int'}, 'column_2': {'type': 'int'}}}
         }
     })
+
+@pytest.fixture
+def serial_schema():
+    def _serial_schema(info: dict):
+        return Schema(SerializedAdapter(info))
+    return _serial_schema
