@@ -41,7 +41,6 @@ class Schema:
             for params in self._adapter.columns()
         ]
 
-
     @cached_property
     def sequences(self) -> List['Entity']:
         """ Database Sequences """
@@ -85,6 +84,7 @@ class Schema:
             'Procedures': self.procedures
         }
 
+
 class Entity:
     """ Generic Database Schema Entity """
     def __init__(self, group: str, schema: Schema, name: str, **custom_params):
@@ -109,19 +109,12 @@ class Entity:
             return self._custom_params[item]
         return super().__getattribute__(item)
 
-    def needs_validation(self, _ignore_tables=None):
-        """Checks if entity should be validated"""
-        return True
-
-    def canonical_name(self):
-        """Name in Report"""
-        return self.name
-
     def __str__(self):
         return f'<{self.__name__} "{self.name}">'
 
     def __repr__(self):
         return self.__str__()
+
 
 def Function(*args, **kwargs): # pylint: disable=invalid-name
     """Function Entity"""
@@ -159,9 +152,6 @@ class Table(Entity):
             trigger for trigger in self._schema.triggers if trigger.table.name == self.name
         ]
 
-    def needs_validation(self, ignore_tables=None):
-        return not self.name in (ignore_tables or [])
-
 class TableEntity(Entity):
     """ Entity That belongs to a Table """
     def __init__(self, group, name, table, schema, **custom_params):
@@ -172,12 +162,6 @@ class TableEntity(Entity):
     def table(self) -> Table:
         """ Table assigned to Entity """
         return self._table
-
-    def needs_validation(self, ignore_tables=None):
-        return self.table.needs_validation(ignore_tables)
-
-    def canonical_name(self):
-        return f'{self.table.canonical_name()}.{self.name}'
 
 def Trigger(**params): # pylint: disable=invalid-name
     """ Trigger Entity """
@@ -231,9 +215,6 @@ class ColumnEntity(TableEntity):
     def column(self) -> Column:
         """ Column Assigned to Entity """
         return self._column
-
-    def canonical_name(self):
-        return f'{self.column.canonical_name()}.{self.name}'
 
 def Index(*args, **kwargs): # pylint: disable=invalid-name
     """ Index Entity """
