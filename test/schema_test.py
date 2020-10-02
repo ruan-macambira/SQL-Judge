@@ -31,6 +31,7 @@ def entity(schema):
 def table(schema):
     return mschema.Table(name='table_one', schema=schema)
 
+
 # Schema
 def test_schema_sequences_returns_schema_sequences(schema):
     assert [seq.name for seq in schema.sequences] == ['sequence_one']
@@ -66,6 +67,7 @@ def test_schema_constraint_returns_constraint_entities(schema):
 def test_schema_indexes_returns_index_entities(schema):
     assert [index.name for index in schema.indexes] == ['index_one']
 
+
 # Entity
 def test_entity_name_is_its_group_capitalized():
     assert mschema.Entity(group='table', name='', schema=None).__name__ == 'Table'
@@ -82,6 +84,17 @@ def test_entity_schema_returns_an_instance_of_schema(entity):
 
 def test_entity_name_returns_its_name(entity):
     assert entity.name == 'entity_one'
+
+def test_entity_schema_returns_the_schema_object(schema):
+    assert schema.tables[0].schema == schema
+
+def test_entity_str():
+    entity = mschema.Entity(group='entity', schema=None, name='foo')
+    assert str(entity) == '<Entity "foo">'
+
+def test_entity_repr():
+    entity = mschema.Entity(group='entity', schema=None, name='foo')
+    assert repr(entity) == '<Entity "foo">'
 
 # Table
 def test_table_columns_returns_column_instances(table):
