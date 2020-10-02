@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-from validate_schema.schema import Schema
+from sql_judge.schema import Schema
 
 def test_generate_schema_adds_tables_to_schema(mock_conn):
     schema = Schema(mock_conn)

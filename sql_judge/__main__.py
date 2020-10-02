@@ -9,13 +9,13 @@ from .export import formatted_output
 
 def default_config():
     return pkg_resources.resource_string(
-        'validate_schema.parse_configuration', 'default_configuration.json')
+        'sql_judge.parse_configuration', 'default_configuration.json')
 
 def user_config(filename):
     with open(filename) as file:
         return file.read(None)
 
-def validate_schema(filenames):
+def sql_judge(filenames):
     """ Main function """
     config_builder = ConfigurationBuilder.from_json(default_config())
     for filename in filenames:
@@ -27,7 +27,7 @@ def validate_schema(filenames):
     return formatted_output(report, config.export)
 
 if __name__ == '__main__':
-    output = validate_schema(sys.argv[1:])
+    output = sql_judge(sys.argv[1:])
 
     for line in output:
         print(line)

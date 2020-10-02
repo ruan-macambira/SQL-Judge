@@ -2,8 +2,8 @@
 # pylint: disable=missing-function-docstring
 import pytest
 
-from validate_schema.serialized_adapter import SerializedAdapter
-from validate_schema.parse_configuration.build_configuration import \
+from sql_judge.serialized_adapter import SerializedAdapter
+from sql_judge.parse_configuration.build_configuration import \
     ConfigurationBuilder
 
 from . import adapter, validations

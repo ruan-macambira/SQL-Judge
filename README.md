@@ -1,7 +1,7 @@
-# Ferramenta de Validação de Schemas de Banco de Dados Relacionais (SQL)
+# SQL Judge, uma ferramenta de Validação de Schemas de Banco de Dados Relacionais (SQL)
 
 ## Objetivos
-A ferramenta tem como objetivo possibilitar o usuário de escrever testes de validações para os Bancos de Dados SQL que sejam facilmente testáveis e reutilizáveis entre diferentes implementações de Bancos de Dado (Ex.: AS calidações funcionarem tanto para PostgreSQL e Oracle SQL)
+A ferramenta tem como objetivo possibilitar o usuário de escrever testes de validações para os Bancos de Dados SQL que sejam facilmente testáveis e reutilizáveis entre diferentes implementações de Bancos de Dado (Ex.: AS validações funcionarem tanto para PostgreSQL e Oracle SQL)
 
 ## Motivação
 Fez-se necessário que fossem desenvolvidos uma série de validações automatizadas para um padrão de banco de dados. A ferramenta escolhida foi a de implementar Custom Design Rules para o Oracle Datamodeler. Essa ferramenta, no entanto tinha muitos problemas:
@@ -58,7 +58,7 @@ As configurações de utilização são passadas através de arquivos no formato
 
 O output é enviado para stdout, independente do formato em que é definido a exportação, mudando apenas a formatação da saída. Caso execute:
 
-``` cd examples; python -m validate_schema config.json special_config.json ```
+``` cd examples; python -m sql_judge config.json special_config.json ```
 
 O output será:
 
@@ -100,7 +100,7 @@ Constraints:
 ```
 
 ## Desenvolvendo um adaptador de banco de Dados
-A ferramenta de validação do Schema é meramente uma maneira de validar um schema de banco de dados SQL. Ele não possui nativamente uma maneira de se comunicar com um banco de Dados, ficando para o usuário a tarefa de providenciar um meio do programa obter o schema. O sistema não assume nada sobre a fonte dos dados, não precisando nem mesmo ser extraído de um banco de dados real. Contanto que ele implemente corretamente a interface do objeto, todas as entidades do schema hão de ser reproduzidas no sistema. Mais informações de como implementar um adaptador no arquivo contendo sua interface (validate_schema/adapter.py)
+A ferramenta de validação do Schema é meramente uma maneira de validar um schema de banco de dados SQL. Ele não possui nativamente uma maneira de se comunicar com um banco de Dados, ficando para o usuário a tarefa de providenciar um meio do programa obter o schema. O sistema não assume nada sobre a fonte dos dados, não precisando nem mesmo ser extraído de um banco de dados real. Contanto que ele implemente corretamente a interface do objeto, todas as entidades do schema hão de ser reproduzidas no sistema. Mais informações de como implementar um adaptador no arquivo contendo sua interface (sql_judge/adapter.py)
 
 ## Criando validações
 O validador não possui nenhuma validação que ele execute por padrão. O usuário precisa, portanto, definir todas as validações em um único arquivo.
@@ -108,7 +108,7 @@ O validador não possui nenhuma validação que ele execute por padrão. O usuá
 O validador não asssume que nenhuma função do módulo passado é uma validação, ele precisa ser explicitamente definido como tal através utilizando o *decorator* ```validates``` especificando o grupo de entidades no qual aquela validação ocorre. Ex.:
 
 ```python
-from validate_schema import validates # Decorator que marca as funções
+from sql_judge import validates # Decorator que marca as funções
 
 def not_a_validation(): # Validador não reconhece como uma validação
   pass

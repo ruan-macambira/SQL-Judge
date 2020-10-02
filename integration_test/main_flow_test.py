@@ -1,9 +1,9 @@
 #pylint: disable=missing-function-docstring
 """ Test for running the main flow of the system """
-from validate_schema import Configuration
-from validate_schema.schema import Schema
-from validate_schema.validate import validate_entities
-from validate_schema.export import formatted_output
+from sql_judge import Configuration
+from sql_judge.schema import Schema
+from sql_judge.validate import validate_entities
+from sql_judge.export import formatted_output
 
 def table_has_tbl_as_prefix(table):
     if table.name[0:3] != 'tbl':

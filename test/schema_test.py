@@ -1,6 +1,6 @@
 #pylint: disable=missing-module-docstring, missing-function-docstring, redefined-outer-name
 import pytest
-from validate_schema import schema as mschema
+from sql_judge import schema as mschema
 
 @pytest.fixture
 def query_schema(build_mock_conn):

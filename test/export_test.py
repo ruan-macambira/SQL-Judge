@@ -1,7 +1,7 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
 import pytest
-from validate_schema.export import formatted_output
+from sql_judge.export import formatted_output
 
 @pytest.fixture
 def report():

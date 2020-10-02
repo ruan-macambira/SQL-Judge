@@ -1,8 +1,8 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
 
-from validate_schema.export.cli import export_cli
-from validate_schema.export.cli import _entity_report
+from sql_judge.export.cli import export_cli
+from sql_judge.export.cli import _entity_report
 
 def test_generate_entity_report_one_message():
     assert _entity_report('table_one', ['message one']) == \

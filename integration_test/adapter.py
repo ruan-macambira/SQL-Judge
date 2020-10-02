@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-class-docstring
-from validate_schema.adapter import AbstractAdapter
+from sql_judge.adapter import AbstractAdapter
 
 class Adapter(AbstractAdapter):
     def __init__(self, *args, **kwargs):

@@ -2,8 +2,8 @@
 # pylint: disable=missing-function-docstring
 from types import ModuleType
 import pytest
-from validate_schema import validates
-from validate_schema.parse_configuration.schema_validations import (
+from sql_judge import validates
+from sql_judge.parse_configuration.schema_validations import (
     module_validations, inspect_validations, to_configuration)
 
 @pytest.fixture

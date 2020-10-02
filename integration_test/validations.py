@@ -1,6 +1,6 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-from validate_schema import validates
+from sql_judge import validates
 
 @validates('table')
 def validate_table(_table):

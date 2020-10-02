@@ -1,6 +1,6 @@
 # pylint: disable=C, redefined-outer-name
 import pytest
-from validate_schema.validation_entity import needs_validation, canonical_name
+from sql_judge.validation_entity import needs_validation, canonical_name
 
 @pytest.fixture
 def schema(serial_schema):

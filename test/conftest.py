@@ -1,11 +1,11 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
 import pytest
-from validate_schema.adapter import AbstractAdapter
-from validate_schema import Configuration
-from validate_schema.serialized_adapter import SerializedAdapter
-from validate_schema.parse_configuration.build_configuration import ConfigurationBuilder
-from validate_schema.schema import Table, Schema
+from sql_judge.adapter import AbstractAdapter
+from sql_judge import Configuration
+from sql_judge.serialized_adapter import SerializedAdapter
+from sql_judge.parse_configuration.build_configuration import ConfigurationBuilder
+from sql_judge.schema import Table, Schema
 
 @pytest.fixture
 def build_configuration_builder():

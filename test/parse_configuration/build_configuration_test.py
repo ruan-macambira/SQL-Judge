@@ -5,7 +5,7 @@ from unittest import mock
 
 import pytest
 
-from validate_schema.parse_configuration.build_configuration import \
+from sql_judge.parse_configuration.build_configuration import \
     ConfigurationBuilder
 
 
@@ -89,7 +89,7 @@ def test_trying_to_build_an_invalid_configuration_raises_value_error(build_confi
     with pytest.raises(ValueError):
         build_configuration_builder(adapter_module=None).build()
 
-@mock.patch('validate_schema.parse_configuration.build_configuration.importlib')
+@mock.patch('sql_judge.parse_configuration.build_configuration.importlib')
 def test_build_a_configuration(build_configuration_builder):
     assert ConfigurationBuilder.build(build_configuration_builder())
 

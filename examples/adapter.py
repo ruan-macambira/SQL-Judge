@@ -1,4 +1,4 @@
-from validate_schema.serialized_adapter import SerializedAdapter
+from sql_judge.serialized_adapter import SerializedAdapter
 import json
 
 class JSONAdapter(SerializedAdapter):
