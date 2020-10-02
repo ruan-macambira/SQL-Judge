@@ -1,5 +1,6 @@
+# pylint: disable=C, redefined-outer-name
 import pytest
-from validate_schema.validation_entity import ValidationEntity
+from validate_schema.validation_entity import needs_validation, canonical_name
 
 @pytest.fixture
 def schema(serial_schema):
@@ -8,67 +9,57 @@ def schema(serial_schema):
         'functions': {'function': {}}})
 
 @pytest.fixture
-def val_entity(schema):
-    return ValidationEntity(schema.functions[0])
+def entity(schema):
+    return schema.functions[0]
 
 @pytest.fixture
-def val_table(schema):
-    return ValidationEntity(schema.tables[0])
+def table(schema):
+    return schema.tables[0]
 
 @pytest.fixture
-def val_tentity(schema):
-    return ValidationEntity(schema.columns[0])
+def table_entity(schema):
+    return schema.columns[0]
 
 @pytest.fixture
-def val_centity(schema):
-    return ValidationEntity(schema.constraints[0])
+def column_entity(schema):
+    return schema.constraints[0]
 
 # needs_validation
 def test_needsval_not_using_an_entity_raises_an_error():
     with pytest.raises(TypeError):
-        ValidationEntity(None).needs_validation([])
+        needs_validation(None, [])
 
-def test_generic_entity_always_succeed(val_entity):
-    assert val_entity.needs_validation([]) is True
+def test_generic_entity_always_succeed(entity):
+    assert needs_validation(entity, []) is True
 
-def test_table_passes_if_its_name_is_not_in_ignore_list(val_table):
-    assert val_table.needs_validation([]) is True
+def test_table_passes_if_its_name_is_not_in_ignore_list(table):
+    assert needs_validation(table, []) is True
 
-def test_table_fails_if_its_name_is_in_ignore_list(val_table):
-    assert val_table.needs_validation(['table']) is False
+def test_table_fails_if_its_name_is_in_ignore_list(table):
+    assert needs_validation(table, ['table']) is False
 
-def test_table_entity_succeeds_if_table_succeeds(val_tentity):
-    assert val_tentity.needs_validation([]) is True
+def test_table_entity_succeeds_if_table_succeeds(table_entity):
+    assert needs_validation(table_entity, []) is True
 
-def test_table_entity_fails_if_table_fails(val_tentity):
-    assert val_tentity.needs_validation(['table']) is False
+def test_table_entity_fails_if_table_fails(table_entity):
+    assert needs_validation(table_entity, ['table']) is False
 
-def test_column_entity_succeeds_if_table_succeeds(val_centity):
-    assert val_centity.needs_validation([]) is True
+def test_column_entity_succeeds_if_table_succeeds(column_entity):
+    assert needs_validation(column_entity, []) is True
 
-def test_column_entity_fails_if_table_fails(val_centity):
-    assert val_centity.needs_validation(['table']) is False
+def test_column_entity_fails_if_table_fails(column_entity):
+    assert needs_validation(column_entity, ['table']) is False
 
 # canonical_name
 def test_canname_not_using_an_entity_raises_an_error():
     with pytest.raises(TypeError):
-        ValidationEntity(None).needs_validation([])
+        needs_validation(None, [])
 
-def test_generic_entity_has_its_name_as_canonical(val_entity):
-    assert val_entity.canonical_name() == val_entity.entity.name
+def test_generic_entity_has_its_name_as_canonical(entity):
+    assert canonical_name(entity) == entity.name
 
-def test_table_entity_has_its_and_its_table_name_as_canonical(val_tentity):
-    entity = val_tentity.entity
-    assert val_tentity.canonical_name() == f'{entity.table.name}.{entity.name}'
+def test_table_entity_has_its_and_its_table_name_as_canonical(table_entity):
+    assert canonical_name(table_entity) == f'{table_entity.table.name}.{table_entity.name}'
 
-def test_column_entity_has_its_column_and_itself_names(val_centity):
-    entity = val_centity.entity
-    assert val_centity.canonical_name() == f'{entity.table.name}.{entity.column.name}.{entity.name}'
-
-# is_valid
-def test_it_is_valid_when_has_no_errors(val_entity):
-    assert val_entity.is_valid() is True
-
-def test_it_is_not_valid_when_has_at_least_one_error(val_entity):
-    val_entity.errors.append('ERROR')
-    assert val_entity.is_valid() is False
+def test_column_entity_has_its_column_and_itself_names(column_entity):
+    assert canonical_name(column_entity) == f'{column_entity.table.name}.{column_entity.column.name}.{column_entity.name}'

@@ -1,21 +1,6 @@
 from functools import singledispatch
 from .schema import Entity, Table, TableEntity, ColumnEntity
 
-class ValidationEntity:
-    def __init__(self, entity: Entity):
-        self.entity: Entity = entity
-        self.errors: list = []
-
-    def needs_validation(self, ignore_tables: list):
-        return needs_validation(self.entity, ignore_tables)
-
-    def canonical_name(self):
-        return canonical_name(self.entity)
-
-    def is_valid(self):
-        return len(self.errors) == 0
-
-
 @singledispatch
 def needs_validation(entity, _ignore_tables: list):
     raise TypeError("This method does not accept instances other than Entity")
