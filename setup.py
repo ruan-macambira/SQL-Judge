@@ -7,7 +7,7 @@ def long_description(): # pylint: disable=missing-function-docstring
 
 setup(
     name='sql_judge',
-    version='0.1b4',
+    version='0.1b5',
     description='Validate SQL database Schemas using Python',
     long_description=long_description(),
     long_description_content_type='text/markdown',
