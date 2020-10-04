@@ -9,6 +9,8 @@ pytest = "*"
 mypy = "*"
 pytest-cov = "*"
 pytest-icdiff = "*"
+twine = "*"
+rope = "*"
 
 [packages]
 
