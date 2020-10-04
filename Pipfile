@@ -9,6 +9,7 @@ pytest = "*"
 mypy = "*"
 pytest-cov = "*"
 pytest-icdiff = "*"
+pytest-integration = "*"
 
 [packages]
 

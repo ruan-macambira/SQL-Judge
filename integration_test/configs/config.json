@@ -1,0 +1,11 @@
+{
+    "adapter": {
+        "module": "json_adapter",
+        "class": "JSONAdapter",
+        "params": ["integration_test/schemas/schema.json"]
+    }, "validations": {
+        "module": "validation"
+    }, "export": {
+        "format": "CSV"
+    }
+}

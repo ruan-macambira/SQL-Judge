@@ -1,0 +1,31 @@
+{
+    "tables": {
+        "table_one": {
+            "columns": {
+                "column_one": {
+                    "type": "integer",
+                    "lenght": 10,
+                    "primary_key": true
+                }, "column_two": {
+                    "type": "varchar",
+                    "length": 150
+                }, "column_three": {
+                    "type": "integer",
+                    "length": 10,
+                    "references": "table_two"
+                }
+            },
+        "table_two": {
+            "columns": {
+                "column_one": {
+                    "type": "integer",
+                    "length": 10,
+                    "primary_key": true
+                }
+            }
+        }
+        }
+    }, "sequences": {
+        "sequence_one": {}
+    }
+}
