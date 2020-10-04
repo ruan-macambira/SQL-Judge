@@ -1,7 +1,6 @@
 """ Run the application """
 from typing import Callable, Dict, List
 from .schema import Schema, Entity
-from . import Configuration
 from .validation_entity import needs_validation, canonical_name
 
 def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: List[str], schema: Schema):
