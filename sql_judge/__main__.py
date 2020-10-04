@@ -23,7 +23,7 @@ def sql_judge(filenames):
 
     config = config_builder.build()
     schema = Schema(config.connection)
-    report = validate_entities(config, schema)
+    report = validate_entities(config.validations, config.ignore_tables, schema)
     return formatted_output(report, config.export)
 
 if __name__ == '__main__':

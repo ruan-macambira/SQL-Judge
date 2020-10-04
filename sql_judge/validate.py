@@ -4,13 +4,13 @@ from .schema import Schema, Entity
 from . import Configuration
 from .validation_entity import needs_validation, canonical_name
 
-def validate_entities(config: Configuration, schema: Schema) -> dict:
+def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: List[str], schema: Schema):
     """ Run the schema validation and return a report """
     report = {}
     for group, entities in schema.entities().items():
         report[group] = _validate(
-            [entity for entity in entities if needs_validation(entity, config.ignore_tables)],
-            config.validations[group])
+            [entity for entity in entities if needs_validation(entity, ignore_tables)],
+            validations.get(group, []))
 
     return report
 

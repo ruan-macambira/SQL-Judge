@@ -75,7 +75,7 @@ def tests_validate_run(build_mock_conn):
         connection=build_mock_conn(info)
     )
     schema = Schema(config.connection)
-    validations_result = validate_entities(config, schema)
+    validations_result = validate_entities(config.validations, config.ignore_tables, schema)
     actual_report = formatted_output(validations_result, 'CLI')
 
     assert ' + tblProduct' not in actual_report
@@ -104,7 +104,7 @@ def test_validate_csv(build_mock_conn):
         connection=build_mock_conn(tables_info),
         export='CSV')
     schema = Schema(config.connection)
-    validations_result = validate_entities(config, schema)
+    validations_result = validate_entities(config.validations, config.ignore_tables, schema)
     actual_report = formatted_output(validations_result, 'CSV')
 
     assert 'Tables, Table, Validation' in actual_report

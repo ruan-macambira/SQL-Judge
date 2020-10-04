@@ -10,28 +10,31 @@ class Adapter(AbstractAdapter):
     def tables(self):
         return []
 
-    def columns(self, _table_name):
+    def columns(self):
         return []
 
-    def primary_key(self, _table_name, _column_name):
+    def primary_keys(self):
         return []
 
-    def references(self, _table_name, _column_name):
+    def references(self):
         return []
 
-    def constraints(self, _table_name, _column_name):
+    def constraints(self):
         return []
 
-    def index(self, _table_name, _column_name):
+    def indexes(self):
         return []
 
-    def triggers(self, _table_name):
+    def triggers(self):
         return []
 
     def functions(self):
         return []
 
     def procedures(self):
+        return []
+
+    def sequences(self):
         return []
 
     def __eq__(self, other):

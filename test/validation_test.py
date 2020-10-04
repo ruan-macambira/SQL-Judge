@@ -25,12 +25,11 @@ def test_validate_entity_captures_exceptions_and_passes_to_messages(table):
         ['validation "raise_validation" raised a Exception with the message "something wrong happened"']
 
 # validate
-def test_validate_entities(build_mock_conn, configuration):
-    mock_adapter = build_mock_conn({'tables': {'table_one': {}}})
-
-    config = configuration(validations={'Tables': [fail_validation], 'Columns': [pass_validation]})
-    schema = Schema(mock_adapter)
-    assert validate_entities(config, schema) == {
+def test_validate_entities(build_mock_conn):
+    validations = validations={'Tables': [fail_validation], 'Columns': [pass_validation]}
+    ignore_tables = []
+    schema = Schema(build_mock_conn({'tables': {'table_one': {}}}))
+    assert validate_entities(validations, ignore_tables, schema) == {
         'Tables': {'table_one': ['ERROR']}, 'Functions': {}, 'Procedures': {},
         'Columns': {}, 'Triggers': {}, 'Indexes': {}, 'Constraints': {}, 'Sequences': {}
     }
