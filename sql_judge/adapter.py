@@ -1,78 +1,138 @@
 """ Database adapters """
 from typing import List, Dict, Tuple
-class AbstractAdapter:
-    """ Specify the methods a Database Connection must have.
-    In order to the Schema Builder work properly, every function
-    in this class must be implemented as oriented by its docstring.
-    It is recommended that the user utilizes this class as the adapter
-    parent class, since doing it will make the linter warn about not implemented
-    methods, and mypy will be able to identify if both the signature and
-    return types are in accordance with the abstract method, though it is not
-    mandatory."""
+from abc import ABC, abstractmethod
+class AbstractAdapter(ABC):
+    """
+    The main and only source for building the schema.
 
+    All the methods in this interface is mandatory. If you do not want to add a specific element
+    to the schema to be built, implement the given function returning an empty list([]).
+
+    The methods can be classified in two types: entity methods and relation method.
+
+    Entity Methods are the ones that are used to generate an entity(table, column, etc.),
+    and they need to return a list of dicts.
+    Many of these methods also need to inform its relation to another entities, but its main purpose
+    is to inform what are the entities in the database and what properties
+    should this given object have, and the values it returns.
+
+    Entities methods have a dict to represent an entity because it allows you to pass
+    any kind of parameter of an object you want,
+    at the same it that it does not enforce any of them besides its name
+    and its relations to another entities. So, for example,
+    if you want to make a validation that utilizes its data type,
+    add a key which value is the column data type ('data_type', for example),
+    and you will be able to access
+    this information through the object as a method (column.data_type, for example).
+
+    Relation methods are, in the other hand, used to inform certain relationships between entities,
+    specifically primary and foreign keys.
+    This information is presented separated from the column method
+    in order to not insert a disproportional amount of logic inside one method(columns).
+    They need to return a list of tuples, or at least in an ordered object(like a list)
+    the information in what needs to appear
+    and in which order is explained in more detail in each method docstring.
+    """
+    @abstractmethod
     def tables(self) -> List[Dict[str, str]]:
-        """Should return a List of string the names of the tables in the schema"""
+        """Return a list containing a dict for every table in the schema
+
+         mandatory keys:
+          - name: The Table name
+         forbidden keys:
+          - columns
+          - triggers
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def columns(self) -> List[Dict[str, str]]:
-        """Should reveice as an argument one table name provided by
-        self.tables, and return a Dict containing its columns.
-        The Key of the dict should be the column name,
-        while its value should be the column type.
+        """Return a dict for every column in the schema
 
-        Note that every table name provided in self.tables will be used
-        as an argument when calling this function"""
+         mandatory keys:
+          - name: The Column name
+          - table: The name of the Table that owns the column
+         forbiddent keys:
+          - constraints
+          - indexes
+          - primary_keys
+          - references
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def triggers(self) -> List[Dict[str, str]]:
-        """Should Receive as argument the table name, and returns a Dict with its
-        associated triggers. The key should be its name, while the value should be the 'hook',
-        i.e when that trigger is triggered (ex.: AFTER INSERT)
-        If there is no trigger associated to the table, it should retutn an empty trigger.
+        """Return a list of dicts, each representing one of every triggers in the schema
 
-        Note that every table name provided in self.tables will be used
-        as an argument when calling this function"""
+        mandatory keys:
+         - name: the Trigger name
+         - table: The Name of the Table that owns it
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def primary_keys(self) -> List[Tuple[str, str]]:
-        """Should receive as an argument a table name and one of its columns name, and return
-        a boolean indicating if the specified table is a primary_key(True if yes, False if no).
+        """Return a tuple for every table that contains one primary key.
+        If the said table has no primary key, do not put the table at all.
 
-        Note that every column name provided in self.columns for every table provided in
-        self.tables will be used as an argument when calling this function"""
+        The tuple must have the table name as its first element, and the name
+        of the column that is its primary key as it's second. Currently does not
+        support primary keys with multiple columns.
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def references(self) -> List[Tuple[str, str, str]]:
-        """Should receive as an argument a table name and one of its column names, and return
-        a the name of the table it references if there is one, and None if there is none. The
-        table name must be one specified in self.tables.
+        """Return a tuple for every column that is a foreign key for a table, ordered by:
 
-        Note that every column name provided in self.columns for every table provided in
-        self.tables will be used as an argument when calling this function"""
+        (the name of the column table, the column name, the name of the referenced table)
+        If a column is not a reference for any table, it should not appear in this list at all.
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def indexes(self) -> List[Dict[str, str]]:
-        """ Return the indexes assigned a column in a table """
+        """ Return a dict for every index int the schema
+
+        mandatory keys:
+         - name: the Index name
+         - column: the column bound with the index
+        currently, it does not support a multi-column index """
         raise NotImplementedError
 
+    @abstractmethod
     def constraints(self) -> List[Dict[str, str]]:
-        """Should receive as arguments a table nem and the name of one of its columns, and return
-        a Dict with its associated Constraints. The Key shoulde be the name,
-        while its value should be the type (ex.: NOT NULL, UNIQUE, CHECK).
-        In case no constraints are associated with the column, it should return an empty Dict
+        """Return a dict for every constraint present in the schema
 
-        Note that every column name provided in self.columns for every table provided in
-        self.tables will be used as an argument when calling this function"""
+        mandatory keys:
+         - name: the Constraint name
+         - column: the column bound with constraint
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def functions(self) -> List[Dict[str, str]]:
-        """Should return a List of string with the names of the functions in the schema"""
+        """Return a dict for every function present in the schema
+
+        mandatory keys:
+         - name: the function name
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def procedures(self) -> List[Dict[str, str]]:
-        """Should return a List of string with the names of the procedures in the schema"""
+        """Return a dict for every procedure present in the schema
+
+        mandatory keys:
+         - name: the procedure name
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def sequences(self) -> List[Dict[str, str]]:
-        """Should return a List of strings with the names of the sequences in the schema"""
+        """Return a dict for every sequence present in the schema
+
+        mandatory keys:
+         - name: the sequence name
+        """
         raise NotImplementedError
