@@ -5,7 +5,7 @@ from sql_judge.parse_configuration.build_configuration import ConfigurationBuild
 
 def test_build_configuration_loads_adapter_instance(build_configuration_builder, adapter_module):
     assert build_configuration_builder(
-        adapter_module='integration_test.adapter', adapter_class='Adapter'
+        adapter_module='adapter', adapter_class='Adapter'
     ).build().connection == adapter_module.Adapter()
 
 def test_default_configuration_is_a_valid_json_config():

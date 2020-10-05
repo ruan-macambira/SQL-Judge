@@ -3,10 +3,10 @@
 import pytest
 
 from sql_judge.serialized_adapter import SerializedAdapter
+import adapter, validations
 from sql_judge.parse_configuration.build_configuration import \
     ConfigurationBuilder
 
-from . import adapter, validations
 
 
 @pytest.fixture
@@ -29,9 +29,9 @@ def build_mock_conn():
 def build_configuration_builder():
     """ Configuration Builder Factory """
     def _build(
-        adapter_module='integration_test.adapter', adapter_class='Adapter',
+        adapter_module='adapter', adapter_class='Adapter',
         adapter_params=None, adapter_named_params=None,
-        validations_module='integration_test.validations',
+        validations_module='validations',
         ignore_tables=None, export_format='CLI'):
         return ConfigurationBuilder(
             adapter_module=adapter_module,
