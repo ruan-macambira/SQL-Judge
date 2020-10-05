@@ -1,7 +1,7 @@
 [run]
 branch = True
 cover_pylib = False
-source = sql_judge/
+source_pkgs = sql_judge
 
 [report]
 fail_under=90

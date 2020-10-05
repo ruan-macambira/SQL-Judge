@@ -1,5 +1,5 @@
 """Setup File"""
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def long_description(): # pylint: disable=missing-function-docstring
     with open('README.md', 'r') as file:
@@ -12,7 +12,8 @@ setup(
     long_description=long_description(),
     long_description_content_type='text/markdown',
     author='MxBromelia',
-    packages=['sql_judge', 'sql_judge.export', 'sql_judge.parse_configuration'],
+    packages= find_packages(where='src'),
+    package_dir={"": "src"},
     package_data={
         '': ['*.json']
     }
