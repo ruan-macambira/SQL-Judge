@@ -10,6 +10,8 @@ mypy = "*"
 pytest-cov = "*"
 pytest-icdiff = "*"
 pytest-integration = "*"
+twine = "*"
+rope = "*"
 
 [packages]
 
