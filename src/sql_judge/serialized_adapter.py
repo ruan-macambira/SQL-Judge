@@ -1,5 +1,5 @@
 """ A Mock for a Database Adapter, used to run tests """
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Set
 from .adapter import AbstractAdapter
 
 FILTER_OUT_TABLE_PARAMS = {'triggers', 'columns'}
@@ -11,6 +11,9 @@ class SerializedAdapter(AbstractAdapter):
     (Not yet implemented)"""
     def __init__(self, info: dict):
         self._info = info
+
+        # caches which methods where called once
+        self._called: Set[str] = set()
 
     def tables(self) -> List[Dict[str, str]]:
         return [
@@ -77,3 +80,15 @@ class SerializedAdapter(AbstractAdapter):
 
     def sequences(self) -> List[Dict[str, str]]:
         return self._entities('sequences')
+
+    # adds a behavior to __getattribute__ that disallows calling a function more than once
+    # in order to guarantee that the program will avoid making multiple calls to the adapter
+    # when generating the schema
+    def __getattribute__(self, attr):
+        called = super().__getattribute__('_called')
+        if attr in called:
+            raise AttributeError(f'Property "{attr}" cannot be called more than once')
+
+        if attr[0] != '_':
+            called.add(attr)
+        return super().__getattribute__(attr)

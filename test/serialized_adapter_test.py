@@ -31,6 +31,11 @@ def adapter(build_mock_conn):
     })
 
 #pylint: disable=redefined-outer-name
+def test_adapter_cannot_call_the_same_method_twice(adapter):
+    with pytest.raises(AttributeError):
+        adapter.tables()
+        adapter.tables()
+
 def test_mock_adapter_tables(adapter):
     assert adapter.tables() == [{'name': 'table_one'}, {'name': 'table_two'}]
 

@@ -8,15 +8,19 @@ class Schema:
     def __init__(self, adapter):
         self._adapter = adapter
 
+        # Caching references used more than once to avoid making multiple calls to the adapter
+        self._references = self._adapter.references()
+        self._primary_keys = self._adapter.primary_keys()
+
     def __references(self, params):
         ref_tuple = namedtuple('Reference', ['table', 'column', 'references'])
-        references = (ref_tuple(*el) for el in self._adapter.references())
+        references = (ref_tuple(*el) for el in self._references)
         ref = find(references, lambda el: el.table == params['table'] and el.column == params['name'])
         return ref.references if ref is not None else None
 
     def __is_primary_key(self, params):
         pkey = find(
-            self._adapter.primary_keys(),
+            self._primary_keys,
             lambda el: el == (params['table'], params['name'])
         )
         return pkey is not None
