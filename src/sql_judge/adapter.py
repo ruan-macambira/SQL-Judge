@@ -5,8 +5,10 @@ class AbstractAdapter(ABC):
     """
     The main and only source for building the schema.
 
-    All the methods in this interface is mandatory. If you do not want to add a specific element
+    All the methods in this interface are mandatory. If you do not want to add a specific element
     to the schema to be built, implement the given function returning an empty list([]).
+    Note, however, that not putting elements that are related to others, namely tables and
+    columns, it may cause unexpected behavior
 
     The methods can be classified in two types: entity methods and relation method.
 
@@ -16,7 +18,7 @@ class AbstractAdapter(ABC):
     is to inform what are the entities in the database and what properties
     should this given object have, and the values it returns.
 
-    Entities methods have a dict to represent an entity because it allows you to pass
+    Entity methods have a dict to represent an entity because it allows you to pass
     any kind of parameter of an object you want,
     at the same it that it does not enforce any of them besides its name
     and its relations to another entities. So, for example,

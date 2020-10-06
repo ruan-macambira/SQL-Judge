@@ -8,3 +8,6 @@ fail_under=90
 skip_empty=True
 sort=Cover
 exclude_lines= raise NotImplementedError
+
+[xml]
+output = coverage/coverage.xml
