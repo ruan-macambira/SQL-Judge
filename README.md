@@ -108,3 +108,48 @@ SQL Judge's Schema builder supports the following databases entities:
  - Indexes;
  - Constraints;
  - Sequences;
+
+By default, each entity provides its name and its relation to others entities (columns associated to a table, for example). You can pass another details about a given entity through the adapter. The properties can be accessed by calling by the key provided in the adapter. So, if you passed in the columns an aditional key 'type', you would acces it by using ```column.type```. Note that all the properties are accessed through properties, not methods. Following, the minimal interface that each entity has that exists by default:
+
+### Schema
+|Property   |Return Type       |Description              |  
+|-----------|------------------|-------------------------|  
+|tables     |List[Table]       |Schema Tables            |  
+|functions  |List[Entity]      |Schema Functions         |  
+|procedures |List[Entity]      |Schema Procedures        |  
+|sequences  |List[Entity]      |Schema sequences         |  
+|columns    |List[Column]      |Schema Table Columns     |  
+|triggers   |List[TableEntity] |Schema Table Triggers    |  
+|indexes    |List[ColumnEntity]|Schema Column Indexes    |  
+|constraints|List[ColumnEntity]|Schema Column constraints|  
+
+### Properties commom to all Entities
+|Property|Return Type|Description                                                 |  
+|--------|-----------|------------------------------------------------------------|  
+|name    |str        |Entity name                                                 |  
+|schema  |Schema     |Main Object, able to access every schema entity             |  
+
+### Table
+|Property   |Return Type      |Description       |      
+|-----------|-----------------|------------------|  
+|columns    |List[Column]     |Table Columns     |  
+|triggers   |List[TableEntity]|Table Triggers    |  
+|primary key|Column           |Primary Key Column|
+
+### Properties commom to Column, Trigger, Constraint and Index
+|Property|Return Type|Description                   |      
+|--------|-----------|------------------------------|  
+|table   |Table      |Table that contains the entity|
+
+### Column
+|Property   |Return Type       |Description                                                                         |      
+|-----------|------------------|------------------------------------------------------------------------------------|  
+|primary_key|boolean           |True if the column is the primary key. False if not                                 |
+|references |Table             |If column has a foreign key constraint, returns the table it references. None if not|
+|indexes    |List[ColumnIndex] |Column Indexes                                                                      |
+|constraints|List[ColumnEntity]|Column Constraints                                                                  |
+
+### Properties commom to Index and Constraint
+|Property|Return Type|Description                    |      
+|--------|-----------|-------------------------------|  
+|column  |Column     |Column that contains the Entity|

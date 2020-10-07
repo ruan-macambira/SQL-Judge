@@ -150,42 +150,43 @@ Está em planos para ter suporte:
 Cada Entidade do schema possui suas propriedades próprias (especificadas abaixo), bem como as relações que esta possui com outras entidades. Por Exemplo, a Entidade tabela possui acesso às colunas que lhe pertencem, bastando apenas que seja utilizadas ```table.columns```, sendo ```table``` o objeto que representaria a tabela em questão. Todas as propriedades das entidades são definidas como properties do objeto, portanto devem ser invocadas apenas pelo seu nome, sem utilizar a sintaxe de invocação de método, i.e ao invés de utilizar ```entity.name()```, utilizar ```entity.name```. Essa regra vale para todas as propriedades apresentadas abaixo.
 
 ### Schema
-|Propriedade|Classe            |Descrição                       |  
-|-----------|------------------|--------------------------------|  
-|tables*    |List[Table]       |Tabelas do Schema               |  
-|functions* |List[SchemaEntity]|Funções do Schema               |  
-|procedures*|List[SchemaEntity]|Procedimentos do Schema         |  
-|triggers   |List[Trigger]     |Triggers das Tabelas do Schema  |  
-|indexes    |List[Index]       |Índices das colunas do Schema   |  
-|constraints|List[Constraint]  |Restrições das colunas do Schema|  
+|Propriedade|Tipo de Retorno |Descrição                       |  
+|-----------|----------------|--------------------------------|  
+|tables     |List[Table]     |Tabelas do Schema               |  
+|functions  |List[Entity]    |Funções do Schema               |  
+|procedures |List[Entity]    |Procedimentos do Schema         |  
+|sequences  |List[Entity]    |Sequências do Schema            |
+|triggers   |List[Trigger]   |Triggers das Tabelas do Schema  |  
+|indexes    |List[Index]     |Índices das colunas do Schema   |  
+|constraints|List[Constraint]|Restrições das colunas do Schema|  
 
 ### Propriedades Comuns a Todas as Entidades (Entity)
-|Propriedade|Classe|Descrição                                                    |  
-|-----------|------|-------------------------------------------------------------|  
-|name       |str   |Nome da Entidade                                             |  
-|-----------|------|-------------------------------------------------------------|  
-|schema     |Schema| Objeto principal, do qual se pode acessar todas as entidades|  
+|Propriedade|Tipo de Retorno|Descrição                                                    |  
+|-----------|---------------|-------------------------------------------------------------|  
+|name       |str            |Nome da Entidade                                             |  
+|schema     |Schema         | Objeto principal, do qual se pode acessar todas as entidades|  
 
 ### Table
-|Propriedade|Classe      |Descrição                                                    |  
-|-----------|------------|-------------------------------------------------------------|  
-|columns    |List[Column]| Colunas da tabela                                           |  
-|primary_key|Column      | Coluna da tabela na qual está a restrição de chave primária |  
+|Propriedade|Tipo de Retorno  |Descrição                                                   |  
+|-----------|-----------------|------------------------------------------------------------|  
+|columns    |List[Column]     |Colunas da tabela                                           |  
+|triggers   |List[TableEntity]|Triggers da Tabela                                          |
+|primary_key|Column           |Coluna da tabela na qual está a restrição de chave primária |  
 
 ### Propriedades Comuns a Column e Trigger(TableEntity)
-|Propriedade|Classe|Descrição                   |  
-|-----------|------|----------------------------|  
-|table      |Table | Tabela associada à Entidade|  
+|Propriedade|Tipo de Retorno|Descrição                   |  
+|-----------|---------------|----------------------------|  
+|table      |Table          |Tabela associada à Entidade|  
 
 ### Column
-|Propriedade|Classe          |Descrição                                              |  
+|Propriedade|Tipo de Retorno |Descrição                                              |  
 |-----------|----------------|-------------------------------------------------------|  
-|primary_key|bool            | True se é a chave primária. False, caso contrário     |  
-|references |Table           | Tabela no qual esta coluna referencia, caso ela o faça|  
-|indexes    |List[Index]     | Índice associado à coluna                             |  
-|constraints|List[Constraint]| Restrições associadas à coluna                        |
+|primary_key|bool            |True se é a chave primária. False, caso contrário     |  
+|references |Table           |Tabela no qual esta coluna referencia, caso ela o faça|  
+|indexes    |List[Index]     |Índice associado à coluna                             |  
+|constraints|List[Constraint]|Restrições associadas à coluna                        |
 
 ### Propriedades Comuns a Index e Constraint(ColumnEntity)
-|Propriedade|Classe|Descrição                  |  
-|-----------|------|---------------------------|  
-|column     |column|Coluna associada à entidade|
+|Propriedade|Tipo de Retorno|Descrição                  |  
+|-----------|---------------|---------------------------|  
+|column     |Column         |Coluna associada à entidade|
