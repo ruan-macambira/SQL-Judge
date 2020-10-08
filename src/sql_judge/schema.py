@@ -94,7 +94,6 @@ class Entity:
     def __init__(self, group: str, schema: Schema, name: str, **custom_params):
         self._schema: Schema = schema
         self.__name: str = name
-        self.__group: str = group
         self._custom_params: dict = custom_params
         self.__name__ = group.capitalize()
 

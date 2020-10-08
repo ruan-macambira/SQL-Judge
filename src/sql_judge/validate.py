@@ -1,5 +1,5 @@
 """ Run the application """
-from typing import Callable, Dict, List, Iterable
+from typing import Callable, Dict, List
 from itertools import product
 from .schema import Schema, Entity
 from .validation_entity import needs_validation, canonical_name
@@ -10,8 +10,11 @@ def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: Lis
     report: dict = {}
     for group, entities in schema.entities().items():
         vals = validations.get(group, [])
-        combinations = ((entity, _guard_validation(validation, entity)) for entity, validation in product(entities, vals) if needs_validation(entity, ignore_tables))
-        result = ((entity.__name__, canonical_name(entity), message) for entity, message in combinations if message is not None)
+        combinations = ((entity, _guard_validation(validation, entity))
+            for entity, validation in product(entities, vals)
+            if needs_validation(entity, ignore_tables))
+        result = ((entity.__name__, canonical_name(entity), message)
+            for entity, message in combinations if message is not None)
         report[group] = group_by(result, lambda x: x[1], lambda x: x[2])
 
     return report
