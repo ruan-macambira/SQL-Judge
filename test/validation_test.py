@@ -13,10 +13,10 @@ def report(build_mock_conn):
         'Functions': [raise_validation]
     }
     schema = Schema(build_mock_conn({
-        'tables': {'table_one': {'columns': {'column_one': {}}}},
+        'tables': {'table_one': {'columns': {'column_one': {}}}, 'ignore': {}},
         'functions': {'function_one': {}}
     }))
-    return validate_entities(validations, [], schema)
+    return validate_entities(validations, ['ignore'], schema)
 
 def pass_validation(_table):
     return None
@@ -29,7 +29,7 @@ def raise_validation(_table):
 
 # validate
 def test_passed_tests_does_not_produce_outputs(report):
-    assert report['Columns'] == {}
+    assert 'Columns' not in report
 
 def test_failed_tests_inserts_message_to_the_output(report):
     assert report['Tables'] == {'table_one': ['ERROR']}

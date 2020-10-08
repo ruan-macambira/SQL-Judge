@@ -77,16 +77,16 @@ class Schema:
 
     def entities(self):
         """ Schema Entities """
-        return {
-            'Tables': self.tables,
-            'Columns': self.columns,
-            'Triggers': self.triggers,
-            'Indexes': self.indexes,
-            'Constraints': self.constraints,
-            'Sequences': self.sequences,
-            'Functions': self.functions,
-            'Procedures': self.procedures
-        }
+        return [
+            *self.tables,
+            *self.columns,
+            *self.triggers,
+            *self.indexes,
+            *self.constraints,
+            *self.sequences,
+            *self.functions,
+            *self.procedures
+        ]
 
 
 class Entity:

@@ -1,21 +1,33 @@
 """ Run the application """
 from typing import Callable, Dict, List
-from itertools import product
+from collections import namedtuple
 from .schema import Schema, Entity
 from .validation_entity import needs_validation, canonical_name
-from .util import group_by
+
+Fail = namedtuple('Fail', ['group', 'report_name', 'message'])
+
+def _titleize(group: str):
+    if group[-1] == 's':
+        return group
+    if group.lower() == 'index':
+        return 'Indexes'
+    return group.capitalize() + 's'
 
 def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: List[str], schema: Schema):
     """ Run the schema validation and return a report """
     report: dict = {}
-    for group, entities in schema.entities().items():
-        vals = validations.get(group, [])
-        combinations = ((entity, _guard_validation(validation, entity))
-            for entity, validation in product(entities, vals)
-            if needs_validation(entity, ignore_tables))
-        result = ((entity.__name__, canonical_name(entity), message)
-            for entity, message in combinations if message is not None)
-        report[group] = group_by(result, lambda x: x[1], lambda x: x[2])
+    for entity in schema.entities():
+        if not needs_validation(entity, ignore_tables):
+            continue
+        group = _titleize(entity.__name__)
+        vals = validations.get(_titleize(group), [])
+        _messages = (_guard_validation(validation, entity) for validation in vals)
+        messages = [message for message in _messages if message is not None]
+        if messages == []:
+            continue
+
+        report.setdefault(group, {})
+        report[group][canonical_name(entity)] = messages
 
     return report
 
