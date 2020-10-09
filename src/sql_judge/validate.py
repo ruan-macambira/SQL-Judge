@@ -15,19 +15,14 @@ def _titleize(group: str):
 
 def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: List[str], schema: Schema):
     """ Run the schema validation and return a report """
-    report: dict = {}
+    report: list = []
     for entity in schema.entities():
         if not needs_validation(entity, ignore_tables):
             continue
         group = _titleize(entity.__name__)
         vals = validations.get(_titleize(group), [])
-        _messages = (_guard_validation(validation, entity) for validation in vals)
-        messages = [message for message in _messages if message is not None]
-        if messages == []:
-            continue
-
-        report.setdefault(group, {})
-        report[group][canonical_name(entity)] = messages
+        messages = (_guard_validation(validation, entity) for validation in vals)
+        report += [Fail(group=group, report_name=canonical_name(entity), message=message) for message in messages if message is not None]
 
     return report
 

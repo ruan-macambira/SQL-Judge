@@ -3,6 +3,7 @@
 
 from sql_judge.export.cli import export_cli
 from sql_judge.export.cli import _entity_report
+from sql_judge.validate import Fail
 
 def test_generate_entity_report_one_message():
     assert _entity_report('table_one', ['message one']) == \
@@ -13,9 +14,7 @@ def test_generate_entity_report_two_messages():
         [' + table_one.column_one', '   + message one', '   + message two']
 
 def test_generate_report_one_entity():
-    report = {'Tables': {
-        'table_one': ['message one']
-    }}
+    report = [Fail('Tables', 'table_one', 'message one')]
 
     assert export_cli(report) == [
         'REPORT', '=' * 50, 'Tables:', '=' * 50,
@@ -23,10 +22,10 @@ def test_generate_report_one_entity():
     ]
 
 def test_generate_report_two_entities():
-    report = {'Columns': {
-        'table_one.column_one': ['message one'],
-        'table_one.column_two': ['message two']
-    }}
+    report = [
+        Fail('Columns', 'table_one.column_one', 'message one'),
+        Fail('Columns', 'table_one.column_two', 'message two')
+    ]
 
     assert export_cli(report) == [
         'REPORT', '=' * 50, 'Columns:', '=' * 50,
@@ -35,11 +34,10 @@ def test_generate_report_two_entities():
     ]
 
 def test_generate_report_two_distinct_entities():
-    report = {'Tables': {
-        'table_one': ['message one']
-    }, 'Columns': {
-        'table_one.column_one': ['message one']
-    }}
+    report = [
+        Fail('Tables', 'table_one', 'message one'),
+        Fail('Columns', 'table_one.column_one', 'message one')
+    ]
 
     assert export_cli(report) == [
         'REPORT', '=' * 50,

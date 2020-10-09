@@ -43,7 +43,7 @@ def constraint_starts_with_table_name(constraint):
 def trigger_is_wrong(_trigger):
     return "It's Wrong"
 
-def tests_validate_run(build_mock_conn):
+def test_validate_run(build_mock_conn):
     # Setting Up Mock Database
     info = {
         'tables': {

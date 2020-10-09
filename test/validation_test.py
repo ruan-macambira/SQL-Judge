@@ -4,6 +4,7 @@ from pytest import fixture
 from sql_judge.validate import validate_entities
 from sql_judge.schema import Schema
 from sql_judge import validates
+from sql_judge.util import find
 
 @fixture
 def report(build_mock_conn):
@@ -32,10 +33,11 @@ def test_passed_tests_does_not_produce_outputs(report):
     assert 'Columns' not in report
 
 def test_failed_tests_inserts_message_to_the_output(report):
-    assert report['Tables'] == {'table_one': ['ERROR']}
+    assert ('Tables', 'table_one', 'ERROR') in report
 
 def test_validations_that_raises_an_exception_insert_message_to_the_output(report):
-    assert report['Functions'] == {'function_one': ['validation "raise_validation" raised a Exception with the message "something wrong happened"']}
+    error_message = 'validation "raise_validation" raised a Exception with the message "something wrong happened"'
+    assert ('Functions', 'function_one', error_message) in report
 
 # validates
 @validates('table')
