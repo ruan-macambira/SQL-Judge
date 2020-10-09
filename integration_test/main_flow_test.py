@@ -65,12 +65,12 @@ def test_validate_run(build_mock_conn):
     config = Configuration(
         ignore_tables='metadata_info',
         validations={
-            'Tables': [table_has_tbl_as_prefix],
-            'Columns': [column_has_cl_as_prefix],
-            'Indexes': [index_starts_with_index],
-            'Constraints': [constraint_starts_with_table_name],
-            'Triggers': [trigger_is_wrong],
-            'Functions': [trigger_is_wrong], 'Procedures': [], 'Sequences': []
+            'table': [table_has_tbl_as_prefix],
+            'column': [column_has_cl_as_prefix],
+            'index': [index_starts_with_index],
+            'constraint': [constraint_starts_with_table_name],
+            'trigger': [trigger_is_wrong],
+            'function': [trigger_is_wrong]
         },
         connection=build_mock_conn(info)
     )
@@ -97,9 +97,7 @@ def test_validate_csv(build_mock_conn):
     config = Configuration(
         ignore_tables=[],
         validations={
-            'Tables': [lambda _: 'Validation'],
-            'Columns': [], 'Indexes': [], 'Constraints': [],
-            'Triggers': [], 'Functions':[], 'Procedures': [], 'Sequences': []
+            'table': [lambda _: 'Validation']
         },
         connection=build_mock_conn(tables_info),
         export='CSV')
@@ -107,4 +105,4 @@ def test_validate_csv(build_mock_conn):
     validations_result = validate_entities(config.validations, config.ignore_tables, schema)
     actual_report = formatted_output(validations_result, 'CSV')
 
-    assert 'Tables, Table, Validation' in actual_report
+    assert 'Table, Table, Validation' in actual_report

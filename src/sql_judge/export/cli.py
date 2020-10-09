@@ -22,7 +22,7 @@ Columns:
 ---------------------------------------
 """
 from typing import List, Dict
-from ..util import group_by
+from ..util import group_by, titleize
 
 def _entity_report(entity_name: str, messages: List[str]) -> List[str]:
     """ Serializes the messages of a given entity to the Report
@@ -51,10 +51,9 @@ def export_cli(report_hash: Dict[str, Dict[str, List[str]]]) -> List[str]:
             value -> A list of Strings containing the Validations Mistakes in the Report"""
     output = ['REPORT', '=' * 50]
 
-    # breakpoint()
     ygroups = group_by(report_hash, lambda x: x.group)
     groups = {key:group_by(value, lambda x: x.report_name, lambda x: x.message) for key, value in ygroups.items()}
 
     for entity_group, entities in groups.items():
-        output += _entities_report(entity_group, entities)
+        output += _entities_report(titleize(entity_group), entities)
     return output

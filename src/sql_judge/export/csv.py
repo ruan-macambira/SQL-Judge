@@ -1,7 +1,8 @@
 """ Generate Report in CSV """
 from typing import List, Dict
-def export_csv(report_hash: Dict[str, Dict[str, List[str]]]) -> List[str]:
+from ..validate import Fail
+def export_csv(report_hash: List[Fail]) -> List[str]:
     report = []
-    for report_line in report_hash:
-        report.append(', '.join(report_line))
+    for group, report_name, message in report_hash:
+        report.append(f'{group.capitalize()}, {report_name}, {message}')
     return report

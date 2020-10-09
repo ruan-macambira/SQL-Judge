@@ -22,3 +22,10 @@ def group_by(values: Iterable, key: Callable, transform: Callable = None):
         result.setdefault(_key, [])
         result[_key].append(transform(value))
     return result
+
+def titleize(group: str):
+    if group[-1] == 's':
+        return group
+    if group.lower() == 'index':
+        return 'Indexes'
+    return group.capitalize() + 's'
