@@ -36,7 +36,7 @@ class SerializedAdapter(AbstractAdapter):
         columns_info = []
         for table, column, column_params in self._table_cols():
             params = {k: v for k, v in column_params.items() if k not in FILTER_OUT_COLUMN_PARAMS}
-            columns_info.append({'table': table, 'name': column, **params})
+            columns_info.append({'table_name': table, 'name': column, **params})
         return columns_info
 
     def primary_keys(self) -> List[Tuple[str,str]]:
@@ -52,21 +52,21 @@ class SerializedAdapter(AbstractAdapter):
         indexes = []
         for table, column, params in self._table_cols():
             for index, index_params in params.get('indexes', {}).items():
-                indexes.append({'table': table, 'column': column, 'name': index, **index_params})
+                indexes.append({'table_name': table, 'column_name': column, 'name': index, **index_params})
         return indexes
 
     def constraints(self) -> List[Dict[str, str]]:
         constraints = []
         for table, column, params in self._table_cols():
             for constraint, cons_params in params.get('constraints', {}).items():
-                constraints.append({'table': table, 'column': column, 'name': constraint, **cons_params})
+                constraints.append({'table_name': table, 'column_name': column, 'name': constraint, **cons_params})
         return constraints
 
     def triggers(self) -> List[Dict[str, str]]:
         triggers = []
         for table, params in self._info.get('tables', {}).items():
             for trigger, trigger_params in params.get('triggers', {}).items():
-                triggers.append({'table': table, 'name': trigger, **trigger_params})
+                triggers.append({'table_name': table, 'name': trigger, **trigger_params})
         return triggers
 
     def _entities(self, group):

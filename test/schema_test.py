@@ -116,7 +116,7 @@ def test_column_indexes_returns_index_instances(schema):
 
 def test_column_entity_column_returns_column_instance(schema):
     column_entity = mschema.Constraint(
-        name='constraint_one', column='column_one',
-        table='table_one', schema=schema
+        name='constraint_one', column_name='column_one',
+        table_name='table_one', schema=schema
     )
     assert column_entity.column == schema.columns[0]

@@ -15,13 +15,13 @@ class Schema:
     def __references(self, params):
         ref_tuple = namedtuple('Reference', ['table', 'column', 'references'])
         references = (ref_tuple(*el) for el in self._references)
-        ref = find(references, lambda el: el.table == params['table'] and el.column == params['name'])
+        ref = find(references, lambda el: el.table == params['table_name'] and el.column == params['name'])
         return ref.references if ref is not None else None
 
     def __is_primary_key(self, params):
         pkey = find(
             self._primary_keys,
-            lambda el: el == (params['table'], params['name'])
+            lambda el: el == (params['table_name'], params['name'])
         )
         return pkey is not None
 
@@ -157,9 +157,9 @@ class Table(Entity):
 
 class TableEntity(Entity):
     """ Entity That belongs to a Table """
-    def __init__(self, group, name, table, schema, **custom_params):
+    def __init__(self, group, name, table_name, schema, **custom_params):
         super().__init__(group=group, name=name, schema=schema, **custom_params)
-        self._table = find(self._schema.tables, lambda el: el.name == table)
+        self._table = find(self._schema.tables, lambda el: el.name == table_name)
 
     @property
     def table(self) -> Table:
@@ -172,8 +172,8 @@ def Trigger(**params): # pylint: disable=invalid-name
 
 class Column(TableEntity):
     """ Column Entity """
-    def __init__(self, name, table, schema, primary_key=False, references=None, **custom_params):
-        super().__init__(group='column', name=name, table=table, schema=schema, **custom_params)
+    def __init__(self, name, table_name, schema, primary_key=False, references=None, **custom_params):
+        super().__init__(group='column', name=name, table_name=table_name, schema=schema, **custom_params)
         self.__primary_key: bool = primary_key
         self._references: str = references
 
@@ -207,11 +207,11 @@ class Column(TableEntity):
 
 class ColumnEntity(TableEntity):
     """ Entity that belongs to a Column """
-    def __init__(self, group, name, table, column, schema, **custom_params):
-        super().__init__(group=group, name=name, table=table, schema=schema, **custom_params)
+    def __init__(self, group, name, table_name, column_name, schema, **custom_params):
+        super().__init__(group=group, name=name, table_name=table_name, schema=schema, **custom_params)
         self._column = find(
             self._schema.columns,
-            lambda el: el.table == self.table and el.name == column
+            lambda el: el.table == self.table and el.name == column_name
         )
 
     @property
