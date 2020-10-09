@@ -1,5 +1,5 @@
 """ A Mock for a Database Adapter, used to run tests """
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Set
 from .adapter import AbstractAdapter
 
 FILTER_OUT_TABLE_PARAMS = {'triggers', 'columns'}
@@ -11,6 +11,9 @@ class SerializedAdapter(AbstractAdapter):
     (Not yet implemented)"""
     def __init__(self, info: dict):
         self._info = info
+
+        # caches which methods where called once
+        self._called: Set[str] = set()
 
     def tables(self) -> List[Dict[str, str]]:
         return [
@@ -33,7 +36,7 @@ class SerializedAdapter(AbstractAdapter):
         columns_info = []
         for table, column, column_params in self._table_cols():
             params = {k: v for k, v in column_params.items() if k not in FILTER_OUT_COLUMN_PARAMS}
-            columns_info.append({'table': table, 'name': column, **params})
+            columns_info.append({'table_name': table, 'name': column, **params})
         return columns_info
 
     def primary_keys(self) -> List[Tuple[str,str]]:
@@ -43,27 +46,27 @@ class SerializedAdapter(AbstractAdapter):
         ]
 
     def references(self) -> List[Tuple[str, str, str]]:
-        return [refs_info for refs_info in self._reference_columns()]
+        return list(self._reference_columns())
 
     def indexes(self) -> List[Dict[str, str]]:
         indexes = []
         for table, column, params in self._table_cols():
             for index, index_params in params.get('indexes', {}).items():
-                indexes.append({'table': table, 'column': column, 'name': index, **index_params})
+                indexes.append({'table_name': table, 'column_name': column, 'name': index, **index_params})
         return indexes
 
     def constraints(self) -> List[Dict[str, str]]:
         constraints = []
         for table, column, params in self._table_cols():
             for constraint, cons_params in params.get('constraints', {}).items():
-                constraints.append({'table': table, 'column': column, 'name': constraint, **cons_params})
+                constraints.append({'table_name': table, 'column_name': column, 'name': constraint, **cons_params})
         return constraints
 
     def triggers(self) -> List[Dict[str, str]]:
         triggers = []
         for table, params in self._info.get('tables', {}).items():
             for trigger, trigger_params in params.get('triggers', {}).items():
-                triggers.append({'table': table, 'name': trigger, **trigger_params})
+                triggers.append({'table_name': table, 'name': trigger, **trigger_params})
         return triggers
 
     def _entities(self, group):
@@ -77,3 +80,15 @@ class SerializedAdapter(AbstractAdapter):
 
     def sequences(self) -> List[Dict[str, str]]:
         return self._entities('sequences')
+
+    # adds a behavior to __getattribute__ that disallows calling a function more than once
+    # in order to guarantee that the program will avoid making multiple calls to the adapter
+    # when generating the schema
+    def __getattribute__(self, attr):
+        called = super().__getattribute__('_called')
+        if attr in called:
+            raise AttributeError(f'Property "{attr}" cannot be called more than once')
+
+        if attr[0] != '_':
+            called.add(attr)
+        return super().__getattribute__(attr)

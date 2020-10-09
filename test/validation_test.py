@@ -1,8 +1,22 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
-from sql_judge.validate import validate_entity, validate_entities
+from pytest import fixture
+from sql_judge.validate import validate_entities
 from sql_judge.schema import Schema
 from sql_judge import validates
+
+@fixture
+def report(build_mock_conn):
+    validations = validations={
+        'table': [fail_validation],
+        'column': [pass_validation],
+        'function': [raise_validation]
+    }
+    schema = Schema(build_mock_conn({
+        'tables': {'table_one': {'columns': {'column_one': {}}}, 'ignore': {}},
+        'functions': {'function_one': {}}
+    }))
+    return validate_entities(validations, ['ignore'], schema)
 
 def pass_validation(_table):
     return None
@@ -13,26 +27,16 @@ def fail_validation(_table):
 def raise_validation(_table):
     raise Exception('something wrong happened')
 
-# validate_entity
-def test_validate_entity_returns_a_list(table):
-    assert validate_entity(table, [pass_validation, fail_validation]) == ['ERROR']
-
-def test_validate_entity_no_messages_returns_empty_list(table):
-    assert validate_entity(table, [pass_validation]) == []
-
-def test_validate_entity_captures_exceptions_and_passes_to_messages(table):
-    assert validate_entity(table, [raise_validation]) == \
-        ['validation "raise_validation" raised a Exception with the message "something wrong happened"']
-
 # validate
-def test_validate_entities(build_mock_conn):
-    validations = validations={'Tables': [fail_validation], 'Columns': [pass_validation]}
-    ignore_tables = []
-    schema = Schema(build_mock_conn({'tables': {'table_one': {}}}))
-    assert validate_entities(validations, ignore_tables, schema) == {
-        'Tables': {'table_one': ['ERROR']}, 'Functions': {}, 'Procedures': {},
-        'Columns': {}, 'Triggers': {}, 'Indexes': {}, 'Constraints': {}, 'Sequences': {}
-    }
+def test_passed_tests_does_not_produce_outputs(report):
+    assert 'column' not in [line.group for line in report]
+
+def test_failed_tests_inserts_message_to_the_output(report):
+    assert ('table', 'table_one', 'ERROR') in report
+
+def test_validations_that_raises_an_exception_insert_message_to_the_output(report):
+    error_message = 'validation "raise_validation" raised a Exception with the message "something wrong happened"'
+    assert ('function', 'function_one', error_message) in report
 
 # validates
 @validates('table')

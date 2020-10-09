@@ -1,13 +1,9 @@
 {
     "adapter": {
-        "module": "adapter",
-        "class": "Adapter",
         "params": [],
         "named_params": {}
     },
-    "validations": {
-        "module": "validations"
-    },
+    "validations": {},
     "ignore_tables": [],
     "export": {
         "format": "CLI",

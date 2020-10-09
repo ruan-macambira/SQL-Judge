@@ -31,15 +31,20 @@ def adapter(build_mock_conn):
     })
 
 #pylint: disable=redefined-outer-name
+def test_adapter_cannot_call_the_same_method_twice(adapter):
+    with pytest.raises(AttributeError):
+        adapter.tables()
+        adapter.tables()
+
 def test_mock_adapter_tables(adapter):
     assert adapter.tables() == [{'name': 'table_one'}, {'name': 'table_two'}]
 
 def test_columns(adapter):
     assert adapter.columns() == [
-        {'table': 'table_one', 'name': 'column_one', 'type': 'int'},
-        {'table': 'table_one', 'name': 'column_two', 'type': 'int'},
-        {'table': 'table_two', 'name': 'column_three', 'type': 'int'},
-        {'table': 'table_two', 'name': 'column_four', 'type': 'int'}
+        {'table_name': 'table_one', 'name': 'column_one', 'type': 'int'},
+        {'table_name': 'table_one', 'name': 'column_two', 'type': 'int'},
+        {'table_name': 'table_two', 'name': 'column_three', 'type': 'int'},
+        {'table_name': 'table_two', 'name': 'column_four', 'type': 'int'}
     ]
 
 def test_primary_key(adapter):
@@ -59,19 +64,19 @@ def test_references(adapter):
 
 def test_indexes(adapter):
     assert adapter.indexes() == [
-        {'table': 'table_two', 'column': 'column_three', 'name': 'column_three_index'}
+        {'table_name': 'table_two', 'column_name': 'column_three', 'name': 'column_three_index'}
     ]
 
 def test_constraints(adapter):
     assert adapter.constraints() == [
-        {'table': 'table_one', 'column': 'column_one', 'name': 'column_one_constraint', 'type': 'primary_key'},
-        {'table': 'table_one', 'column': 'column_one', 'name': 'column_one_constraint_2', 'type': 'not null'}
+        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'column_one_constraint', 'type': 'primary_key'},
+        {'table_name': 'table_one', 'column_name': 'column_one', 'name': 'column_one_constraint_2', 'type': 'not null'}
     ]
 
 def test_triggers(adapter):
     assert adapter.triggers() == [
-        {'table': 'table_one', 'name': 'trigger_one', 'hook': 'hook_one'},
-        {'table': 'table_two', 'name': 'trigger_two', 'hook': 'hook_two'}
+        {'table_name': 'table_one', 'name': 'trigger_one', 'hook': 'hook_one'},
+        {'table_name': 'table_two', 'name': 'trigger_two', 'hook': 'hook_two'}
     ]
 
 def test_functions(build_mock_conn):
