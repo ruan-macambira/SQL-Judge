@@ -15,6 +15,11 @@ def setup_module():
     sys.path.append(BASEPATH + 'validations')
 
 @mark.integration_test
+def test_no_configuration(caplog):
+    sql_judge([])
+    assert caplog.record_tuples[0] == ('root', logging.ERROR, 'At least one configuration file must be provided')
+
+@mark.integration_test
 def test_empty_configuration(caplog):
     config = [BASEPATH + 'configs/empty_config.json']
     sql_judge(config)

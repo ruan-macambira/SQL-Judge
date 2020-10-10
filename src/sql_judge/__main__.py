@@ -9,10 +9,12 @@ from .schema import Schema
 from .export import formatted_output
 
 def default_config():
+    """default configuration file"""
     return pkg_resources.resource_string(
         'sql_judge.parse_configuration', 'default_configuration.json')
 
 def user_config(filename):
+    """user-provided configuration file"""
     try:
         with open(filename) as file:
             return file.read(None)
@@ -21,6 +23,10 @@ def user_config(filename):
 
 def sql_judge(filenames):
     """ Main function """
+    if len(filenames) == 0:
+        logging.error('At least one configuration file must be provided')
+        return []
+
     try:
         config_builder = ConfigurationBuilder.from_json(default_config())
         for filename in filenames:
