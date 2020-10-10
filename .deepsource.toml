@@ -1,11 +1,12 @@
 version = 1
 
 test_patterns = [
-    "test/**",
+    "test/**"
 ]
 
 exclude_patterns = [
-  "test/**"
+  "test/**",
+  "examples/**"
 ]
 
 [[analyzers]]
