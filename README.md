@@ -10,10 +10,9 @@ It achieves the first by making the validations pure python functions that are e
 The second is achieved by utilizing a independent, user-provided way to access the database (see [Adapters](#Adapters))
 
 ## Install
-_Will be written when it is properly uploaded to PyPi_
-
-## How it Works
-_TODO: write section_
+```
+pip install sql_judge
+```
 
 ## How to Use
 In order to use the tool, the user must pass a configuration file in JSON format. For example, if you have the configuration in a file called ```config.json```, it would execute the tool with:
