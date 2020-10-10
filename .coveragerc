@@ -2,6 +2,7 @@
 branch = True
 cover_pylib = False
 source_pkgs = sql_judge
+data_file = temp/.coverage
 
 [report]
 fail_under=90
