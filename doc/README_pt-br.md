@@ -127,7 +127,7 @@ def table_must_start_with_tbl(table):
 ```
 
 Cada função que é define uma validação precisa seguir algumas regras:
- - Precisa ser marcada com o decorator ```validates```, passando, como argumento, o grupo de entidades (Tables, Columns, Indexes, Constraints, Triggers, Functions, Procedures) no plural e com a primeira letra em maiúsculo;
+ - Precisa ser marcada com o decorator ```validates```, passando, como argumento, o grupo de entidades (table, column, index, constraint, trigger, function, procedure, seqeunce) em inglês, no singular, e com todas as letras em minúsculo;
  - Precisa possuir um, e apenas um, argumento, pelo qual a entidade será referenciada. É recomendado, mas não obrigatório, que o argumento possua o nome da entidade no qual ela valide;
  - Para que uma entidade seja considerada válida em uma dada validação, a validação executada na entidade deve retornar None;
  - Se uma validação retorna uma string, é considerada uma falha de validação, e o seu valor de retorno é utilizado como a mensagem explicando o porque da validação ter falhado, que será adicionado ao relatório.

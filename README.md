@@ -75,8 +75,7 @@ The idea is that, in the future, these adapters will be able to be passed throug
 ## Writing Validations
 In order to have the validations tested against the schema, the user must create a python module containing the validations, and which entities they should validate against. A validation is recognized by the program when a function is decorated with ```validates```. The program assumes each validation follow this behavior:
 
- - A validation must be decorated with ```validates```, passing the entity it will be validated against(ex.: Tables, Columns)
-   - Obs.: Currently, it needs to pass the entity capitalized and in plural - Tables and Indexes instead of table and index, for example.
+ - A validation must be decorated with ```validates```, passing the entity it will be validated against(ex.: table, column)
  - The given function must have one, and only one, parameter, that will represent the entity to be validated.
  - When given entity follows the rule present in the validation, the function must return None
  - When given entity does not follow the rule present in the validation, the function must return a string, preferably detailing the reason it failed, since the string will be passed to the report
@@ -88,9 +87,9 @@ from sql_judge import validates # Decorator that marks functions as validations
 
 def not_a_validation(): # Since it does not have the decorator, it is not recognized as a validation
 
-@validates('Tables') # Makes the function a validation of tables
+@validates('table') # Makes the function a validation of tables
 def table_must_start_with_tbl(table):
-  if table.name[0:4] != 'tbl_':
+  if table.name[0:4] == 'tbl_':
     return None # Return None if the entity follows the rule
 
   # Return a string containing the error when it does not follow the rule
