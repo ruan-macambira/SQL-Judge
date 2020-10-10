@@ -1,11 +1,11 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
-import pytest
+from pytest import fixture
 from sql_judge.serialized_adapter import SerializedAdapter
 from sql_judge.parse_configuration.build_configuration import ConfigurationBuilder
 from sql_judge.schema import Schema
 
-@pytest.fixture
+@fixture
 def build_configuration_builder():
     """ Configuration Builder Factory """
     def _build(
@@ -24,19 +24,19 @@ def build_configuration_builder():
         )
     return _build
 
-@pytest.fixture
+@fixture
 def configuration_builder(build_configuration_builder):
     """ Basic Configuration Builder """
     return build_configuration_builder()
 
-@pytest.fixture
+@fixture
 def build_schema_adapter():
     """ Mock Database schema Adapter Factory """
     def _build_schema_adapter(info):
         return SerializedAdapter(info)
     return _build_schema_adapter
 
-@pytest.fixture
+@fixture
 def schema_adapter(build_schema_adapter):
     """ A basic mock database schema adapter """
     return build_schema_adapter({
@@ -46,8 +46,12 @@ def schema_adapter(build_schema_adapter):
         }
     })
 
-@pytest.fixture
+@fixture
 def serial_schema():
     def _serial_schema(info: dict):
         return Schema(SerializedAdapter(info))
     return _serial_schema
+
+@fixture
+def stdout(capsys):
+    return capsys.readouterr().out
