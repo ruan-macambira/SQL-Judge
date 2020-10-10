@@ -10,8 +10,8 @@ from sql_judge.parse_configuration.build_configuration import \
 
 
 # ConfigurationBuilder.is_valid
-def test_empty_builder_is_invalid(empty_configuration_builder):
-    assert empty_configuration_builder.is_valid() is False
+def test_empty_builder_is_invalid():
+    assert ConfigurationBuilder().is_valid() is False
 
 def test_valid_builder(configuration_builder):
     assert configuration_builder.is_valid() is True

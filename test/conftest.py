@@ -1,11 +1,9 @@
 """ Fixtures """
 # pylint: disable=redefined-outer-name
 import pytest
-from sql_judge.adapter import AbstractAdapter
-from sql_judge import Configuration
 from sql_judge.serialized_adapter import SerializedAdapter
 from sql_judge.parse_configuration.build_configuration import ConfigurationBuilder
-from sql_judge.schema import Table, Schema
+from sql_judge.schema import Schema
 
 @pytest.fixture
 def build_configuration_builder():
@@ -27,51 +25,21 @@ def build_configuration_builder():
     return _build
 
 @pytest.fixture
-def table():
-    return Table(schema=None, name='table_name')
-
-@pytest.fixture
 def configuration_builder(build_configuration_builder):
     """ Basic Configuration Builder """
     return build_configuration_builder()
 
 @pytest.fixture
-def empty_configuration_builder():
-    """ Empty Configuration Builder """
-    return ConfigurationBuilder()
-
-# adapter.DBAdapter
-@pytest.fixture
-def db_adapter():
-    """ Basic DB Adapter """
-    return AbstractAdapter()
-
-@pytest.fixture
-def configuration():
-    VALIDATIONS = {
-        'Tables': [], 'Functions': [], 'Procedures': [], 'Sequences': [],
-        'Columns': [], 'Triggers': [], 'Constraints': [], 'Indexes': []
-    }
-    def _configuration(connection=None, validations=None, ignore_tables=None, export='CLI'):
-        return Configuration(
-            connection=connection,
-            validations={**VALIDATIONS, **(validations or {})},
-            ignore_tables=ignore_tables or [],
-            export=export
-        )
-    return _configuration
-
-@pytest.fixture
-def build_mock_conn():
+def build_schema_adapter():
     """ Mock Database schema Adapter Factory """
-    def _build_mock_conn(info):
+    def _build_schema_adapter(info):
         return SerializedAdapter(info)
-    return _build_mock_conn
+    return _build_schema_adapter
 
 @pytest.fixture
-def mock_conn(build_mock_conn):
+def schema_adapter(build_schema_adapter):
     """ A basic mock database schema adapter """
-    return build_mock_conn({
+    return build_schema_adapter({
         'tables': {
             'table_one': {'columns': {'column_one': {'type': 'text'}}},
             'table_two': {'columns': {'column_1': {'type': 'int'}, 'column_2': {'type': 'int'}}}

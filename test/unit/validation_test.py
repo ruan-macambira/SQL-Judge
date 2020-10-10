@@ -6,13 +6,13 @@ from sql_judge.schema import Schema
 from sql_judge import validates
 
 @fixture
-def report(build_mock_conn):
+def report(build_schema_adapter):
     validations = validations={
         'table': [fail_validation],
         'column': [pass_validation],
         'function': [raise_validation]
     }
-    schema = Schema(build_mock_conn({
+    schema = Schema(build_schema_adapter({
         'tables': {'table_one': {'columns': {'column_one': {}}}, 'ignore': {}},
         'functions': {'function_one': {}}
     }))

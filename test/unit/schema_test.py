@@ -3,8 +3,8 @@ import pytest
 from sql_judge import schema as mschema
 
 @pytest.fixture
-def query_schema(build_mock_conn):
-    return build_mock_conn({
+def query_schema(build_schema_adapter):
+    return build_schema_adapter({
         'tables': {
             'table_one': {
                 'columns': {

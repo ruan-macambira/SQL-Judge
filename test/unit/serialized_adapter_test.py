@@ -3,8 +3,8 @@
 import pytest
 
 @pytest.fixture
-def adapter(build_mock_conn):
-    return build_mock_conn({
+def adapter(build_schema_adapter):
+    return build_schema_adapter({
         'tables': {
             'table_one': {
                 'columns': {
@@ -53,8 +53,8 @@ def test_primary_key(adapter):
         ('table_two', 'column_three')
     ]
 
-def test_no_primary_key(build_mock_conn):
-    no_pkey = build_mock_conn({'tables': {'table_one': {'columns': {'column_one': {}}}}})
+def test_no_primary_key(build_schema_adapter):
+    no_pkey = build_schema_adapter({'tables': {'table_one': {'columns': {'column_one': {}}}}})
     assert no_pkey.primary_keys() == []
 
 def test_references(adapter):
@@ -79,8 +79,8 @@ def test_triggers(adapter):
         {'table_name': 'table_two', 'name': 'trigger_two', 'hook': 'hook_two'}
     ]
 
-def test_functions(build_mock_conn):
-    assert build_mock_conn({'functions': {'function_one': {}}}).functions() == [{'name': 'function_one'}]
+def test_functions(build_schema_adapter):
+    assert build_schema_adapter({'functions': {'function_one': {}}}).functions() == [{'name': 'function_one'}]
 
-def test_procedures(build_mock_conn):
-    assert build_mock_conn({'procedures': {'procedure_one': {}}}).procedures() == [{'name': 'procedure_one'}]
+def test_procedures(build_schema_adapter):
+    assert build_schema_adapter({'procedures': {'procedure_one': {}}}).procedures() == [{'name': 'procedure_one'}]
