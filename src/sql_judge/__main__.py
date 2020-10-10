@@ -21,7 +21,7 @@ def user_config(filename):
     except FileNotFoundError as fnf:
         raise RuntimeError(f"File '{filename}' could not be found") from fnf
 
-def sql_judge(filenames):
+def sql_judge(filenames) -> list:
     """ Main function """
     if len(filenames) == 0:
         logging.error('At least one configuration file must be provided')
@@ -38,6 +38,7 @@ def sql_judge(filenames):
         return formatted_output(report, config.export)
     except RuntimeError as err:
         logging.error(str(err))
+        return []
 
 if __name__ == '__main__':
     output = sql_judge(sys.argv[1:])
