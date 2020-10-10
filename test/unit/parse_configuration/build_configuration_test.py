@@ -85,8 +85,8 @@ def test_merging_a_builder_overwrites_validations_module_if_present(build_config
         .validations_module == 'overwritten_module'
 
 # ConfigurationBuilder.build
-def test_trying_to_build_an_invalid_configuration_raises_value_error(build_configuration_builder):
-    with pytest.raises(ValueError):
+def test_trying_to_build_an_invalid_configuration_raises_runtime_error(build_configuration_builder):
+    with pytest.raises(RuntimeError):
         build_configuration_builder(adapter_module=None).build()
 
 @mock.patch('sql_judge.parse_configuration.build_configuration.importlib')
@@ -111,3 +111,7 @@ def test_from_json_parses_json_string_and_generates_a_configuration_builder():
 def test_from_json_succeeds_even_with_an_empty_config():
     json_str = json.dumps({})
     assert ConfigurationBuilder.from_json(json_str) == ConfigurationBuilder()
+
+def test_from_json_raises_runtime_error_when_it_provides_an_invalid_json():
+    with pytest.raises(RuntimeError):
+        assert ConfigurationBuilder.from_json('')

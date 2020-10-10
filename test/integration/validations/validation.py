@@ -2,13 +2,9 @@
 # pylint: disable=missing-function-docstring
 from sql_judge import validates
 
-@validates('table')
-def validate_table(_table):
-    return None
-
-@validates('column')
-def validate_column(_column):
-    return None
+def is_invalid(entity):
+    if not entity.valid:
+        return 'Invalid'
 
 @validates('invalid_entity')
 def validate_invalid_entity(_invalid_entity):
@@ -16,3 +12,11 @@ def validate_invalid_entity(_invalid_entity):
 
 def not_a_validation():
     return None
+
+@validates('table')
+def val_table(table):
+    return is_invalid(table)
+
+@validates('column')
+def val_column(column):
+    return is_invalid(column)

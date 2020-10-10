@@ -19,11 +19,15 @@ class ConfigurationBuilder:
     ignore_tables: List[str] = field(default_factory=list)
     export_format: Optional[str] = None
     export_output: Optional[str] = None
+    _invalidation: Optional[str] = None
 
     @classmethod
     def from_json(cls, json_str):
         """Generates an instance based from a JSON string"""
-        options = json.loads(json_str)
+        try:
+            options = json.loads(json_str)
+        except json.JSONDecodeError as jserr:
+            raise RuntimeError('Error while parsing configuration') from jserr
         adapter_options = options.get('adapter', {})
         validation_options = options.get('validations', {})
         export_options = options.get('export', {})
@@ -52,12 +56,16 @@ class ConfigurationBuilder:
     def is_valid(self):
         """Checks validity of Configuration Builder"""
         if self.adapter_module is None:
+            self._invalidation = 'Adapter Module not provided'
             return False
         if self.adapter_class is None:
+            self._invalidation = 'Adapter Class not provided'
             return False
         if self.validations_module is None:
+            self._invalidation = 'Validations Module not provided'
             return False
         if self.export_format is None:
+            self._invalidation = 'Export Format not provided'
             return False
         return True
 
@@ -73,7 +81,7 @@ class ConfigurationBuilder:
     def build(self) -> Configuration:
         """Use the internal parameters to generate a Configuration Instance"""
         if not self.is_valid():
-            raise ValueError
+            raise RuntimeError(self._invalidation)
         return Configuration(
             connection=self._adapter(),
             validations=self._validations(),

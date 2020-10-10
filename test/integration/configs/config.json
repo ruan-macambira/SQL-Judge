@@ -5,7 +5,5 @@
         "params": ["test/integration/schemas/schema.json"]
     }, "validations": {
         "module": "validation"
-    }, "export": {
-        "format": "CSV"
-    }
+    }, "ignore_tables": ["skippable_table"]
 }

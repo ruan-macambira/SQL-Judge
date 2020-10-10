@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 """ Main Module """
 import sys
+import logging
 import pkg_resources
 from .validate import validate_entities
 from .parse_configuration.build_configuration import ConfigurationBuilder
@@ -12,19 +13,25 @@ def default_config():
         'sql_judge.parse_configuration', 'default_configuration.json')
 
 def user_config(filename):
-    with open(filename) as file:
-        return file.read(None)
+    try:
+        with open(filename) as file:
+            return file.read(None)
+    except FileNotFoundError as fnf:
+        raise RuntimeError(f"File '{filename}' could not be found") from fnf
 
 def sql_judge(filenames):
     """ Main function """
-    config_builder = ConfigurationBuilder.from_json(default_config())
-    for filename in filenames:
-        config_builder = config_builder.merge(ConfigurationBuilder.from_json(user_config(filename)))
+    try:
+        config_builder = ConfigurationBuilder.from_json(default_config())
+        for filename in filenames:
+            config_builder = config_builder.merge(ConfigurationBuilder.from_json(user_config(filename)))
 
-    config = config_builder.build()
-    schema = Schema(config.connection)
-    report = validate_entities(config.validations, config.ignore_tables, schema)
-    return formatted_output(report, config.export)
+        config = config_builder.build()
+        schema = Schema(config.connection)
+        report = validate_entities(config.validations, config.ignore_tables, schema)
+        return formatted_output(report, config.export)
+    except RuntimeError as err:
+        logging.error(str(err))
 
 if __name__ == '__main__':
     output = sql_judge(sys.argv[1:])

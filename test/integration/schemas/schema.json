@@ -1,31 +1,34 @@
 {
     "tables": {
-        "table_one": {
+        "valid_table_one": {
+            "valid": true,
             "columns": {
-                "column_one": {
-                    "type": "integer",
-                    "lenght": 10,
-                    "primary_key": true
-                }, "column_two": {
-                    "type": "varchar",
-                    "length": 150
-                }, "column_three": {
-                    "type": "integer",
-                    "length": 10,
-                    "references": "table_two"
+                "id": {
+                    "valid": true, "primary_key": true,
+                    "indexes": {"valid_index": {"valid": true}},
+                    "constraints": {"valid_constraint": {"valid": true}}
                 }
-            },
-        "table_two": {
+            }, "triggers": {
+                "valid_triggger": {"valid": true}
+            }
+        }, "valid_table_two": {
+            "valid": true,
             "columns": {
-                "column_one": {
-                    "type": "integer",
-                    "length": 10,
-                    "primary_key": true
+                "table_one_column": {
+                    "valid": true,
+                    "references": "valid_table_one"
                 }
             }
-        }
+        }, "invalid_table": {"valid": false},
+        "skippable_table": {
+            "valid": false,
+            "columns": {"skippable_column": {"valid": false}}
         }
     }, "sequences": {
-        "sequence_one": {}
+        "valid_sequence": {"valid": true}
+    }, "functions": {
+        "valid_function": {"valid": true}
+    }, "procedures": {
+        "valid_procedure": {"valid": true}
     }
 }
