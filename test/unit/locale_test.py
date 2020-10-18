@@ -1,12 +1,15 @@
 # pylint: disable=C
+from io import StringIO
 from pytest import raises
 from sql_judge import locale
 
 def setup_module():
-    locale.load_labels({
-        'key': 'value',
-        'nested_key': {'key': 'nested_value'}
-    })
+    toml_str = StringIO("""
+    key = "value"
+    [nested_key]
+    key = "nested_value"
+    """)
+    locale.load_toml(toml_str)
 
 def test_get_existing_key():
     assert locale.translate('key') == 'value'

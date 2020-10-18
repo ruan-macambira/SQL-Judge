@@ -1,6 +1,11 @@
-_LOCALE: dict = {}
+from typing import TextIO, MutableMapping
+import toml
+_LOCALE: MutableMapping = {}
 
-def load_labels(labels: dict):
+def load_toml(ftoml: TextIO):
+    load_labels(toml.load(ftoml))
+
+def load_labels(labels: MutableMapping):
     global _LOCALE #pylint: disable = global-statement
     _LOCALE = labels
 
