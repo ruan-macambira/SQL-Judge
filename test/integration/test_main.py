@@ -34,6 +34,19 @@ def test_non_existent_file(caplog):
     assert caplog.record_tuples[0] == ('root', logging.ERROR, "File 'test/integration/configs/nonexistent_config.json' could not be found")
 
 @mark.integration_test
+def test_nonexisten_plugin(caplog):
+    config = [BASEPATH + 'configs/plugin_does_not_exist.json']
+    sql_judge(config)
+    assert caplog.record_tuples[0] == ('root', logging.ERROR, "Could not find plugin with 'nonexistent_pluging' ID")
+
+@mark.integration_test
+def test_plugin_adapter():
+    config = [BASEPATH + 'configs/plugin_config.json']
+    assert sql_judge(config) == [
+        'REPORT', '=' * 50, 'table:', '=' * 50, ' + invalid_table', '   + Invalid', '-' * 40
+    ]
+
+@mark.integration_test
 def test_cli_export():
     config = [BASEPATH + 'configs/config.json']
     assert sql_judge(config) == [

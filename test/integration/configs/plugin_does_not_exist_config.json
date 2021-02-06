@@ -1,0 +1,8 @@
+{
+    "adapter": {
+        "plugin": "nonexistent_adapter",
+        "params": ["test/integration/schemas/schema.json"]
+    }, "validations": {
+        "module": "validation"
+    }, "ignore_tables": ["skippable_table"]
+}
