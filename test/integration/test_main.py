@@ -19,7 +19,7 @@ def test_no_configuration(caplog):
 def test_empty_configuration(caplog):
     config = [BASEPATH + 'configs/empty_config.json']
     sql_judge(config)
-    assert caplog.record_tuples[0] == ('root', logging.ERROR, 'Adapter Module not provided')
+    assert caplog.record_tuples[0] == ('root', logging.ERROR, 'Builder could not resolve Adapter Type')
 
 @mark.integration_test
 def test_invalid_configuration(caplog):
@@ -35,9 +35,9 @@ def test_non_existent_file(caplog):
 
 @mark.integration_test
 def test_nonexisten_plugin(caplog):
-    config = [BASEPATH + 'configs/plugin_does_not_exist.json']
+    config = [BASEPATH + 'configs/plugin_does_not_exist_config.json']
     sql_judge(config)
-    assert caplog.record_tuples[0] == ('root', logging.ERROR, "Could not find plugin with 'nonexistent_pluging' ID")
+    assert caplog.record_tuples[0] == ('root', logging.ERROR, "Could not find plugin with 'nonexistent_adapter' ID")
 
 @mark.integration_test
 def test_plugin_adapter():

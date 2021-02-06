@@ -115,8 +115,11 @@ class PluggableAdapterBuilder(AbstractAdapterBuilder):
 
     def build(self):
         iter_adapter_plugins = pkg_resources.iter_entry_points('sql_judge.adapter')
-        plugin_module = next(p for p in iter_adapter_plugins if p.name == self.plugin).load()
-        return getattr(plugin_module, 'Adapter')(*self.params, **self.named_params)
+        try:
+            plugin_module = next(p for p in iter_adapter_plugins if p.name == self.plugin).load()
+            return getattr(plugin_module, 'Adapter')(*self.params, **self.named_params)
+        except StopIteration as stopit:
+            raise RuntimeError(f"Could not find plugin with '{self.plugin}' ID") from stopit
 
 def from_json(options):
     if 'class' in options:
