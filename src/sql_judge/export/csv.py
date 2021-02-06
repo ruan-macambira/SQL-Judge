@@ -1,5 +1,12 @@
-""" Generate Report in CSV """
-from typing import List, Dict
+""" Generate the Report Output in CSV format
+
+Report Example:
+Table, table_one, message one
+Table, table_one, message two
+Column, table_one.column_one, message one
+Column, table_one.column_two, message one
+"""
+from typing import List
 from ..validate import Fail
 def export_csv(report_hash: List[Fail]) -> List[str]:
     report = []
