@@ -1,3 +1,4 @@
+# pylint: disable=C
 from setuptools import setup
 
 setup(

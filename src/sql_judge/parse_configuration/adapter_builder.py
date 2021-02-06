@@ -1,9 +1,11 @@
+"""Confinguration Builder for Adapter Options"""
 from abc import ABC, abstractmethod
 from typing import List, Dict
 import importlib
 import pkg_resources
 
-class AbstractAdapterBuilder(ABC):
+class AdapterBuilder(ABC):
+    """Abstract Class for retrieving the adapter used to fetch DB schema data"""
     params: List[str]
     named_params: Dict[str, str]
 
@@ -14,14 +16,14 @@ class AbstractAdapterBuilder(ABC):
 
     @classmethod
     @abstractmethod
-    def elligible(cls, config):
+    def elligible(cls, config) -> bool:
         """Checks whether the config matches with the type"""
 
     @abstractmethod
-    def asdict(self):
+    def asdict(self) -> dict:
         """Convert Params to a Dict"""
 
-    def merge(self, other):
+    def merge(self, other) -> 'AdapterBuilder':
         """Merge two Adapter Options"""
         keys = {*self.asdict(), *other.asdict()}
         ret = {}
@@ -34,16 +36,19 @@ class AbstractAdapterBuilder(ABC):
         """Build Configuration Adapter Param"""
 
     @abstractmethod
-    def is_valid(self):
+    def is_valid(self) -> bool:
         """Checks validity"""
 
     def __eq__(self, other):
         return self.asdict() == other.asdict()
 
-    def error(self):
+    def error(self) -> str:
+        """Invalid builder message"""
         return self._invalidation
 
-class UnresolvedAdapterBuilder(AbstractAdapterBuilder):
+class UnresolvedAdapterBuilder(AdapterBuilder):
+    """Similar to a Null Object, it is instantiaded in a 'from_json' call whenever
+    it cannot resolve to an appended or pluggable type."""
     def __init__(self, params = None, named_params = None, **_unresolved):
         super().__init__(params, named_params)
 
@@ -61,7 +66,8 @@ class UnresolvedAdapterBuilder(AbstractAdapterBuilder):
     def build(self):
         raise RuntimeError('Cannot Build an Unresolved Adapter Builder')
 
-class AppendedAdapterBuilder(AbstractAdapterBuilder):
+class AppendedAdapterBuilder(AdapterBuilder):
+    """Adapter Builder for modules used in Python discovery"""
     def __init__(self, module, klass, params = None, named_params = None):
         super().__init__(params, named_params)
         self.module = module
@@ -92,7 +98,8 @@ class AppendedAdapterBuilder(AbstractAdapterBuilder):
         adapter_module = importlib.import_module(self.module)
         return getattr(adapter_module, self.klass)(*self.params, **self.named_params)
 
-class PluggableAdapterBuilder(AbstractAdapterBuilder):
+class PluggableAdapterBuilder(AdapterBuilder):
+    """Adapter Builder for modules that are plugins"""
     def __init__(self, plugin, params = None, named_params = None):
         super().__init__(params, named_params)
         self.plugin = plugin
@@ -122,6 +129,8 @@ class PluggableAdapterBuilder(AbstractAdapterBuilder):
             raise RuntimeError(f"Could not find plugin with '{self.plugin}' ID") from stopit
 
 def from_json(options):
+    """AdapterBuilder factory made out of a dict.
+    The Type of Adapter depends on the keys the config holds"""
     if 'class' in options:
         options['klass'] = options['class']
         del options['class']
@@ -131,4 +140,5 @@ def from_json(options):
     return UnresolvedAdapterBuilder(**options)
 
 def default_adapter():
+    """Default Adapter Configuration. Alias for an adapter that has no properties"""
     return from_json({})

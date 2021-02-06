@@ -4,7 +4,7 @@ Object to use in the rest of the proccess """
 import importlib
 import json
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict
+from typing import List, Optional
 from .. import Configuration
 from . import schema_validations, adapter_builder
 
@@ -12,7 +12,7 @@ from . import schema_validations, adapter_builder
 @dataclass
 class ConfigurationBuilder:
     """Group, Validate and Build the Configurations parameters"""
-    adapter: adapter_builder.AbstractAdapterBuilder = field(default_factory=adapter_builder.default_adapter)
+    adapter: adapter_builder.AdapterBuilder = field(default_factory=adapter_builder.default_adapter)
     validations_module: Optional[str] = None
     ignore_tables: List[str] = field(default_factory=list)
     export_format: Optional[str] = None
