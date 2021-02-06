@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
 import importlib
+import pkg_resources
 
 class AbstractAdapterBuilder(ABC):
     params: List[str]
@@ -91,11 +92,37 @@ class AppendedAdapterBuilder(AbstractAdapterBuilder):
         adapter_module = importlib.import_module(self.module)
         return getattr(adapter_module, self.klass)(*self.params, **self.named_params)
 
+class PluggableAdapterBuilder(AbstractAdapterBuilder):
+    def __init__(self, plugin, params = None, named_params = None):
+        super().__init__(params, named_params)
+        self.plugin = plugin
+
+    @classmethod
+    def elligible(cls, config):
+        return 'plugin' in config
+
+    def is_valid(self):
+        if self.plugin is None:
+            return False
+        return True
+
+    def asdict(self):
+        return {
+            'plugin': self.plugin,
+            'params': self.params,
+            'named_params': self.named_params
+        }
+
+    def build(self):
+        iter_adapter_plugins = pkg_resources.iter_entry_points('sql_judge.adapter')
+        plugin_module = next(p for p in iter_adapter_plugins if p.name == self.plugin).load()
+        return getattr(plugin_module, 'Adapter')(*self.params, **self.named_params)
+
 def from_json(options):
     if 'class' in options:
         options['klass'] = options['class']
         del options['class']
-    for builder in (AppendedAdapterBuilder,):
+    for builder in (AppendedAdapterBuilder,PluggableAdapterBuilder):
         if builder.elligible(options):
             return builder(**options)
     return UnresolvedAdapterBuilder(**options)

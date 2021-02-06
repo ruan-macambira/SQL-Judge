@@ -48,7 +48,7 @@ class ConfigurationBuilder:
     def is_valid(self):
         """Checks validity of Configuration Builder"""
         if not self.adapter.is_valid():
-            self._invalidation = self.adapter._invalidation
+            self._invalidation = self.adapter.error()
             return False
         if self.validations_module is None:
             self._invalidation = 'Validations Module not provided'

@@ -7,6 +7,7 @@ import pytest
 from sql_judge.parse_configuration.adapter_builder import (
     UnresolvedAdapterBuilder,
     AppendedAdapterBuilder,
+    PluggableAdapterBuilder,
     default_adapter,
     from_json
 )
@@ -24,6 +25,10 @@ def build_appended_adapter_builder(build_adapter_builder):
 @pytest.fixture
 def appended_adapter_builder(build_appended_adapter_builder):
     return build_appended_adapter_builder()
+
+@pytest.fixture
+def pluggable_adapter_builer():
+    return from_json({'plugin': 'plugin'})
 
 # default adapter
 def test_default_adapter_is_unresolved():
@@ -81,3 +86,20 @@ def test_merge_appended_adapter(build_appended_adapter_builder):
     assert build_appended_adapter_builder() \
                 .merge(build_appended_adapter_builder(module='override')) \
                 .module == 'override'
+
+# Pluggable Adapter
+def test_adapter_with_plugin_is_pluggable():
+    assert isinstance(from_json({'plugin':'plugin'}), PluggableAdapterBuilder)
+
+def test_pluggable_adapter_validity(pluggable_adapter_builer):
+    assert pluggable_adapter_builer.is_valid()
+
+def test_pluggable_adapter_is_invalid_with_no_plugin_id_provided():
+    assert not from_json({'plugin': None}).is_valid()
+
+def test_pluggable_adapter_as_dict(pluggable_adapter_builer):
+    assert pluggable_adapter_builer.asdict() == {
+        'plugin': 'plugin',
+        'params': [],
+        'named_params': {}
+    }
