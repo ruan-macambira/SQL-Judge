@@ -39,6 +39,18 @@ def test_from_json_substitutes_class_with_klass():
     assert from_json({'module': 'module', 'class':'override'}).klass == 'override'
 
 
+# Adapter Builder
+def test_merging_builders_appends_its_params(build_adapter_builder):
+    builder_a = build_adapter_builder(params=[1, 2])
+    builder_b = build_adapter_builder(params=[3,4])
+    assert builder_a.merge(builder_b).params == [3,4]
+
+def test_merginf_builders_appends_its_named_params(build_adapter_builder):
+    builder_a = build_adapter_builder(named_params={'x': 1})
+    builer_b = build_adapter_builder(named_params={'y': 2})
+    assert builder_a.merge(builer_b).named_params == {'x': 1, 'y': 2}
+
+
 # Unresolved Adapter Builder
 def test_empty_adapter_is_unresolved(build_adapter_builder):
     assert isinstance(build_adapter_builder(), UnresolvedAdapterBuilder)
@@ -54,8 +66,8 @@ def test_unresolved_adapter_invalid_message(unresolved_adapter):
     assert unresolved_adapter.error() == \
         'Builder could not resolve Adapter Type'
 
-def test_unresolved_adapter_converts_into_an_empty_dict(unresolved_adapter):
-    assert unresolved_adapter.asdict() == {}
+def test_unresolved_adapter_converts_into_an_dict_with_params_and_named_params_only(unresolved_adapter):
+    assert unresolved_adapter.asdict() == {'params': [], 'named_params': {}}
 
 def test_unresolved_adapter_cannot_build(unresolved_adapter):
     with pytest.raises(RuntimeError):

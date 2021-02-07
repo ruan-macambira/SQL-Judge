@@ -28,8 +28,11 @@ class AdapterBuilder(ABC):
         keys = {*self.asdict(), *other.asdict()}
         ret = {}
         for key in keys:
+            if key == 'named_params':
+                continue
             ret[key] = other.asdict().get(key) or self.asdict().get(key)
-        return from_json(ret)
+        ret['named_params'] = {**self.named_params, **other.named_params}
+        return from_json(ret)   
 
     @abstractmethod
     def build(self):
@@ -61,7 +64,7 @@ class UnresolvedAdapterBuilder(AdapterBuilder):
         return False
 
     def asdict(self):
-        return {}
+        return {'params': self.params, 'named_params': self.named_params}
 
     def build(self):
         raise RuntimeError('Cannot Build an Unresolved Adapter Builder')

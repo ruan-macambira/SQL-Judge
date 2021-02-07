@@ -86,7 +86,7 @@ def test_merging_a_builder_overwrites_validations_module_if_present(build_config
         .merge(build_configuration_builder(validations_module='overwritten_module')) \
         .validations_module == 'overwritten_module'
 
-ConfigurationBuilder.build
+# ConfigurationBuilder.build
 def test_trying_to_build_an_invalid_configuration_raises_runtime_error(build_configuration_builder):
     with pytest.raises(RuntimeError):
         build_configuration_builder(adapter_module=None).build()
