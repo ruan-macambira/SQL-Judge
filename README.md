@@ -57,7 +57,7 @@ The SQL Judge configuration has the following format, with a more detailed infor
  - params *(optional)*: unnamed parameters passed to the Adapter constuctor
  - named_params *(optional)*: named parameters passed to the Adapter constructor
 
-_Obs.: SQL Judge allows to create and use plug-ins for the Adapter. More info on how to develop and use in [Developing Adapter Plug-ins for SQL Judge](/doc/en/Adapter-Plug-ins.md)_
+_Obs.: SQL Judge allows to create and use plug-ins for the Adapter. More info on how to develop and use in [Developing Adapter Plug-ins for SQL Judge](/doc/en/Adapter-Plugins.md)_
 
 **validations**: Options regarding the schema validations:
  - module *(mandatory)*: The module containing the validations functions

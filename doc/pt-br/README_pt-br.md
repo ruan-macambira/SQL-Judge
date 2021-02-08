@@ -64,7 +64,7 @@ As configurações de utilização são passadas através de arquivos no formato
  - params *(opcional)*: Lista de argumentos posicionais para serem enviadas ao construtor do adaptador
  - named_params *(opcional)*: Hash com argumentos para serem enviados como argumentos nomeados ao construtor do adaptador
 
-_Obs.: SQL Judge permite que se crie e utilize plug-ins para o Adaptador. Mais informações em [Desenvolvendo Plug-ins de Adaptador para SQL Judge]((doc/pt-br/Adapter-Plug-ins_pt-br.md)_
+_Obs.: SQL Judge permite que se crie e utilize plug-ins para o Adaptador. Mais informações em [Desenvolvendo Plug-ins de Adaptador para SQL Judge]((doc/pt-br/Adapter-Plugins_pt-br.md)_
 
 **validations**: Opções relacionadas às validações. Instruções de como criar as validações mais abaixo.
  - module *(obrigatório)*: Módulo em que as validações se encontra.
