@@ -17,14 +17,26 @@ Fez-se necessário que fossem desenvolvidos uma série de validações automatiz
 
 
 ## Instalação
- - Faça o clone do repositório
- - No terminal escreva ```python setup.py bdist_wheel```
- - Novamente no terminal ```pip install dist/[ARQUIVO_WHEEL].whl```, onde ARQUIVO_WHEEL é o nome do arquivo que foi criado na pasta dist/
+```
+pip install sql_judge
+```
 
 ## Como funciona
-_TODO: escrever seção_
+O usuário passa para o programa um arquivo de configuração no formato JSON. Por exemplo, se o seu arquivo de configuração é ```configuração.json```, seria exececutado pelo comando:
 
-## Como utilizar
+```bash
+python -m sql_judge configuração.json
+```
+
+Todas as configurações devem ser passadas através de um arquivo de configuração. O programa, no entanto, aceita que se passe mais de um arquivo de configura, que se complementem:
+
+```bash
+python -m sql_judge configuração.json outra_configuração.json
+```
+
+No caso de conflito de informações nos arquivos, as configurações presentes no arquivo mais à direita têm preferência.
+
+## configurando um arquivo de configuração
 As configurações de utilização são passadas através de arquivos no formato JSON, que seguem o padrão abaixo:
 
 ```json
@@ -50,7 +62,7 @@ As configurações de utilização são passadas através de arquivos no formato
  - module *(obrigatório)*: Nome do módulo em que a classe do adaptador se encontra. *Planeja-se no futuro que o usuário possa passar um arquivo qualquer, que independa do sys.path do interpretador*
  - class *(obrigatório)*: Nome da classe do adaptador
  - params *(opcional)*: Lista de argumentos posicionais para serem enviadas ao construtor do adaptador
- - named_params *(opcionais)*: Hash com argumentos para serem enviados como argumentos nomeados ao construtor do adaptador
+ - named_params *(opcional)*: Hash com argumentos para serem enviados como argumentos nomeados ao construtor do adaptador
 
 **validations**: Opções relacionadas às validações. Instruções de como criar as validações mais abaixo.
  - module *(obrigatório)*: Módulo em que as validações se encontra.
@@ -59,51 +71,6 @@ As configurações de utilização são passadas através de arquivos no formato
 
 **export**: Formato de exportação do relatório. *No momento ele sempre exporta em stdout*
  - format (*opcional, possível: [CLI, CSV], padrão: CLI*)
-
-É possível utilizar múltiplos arquivos de configuração. Se houver um conflito entre dois arquivos atribuem um valor para a mesma opção, a prioridade é do arquivo que foi especificado por último.
-
-O output é enviado para stdout, independente do formato em que é definido a exportação, mudando apenas a formatação da saída. Caso execute:
-
-``` cd examples; python -m sql_judge config.json special_config.json ```
-
-O output será:
-
-```
-REPORT
-==================================================
-Tables:
-==================================================
- + purchases
-   + Table should start with "TBL_"
-----------------------------------------
-Functions:
-==================================================
-Procedures:
-==================================================
-Columns:
-==================================================
- + tbl_product.product_name
-   + varchar column should start with VC_
-----------------------------------------
- + purchases.product_id
-   + Since it' a foreign key, column should be named "PRODUCT_ID"
-----------------------------------------
- + tbl_price_history.product_id
-   + Since it' a foreign key, column should be named "PRODUCT_ID"
-----------------------------------------
- + tbl_price_history.history_price
-   + real column should start with RL_
-----------------------------------------
-Triggers:
-==================================================
- + tbl_price_history.alter_product_price
-   + Trigger name should start with "TG_"
-----------------------------------------
-Indexes:
-==================================================
-Constraints:
-==================================================
-```
 
 ## Desenvolvendo um adaptador de banco de Dados
 A ferramenta de validação do Schema é meramente uma maneira de validar um schema de banco de dados SQL. Ele não possui nativamente uma maneira de se comunicar com um banco de Dados, ficando para o usuário a tarefa de providenciar um meio do programa obter o schema. O sistema não assume nada sobre a fonte dos dados, não precisando nem mesmo ser extraído de um banco de dados real. Contanto que ele implemente corretamente a interface do objeto, todas as entidades do schema hão de ser reproduzidas no sistema. Mais informações de como implementar um adaptador no arquivo contendo sua interface (sql_judge/adapter.py)
@@ -119,7 +86,7 @@ from sql_judge import validates # Decorator que marca as funções
 def not_a_validation(): # Validador não reconhece como uma validação
   pass
 
-@validates('Tables') # Define que a função irá validar tabelas
+@validates('table') # Define que a função irá validar tabelas
 def table_must_start_with_tbl(table):
   if table.name[0:4] == 'tbl_':
     return None # Válida
@@ -142,10 +109,6 @@ O montador de Schema tem suporte para as seguintes entidades de um banco de Dado
  - Índices (atualmente ligado a colunas);
  - Restrições;
  - Sequências.
-
-Está em planos para ter suporte:
- - Visões;
- - Visões Materializadas;
 
 Cada Entidade do schema possui suas propriedades próprias (especificadas abaixo), bem como as relações que esta possui com outras entidades. Por Exemplo, a Entidade tabela possui acesso às colunas que lhe pertencem, bastando apenas que seja utilizadas ```table.columns```, sendo ```table``` o objeto que representaria a tabela em questão. Todas as propriedades das entidades são definidas como properties do objeto, portanto devem ser invocadas apenas pelo seu nome, sem utilizar a sintaxe de invocação de método, i.e ao invés de utilizar ```entity.name()```, utilizar ```entity.name```. Essa regra vale para todas as propriedades apresentadas abaixo.
 

@@ -30,7 +30,7 @@ python -m sql_judge config.json another_config.json
 In case of conflict between the two files, the latter has preference.
 
 ### Setting up a configuration file
-The configuration file must be formatted correctly ni order to the program to execute properly. Here is a guide in how to fill it properly:
+The configuration file must be formatted correctly in order to the program to execute properly. Here is a guide in how to fill it properly:
 
 The SQL Judge configuration has the following format, with a more detailed information below it:
 ```json
