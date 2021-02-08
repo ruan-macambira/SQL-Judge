@@ -19,5 +19,6 @@ setup(
     },
     entry_points={
         'console_scripts': ['sql-judge=sql_judge.__main__:main']
-    }
+    },
+    python_requires='>=3.7'
 )
