@@ -16,5 +16,8 @@ setup(
     package_dir={"": "src"},
     package_data={
         '': ['*.json']
+    },
+    entry_points={
+        'console_scripts': ['sql-judge=sql_judge.__main__:main']
     }
 )
