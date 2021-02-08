@@ -40,8 +40,13 @@ def sql_judge(filenames) -> list:
         logging.error(str(err))
         return []
 
-if __name__ == '__main__':
+def main():
+    """Console Scripts entry point"""
     output = sql_judge(sys.argv[1:])
 
     for line in output:
         print(line)
+
+
+if __name__ == '__main__':
+    main()

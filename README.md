@@ -18,13 +18,13 @@ pip install sql_judge
 In order to use the tool, the user must pass a configuration file in JSON format. For example, if you have the configuration in a file called ```config.json```, it would execute the tool with:
 
 ```bash
-python -m sql_judge config.json
+sql-judge config.json
 ```
 
 Currently, all configuration options must be passed through a configuration file. You can, however, pass multiple files, like this:
 
 ```bash
-python -m sql_judge config.json another_config.json
+sql-judge config.json another_config.json
 ```
 
 In case of conflict between the two files, the latter has preference.
@@ -88,6 +88,7 @@ Here's an example of a validation module
 from sql_judge import validates # Decorator that marks functions as validations
 
 def not_a_validation(): # Since it does not have the decorator, it is not recognized as a validation
+  pass
 
 @validates('table') # Makes the function a validation of tables
 def table_must_start_with_tbl(table):
