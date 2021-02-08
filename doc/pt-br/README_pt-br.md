@@ -59,10 +59,12 @@ As configurações de utilização são passadas através de arquivos no formato
 
 **adapter**: Opções relacionadas ao Adaptador, i.e a classe que informa o dicionário de dados do schema, para montar o schema. Instruções de como criar um adaptador mais abaixo.
 
- - module *(obrigatório)*: Nome do módulo em que a classe do adaptador se encontra. *Planeja-se no futuro que o usuário possa passar um arquivo qualquer, que independa do sys.path do interpretador*
+ - module *(obrigatório)*: Nome do módulo em que a classe do adaptador se encontra.
  - class *(obrigatório)*: Nome da classe do adaptador
  - params *(opcional)*: Lista de argumentos posicionais para serem enviadas ao construtor do adaptador
  - named_params *(opcional)*: Hash com argumentos para serem enviados como argumentos nomeados ao construtor do adaptador
+
+_Obs.: SQL Judge permite que se crie e utilize plug-ins para o Adaptador. Mais informações em [Desenvolvendo Plug-ins de Adaptador para SQL Judge]((doc/pt-br/Adapter-Plug-ins_pt-br.md)_
 
 **validations**: Opções relacionadas às validações. Instruções de como criar as validações mais abaixo.
  - module *(obrigatório)*: Módulo em que as validações se encontra.

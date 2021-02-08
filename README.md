@@ -1,6 +1,6 @@
 # SQL Judge, a tool for validation Relational Databases Schemas (SQL)
 
-Also avaliable in [PT-BR](https://github.com/MxBromelia/SQL-Judge/blob/master/doc/README_pt-br.md)
+Also avaliable in [PT-BR](doc/pt-br/README_pt-br.md)
 
 ## Goals
 SQL Judge has a goal to allow writing database schema validations that are easily testable and portable between different Database implementations (Postgres, MariaDB, MySQL, etc.)
@@ -56,6 +56,8 @@ The SQL Judge configuration has the following format, with a more detailed infor
  - class *(mandatory)*: The Adapter class presented in the module
  - params *(optional)*: unnamed parameters passed to the Adapter constuctor
  - named_params *(optional)*: named parameters passed to the Adapter constructor
+
+_Obs.: SQL Judge allows to create and use plug-ins for the Adapter. More info on how to develop and use in [Developing Adapter Plug-ins for SQL Judge](/doc/en/Adapter-Plug-ins.md)_
 
 **validations**: Options regarding the schema validations:
  - module *(mandatory)*: The module containing the validations functions
