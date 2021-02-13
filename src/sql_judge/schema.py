@@ -15,7 +15,8 @@ class Schema:
     def __references(self, params):
         ref_tuple = namedtuple('Reference', ['table', 'column', 'references'])
         references = (ref_tuple(*el) for el in self._references)
-        ref = find(references, lambda el: el.table == params['table_name'] and el.column == params['name'])
+        find_reference = lambda el: el.table == params['table_name'] and el.column == params['name']
+        ref = find(references, find_reference)
         return ref.references if ref is not None else None
 
     def __is_primary_key(self, params):

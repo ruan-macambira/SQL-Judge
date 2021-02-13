@@ -4,7 +4,7 @@ from pytest import fixture
 from sql_judge.serialized_adapter import SerializedAdapter
 from sql_judge.parse_configuration.build_configuration import ConfigurationBuilder
 from sql_judge.parse_configuration import adapter_builder
-from sql_judge.schema import Schema
+from sql_judge import schema
 
 @fixture
 def build_configuration_builder(build_adapter_builder):
@@ -64,9 +64,11 @@ def schema_adapter(build_schema_adapter):
 @fixture
 def serial_schema():
     def _serial_schema(info: dict):
-        return Schema(SerializedAdapter(info))
+        return schema.Schema(SerializedAdapter(info))
     return _serial_schema
 
 @fixture
-def stdout(capsys):
-    return capsys.readouterr().out
+def build_entity():
+    def build(group: str, name: str, **custom_params):
+        return getattr(schema, group)(schema=None, name=name, **custom_params)
+    return build

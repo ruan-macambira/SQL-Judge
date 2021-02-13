@@ -13,12 +13,17 @@ def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: Lis
         if not needs_validation(entity, ignore_tables):
             continue
         group = entity.__name__.lower()
-        messages = (_guard_validation(validation, entity)
-                    for validation in validations.get(group, []))
+        messages = validate_entity(validations, entity)
         report += [Fail(group, canonical_name(entity), message)
                    for message in messages if message is not None]
 
     return report
+
+def validate_entity(validations: Dict[str, List[Callable]], entity: Entity):
+    """Validate Entity"""
+    group = entity.__name__.lower()
+    return (_guard_validation(validation, entity)
+            for validation in validations.get(group, []))
 
 def _guard_validation(validation: Callable, entity: Entity):
     try:

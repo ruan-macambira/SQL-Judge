@@ -4,7 +4,7 @@ from types import ModuleType
 import pytest
 from sql_judge import validates
 from sql_judge.parse_configuration.schema_validations import (
-    module_validations, inspect_validations, to_configuration)
+    module_validations, to_configuration)
 
 @pytest.fixture
 def mockule():
@@ -22,12 +22,3 @@ def validations(mockule): # pylint: disable=redefined-outer-name
 def test_module_validations_returns_functions_decotared_as_validations(mockule): # pylint: disable=redefined-outer-name
     assert set(module_validations(mockule)) == \
         set((mockule.validate_table, mockule.validate_invalid))
-
-def test_inspect_validations_validates_the_entity_the_function_validates(validations): # pylint: disable=redefined-outer-name
-    assert inspect_validations(validations) == ["'invalid' is not a valid entity"]
-
-def test_to_configuration_export_function_to_a_format_accepted_by_the_configuration(validations, mockule): # pylint: disable=redefined-outer-name
-    assert to_configuration(validations) == {
-        'table': [mockule.validate_table],
-        'invalid': [mockule.validate_invalid]
-    }

@@ -43,17 +43,24 @@ def test_nonexisten_plugin(caplog):
 def test_plugin_adapter():
     config = [BASEPATH + 'configs/plugin_config.json']
     assert sql_judge(config) == [
-        'REPORT', '=' * 50, 'table:', '=' * 50, ' + invalid_table', '   + Invalid', '-' * 40
+        'REPORT', '=' * 50,
+        'table:', '=' * 50,' + invalid_table', '   + Invalid', '-' * 40,
+        'column:', '=' * 50, ' + invalid_table.invalid_column', '   + Invalid', '-' * 40
     ]
 
 @mark.integration_test
 def test_cli_export():
     config = [BASEPATH + 'configs/config.json']
     assert sql_judge(config) == [
-        'REPORT', '=' * 50, 'table:', '=' * 50, ' + invalid_table', '   + Invalid', '-' * 40
+        'REPORT', '=' * 50,
+        'table:', '=' * 50,' + invalid_table', '   + Invalid', '-' * 40,
+        'column:', '=' * 50, ' + invalid_table.invalid_column', '   + Invalid', '-' * 40
     ]
 
 @mark.integration_test
 def test_csv_export():
     config = [BASEPATH + 'configs/config.json', BASEPATH + 'configs/config_csv.json']
-    assert sql_judge(config) == ['Table, invalid_table, Invalid']
+    assert sql_judge(config) == [
+        'Table, invalid_table, Invalid',
+        'Column, invalid_table.invalid_column, Invalid'
+        ]

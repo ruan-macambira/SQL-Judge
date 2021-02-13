@@ -17,16 +17,8 @@ def module_validations(module):
         if getattr(function, 'validates', None) is not None
     ]
 
-def inspect_validations(validations):
-    """ Returns validation_warnings """
-    return [
-        f"'{validation.validates}' is not a valid entity"
-        for validation in validations
-        if validation.validates.lower() not in VALID_ENTITITES
-    ]
-
 def to_configuration(validations):
-    """ Converts a collection of validation fucntions to the configuration format """
+    """ Converts a collection of validation functions to the configuration format """
     validations_dict = defaultdict(list)
 
     for validation in validations:

@@ -8,7 +8,12 @@ data_file = temp/.coverage
 fail_under=90
 skip_empty=True
 sort=Cover
-exclude_lines= raise NotImplementedError
+exclude_lines=
+    pragma: no cover
+    raise NotImplementedError
+    if __name__ == '__main__'
+    def __repr__
+    def main
 omit = src/sql_judge/__main__.py
 
 [xml]

@@ -19,7 +19,12 @@
                     "references": "valid_table_one"
                 }
             }
-        }, "invalid_table": {"valid": false},
+        }, "invalid_table": {
+            "valid": false,
+            "columns": {
+                "invalid_column": { "valid": false }
+            }
+        },
         "skippable_table": {
             "valid": false,
             "columns": {"skippable_column": {"valid": false}}
