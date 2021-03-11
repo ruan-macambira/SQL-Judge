@@ -97,13 +97,13 @@ def test_build_a_configuration(build_configuration_builder):
 
 # from_json
 def test_from_json_parses_json_string_and_generates_a_configuration_builder():
-    json_str = json.dumps({
+    options = {
         'adapter': {
             'module': 'adapter', 'class': 'Adapter',
             'params': ['foo'], 'named_params': {'foo': 'bar'}},
         'ignore_tables':['metainfo'], 'validations': {'module': 'validations'}
-    })
-    assert ConfigurationBuilder.from_json(json_str) == \
+    }
+    assert ConfigurationBuilder.load(options) == \
         ConfigurationBuilder(
             adapter=AppendedAdapterBuilder(
                 module='adapter', klass='Adapter',
@@ -112,9 +112,4 @@ def test_from_json_parses_json_string_and_generates_a_configuration_builder():
         )
 
 def test_from_json_succeeds_even_with_an_empty_config():
-    json_str = json.dumps({})
-    assert ConfigurationBuilder.from_json(json_str) == ConfigurationBuilder()
-
-def test_from_json_raises_runtime_error_when_it_provides_an_invalid_json():
-    with pytest.raises(RuntimeError):
-        assert ConfigurationBuilder.from_json('')
+    assert ConfigurationBuilder.load({}) == ConfigurationBuilder()

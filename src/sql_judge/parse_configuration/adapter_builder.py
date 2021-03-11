@@ -32,7 +32,7 @@ class AdapterBuilder(ABC):
                 continue
             ret[key] = other.asdict().get(key) or self.asdict().get(key)
         ret['named_params'] = {**self.named_params, **other.named_params}
-        return from_json(ret)   
+        return load(ret)   
 
     @abstractmethod
     def build(self):
@@ -131,7 +131,7 @@ class PluggableAdapterBuilder(AdapterBuilder):
         except StopIteration as stopit:
             raise RuntimeError(f"Could not find plugin with '{self.plugin}' ID") from stopit
 
-def from_json(options):
+def load(options):
     """AdapterBuilder factory made out of a dict.
     The Type of Adapter depends on the keys the config holds"""
     if 'class' in options:
@@ -144,4 +144,4 @@ def from_json(options):
 
 def default_adapter():
     """Default Adapter Configuration. Alias for an adapter that has no properties"""
-    return from_json({})
+    return load({})

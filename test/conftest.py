@@ -36,7 +36,7 @@ def configuration_builder(build_configuration_builder):
 def build_adapter_builder():
     """Adapter Builder Factory"""
     def _build(**options):
-        return adapter_builder.from_json(options)
+        return adapter_builder.load(options)
     return _build
 
 @fixture

@@ -9,7 +9,7 @@ from sql_judge.parse_configuration.adapter_builder import (
     AppendedAdapterBuilder,
     PluggableAdapterBuilder,
     default_adapter,
-    from_json
+    load
 )
 
 #Fixtures
@@ -28,7 +28,7 @@ def appended_adapter_builder(build_appended_adapter_builder):
 
 @pytest.fixture
 def pluggable_adapter_builer():
-    return from_json({'plugin': 'plugin'})
+    return load({'plugin': 'plugin'})
 
 # default adapter
 def test_default_adapter_is_unresolved():
@@ -36,7 +36,7 @@ def test_default_adapter_is_unresolved():
 
 # from json
 def test_from_json_substitutes_class_with_klass():
-    assert from_json({'module': 'module', 'class':'override'}).klass == 'override'
+    assert load({'module': 'module', 'class':'override'}).klass == 'override'
 
 
 # Adapter Builder
@@ -101,13 +101,13 @@ def test_merge_appended_adapter(build_appended_adapter_builder):
 
 # Pluggable Adapter
 def test_adapter_with_plugin_is_pluggable():
-    assert isinstance(from_json({'plugin':'plugin'}), PluggableAdapterBuilder)
+    assert isinstance(load({'plugin':'plugin'}), PluggableAdapterBuilder)
 
 def test_pluggable_adapter_validity(pluggable_adapter_builer):
     assert pluggable_adapter_builer.is_valid()
 
 def test_pluggable_adapter_is_invalid_with_no_plugin_id_provided():
-    assert not from_json({'plugin': None}).is_valid()
+    assert not load({'plugin': None}).is_valid()
 
 def test_pluggable_adapter_as_dict(pluggable_adapter_builer):
     assert pluggable_adapter_builer.asdict() == {

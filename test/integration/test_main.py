@@ -25,7 +25,7 @@ def test_empty_configuration(caplog):
 def test_invalid_configuration(caplog):
     config = [BASEPATH + 'configs/invalid_config.json']
     sql_judge(config)
-    assert caplog.record_tuples[0] == ('root', logging.ERROR, 'Error while parsing configuration')
+    assert caplog.record_tuples[0] == ('root', logging.ERROR, "Error while parsing 'test/integration/configs/invalid_config.json'")
 
 @mark.integration_test
 def test_non_existent_file(caplog):

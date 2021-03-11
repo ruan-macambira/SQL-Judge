@@ -2,7 +2,6 @@
 options from various sources, merge them, and build a valid Configuration
 Object to use in the rest of the proccess """
 import importlib
-import json
 from dataclasses import dataclass, field
 from typing import List, Optional
 from .. import Configuration
@@ -20,17 +19,13 @@ class ConfigurationBuilder:
     _invalidation: Optional[str] = None
 
     @classmethod
-    def from_json(cls, json_str):
+    def load(cls, options: dict):
         """Generates an instance based from a JSON string"""
-        try:
-            options = json.loads(json_str)
-        except json.JSONDecodeError as jserr:
-            raise RuntimeError('Error while parsing configuration') from jserr
         adapter_options = options.get('adapter', {})
         validation_options = options.get('validations', {})
         export_options = options.get('export', {})
         return cls(
-            adapter = adapter_builder.from_json(adapter_options),
+            adapter = adapter_builder.load(adapter_options),
             ignore_tables=options.get('ignore_tables', []),
             validations_module=validation_options.get('module'),
             export_format=export_options.get('format')
