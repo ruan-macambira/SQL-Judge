@@ -12,7 +12,7 @@ pytest-icdiff = "*"
 pytest-integration = "*"
 twine = "*"
 rope = "*"
-tox = "*"
+nox = "*"
 
 [packages]
 

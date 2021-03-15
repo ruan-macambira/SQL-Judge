@@ -7,7 +7,7 @@ temp/
 *.pyc
 build/
 dist/
-sql_judge.egg-info
+*.egg-info
 coverage.xml
 .mypy_cache
 .pytest_cache
