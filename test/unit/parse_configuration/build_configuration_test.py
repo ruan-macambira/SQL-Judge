@@ -1,19 +1,15 @@
 # pylint: disable=missing-module-docstring
 # pylint: disable=missing-function-docstring
-import json
 from unittest import mock
 
 import pytest
 
-from sql_judge.parse_configuration.build_configuration import \
-    ConfigurationBuilder
-from sql_judge.parse_configuration.adapter_builder import \
-    AppendedAdapterBuilder
+from sql_judge.parse_configuration import build_configuration
 
 
 # ConfigurationBuilder.is_valid
 def test_empty_builder_is_invalid():
-    assert ConfigurationBuilder().is_valid() is False
+    assert build_configuration.default().is_valid() is False
 
 def test_valid_builder(configuration_builder):
     assert configuration_builder.is_valid() is True
@@ -32,9 +28,9 @@ def test_builder_is_invalid_when_there_is_no_export_format(build_configuration_b
 
 # ConfigurationBuilder.merge
 def test_merging_a_builder_to_an_empty_build_does_not_affect_it():
-    configuration_builder = ConfigurationBuilder()
+    configuration_builder = build_configuration.default()
     assert configuration_builder == \
-        configuration_builder.merge(ConfigurationBuilder())
+        configuration_builder.merge(build_configuration.default())
 
 def test_merging_a_builder_does_preserves_adapter_module_if_not_present(build_configuration_builder):
     assert build_configuration_builder() \
@@ -93,23 +89,26 @@ def test_trying_to_build_an_invalid_configuration_raises_runtime_error(build_con
 
 @mock.patch('sql_judge.parse_configuration.build_configuration.importlib')
 def test_build_a_configuration(build_configuration_builder):
-    assert ConfigurationBuilder.build(build_configuration_builder())
+    assert build_configuration_builder().build()
 
 # from_json
-def test_from_json_parses_json_string_and_generates_a_configuration_builder():
+def test_from_json_uses_nested_dict_and_generates_a_configuration_builder(build_configuration_builder):
     options = {
         'adapter': {
             'module': 'adapter', 'class': 'Adapter',
             'params': ['foo'], 'named_params': {'foo': 'bar'}},
         'ignore_tables':['metainfo'], 'validations': {'module': 'validations'}
     }
-    assert ConfigurationBuilder.load(options) == \
-        ConfigurationBuilder(
-            adapter=AppendedAdapterBuilder(
-                module='adapter', klass='Adapter',
-                params=['foo'], named_params={'foo':'bar'}
-            ), ignore_tables=['metainfo'], validations_module='validations'
+    assert build_configuration.load(options) == \
+        build_configuration_builder(
+            adapter_module='adapter',
+            adapter_class='Adapter',
+            adapter_params=['foo'],
+            adapter_named_params={'foo':'bar'},
+            ignore_tables=['metainfo'],
+            validations_module='validations',
+            export_format=None
         )
 
 def test_from_json_succeeds_even_with_an_empty_config():
-    assert ConfigurationBuilder.load({}) == ConfigurationBuilder()
+    assert build_configuration.load({}) == build_configuration.default()

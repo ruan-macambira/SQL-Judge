@@ -5,7 +5,7 @@ import json
 import logging
 import pkg_resources
 from .validate import validate_entities
-from .parse_configuration.build_configuration import ConfigurationBuilder
+from .parse_configuration.build_configuration import load
 from .schema import Schema
 from .export import formatted_output
 
@@ -31,9 +31,9 @@ def sql_judge(filenames) -> list:
         return []
 
     try:
-        config_builder = ConfigurationBuilder.load(default_config())
+        config_builder = load(default_config())
         for filename in filenames:
-            config_builder = config_builder.merge(ConfigurationBuilder.load(user_config(filename)))
+            config_builder = config_builder.merge(load(user_config(filename)))
 
         config = config_builder.build()
         schema = Schema(config.connection)

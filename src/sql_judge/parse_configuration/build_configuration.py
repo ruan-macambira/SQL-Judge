@@ -16,20 +16,7 @@ class ConfigurationBuilder:
     ignore_tables: List[str] = field(default_factory=list)
     export_format: Optional[str] = None
     export_output: Optional[str] = None
-    _invalidation: Optional[str] = None
-
-    @classmethod
-    def load(cls, options: dict):
-        """Generates an instance based from a JSON string"""
-        adapter_options = options.get('adapter', {})
-        validation_options = options.get('validations', {})
-        export_options = options.get('export', {})
-        return cls(
-            adapter = adapter_builder.load(adapter_options),
-            ignore_tables=options.get('ignore_tables', []),
-            validations_module=validation_options.get('module'),
-            export_format=export_options.get('format')
-        )
+    _invalidation: Optional[str] = None   
 
     def merge(self, builder: 'ConfigurationBuilder'):
         """ Combine two builders """
@@ -69,3 +56,18 @@ class ConfigurationBuilder:
             export=self.export_format, #type: ignore
             ignore_tables=self.ignore_tables
         )
+
+def load(options: dict) -> ConfigurationBuilder:
+    """Generates an instance based from a JSON string"""
+    adapter_options = options.get('adapter', {})
+    validation_options = options.get('validations', {})
+    export_options = options.get('export', {})
+    return ConfigurationBuilder(
+        adapter = adapter_builder.load(adapter_options),
+        ignore_tables=options.get('ignore_tables', []),
+        validations_module=validation_options.get('module'),
+        export_format=export_options.get('format')
+    )
+
+def default() -> ConfigurationBuilder:
+    return ConfigurationBuilder()
