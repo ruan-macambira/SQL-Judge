@@ -1,12 +1,12 @@
 """ Run the application """
-from typing import Callable, Dict, List
+from typing import Callable, Dict, Collection
 from collections import namedtuple
 from .schema import Schema, Entity
 from .validation_entity import needs_validation, canonical_name
 
 Fail = namedtuple('Fail', ['group', 'report_name', 'message'])
 
-def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: List[str], schema: Schema):
+def validate_entities(validations: Dict[str, Collection[Callable]], ignore_tables: Collection[str], schema: Schema):
     """ Run the schema validation and return a report """
     report: list = []
     for entity in schema.entities():
@@ -19,7 +19,7 @@ def validate_entities(validations: Dict[str, List[Callable]], ignore_tables: Lis
 
     return report
 
-def validate_entity(validations: Dict[str, List[Callable]], entity: Entity):
+def validate_entity(validations: Dict[str, Collection[Callable]], entity: Entity):
     """Validate Entity"""
     group = entity.__name__.lower()
     return (_guard_validation(validation, entity)

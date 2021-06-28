@@ -1,7 +1,7 @@
 """Test Utils"""
 
 from typing import Dict, List, Callable
-from .parse_configuration.schema_validations import module_validations, to_configuration
+from .schema_validations import module_validations, to_configuration
 from .validate import validate_entity
 from .schema import Entity
 

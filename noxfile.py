@@ -13,5 +13,9 @@ def unit(session):
 def integration(session):
     session.install('pytest', 'pytest-cov', 'pytest-icdiff', 'pytest-integration')
     session.install('-e', '.')
-    session.install('-e', 'test/integration/plug-ins/sql_judge_json_adapter')
     session.run('pytest', 'test/integration', '--integration-cover')
+
+@nox.session(python=VERSIONS, reuse_venv=True)
+def example(session):
+    session.install('-e', '.')
+    session.run('python', 'examples/run.py', 'examples/', env={'PYTHONPATH': 'examples:$PYTHONPATH'})

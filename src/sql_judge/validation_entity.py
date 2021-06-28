@@ -4,6 +4,7 @@ namely: whether it needs validations and the name it will appear on the report""
 from functools import singledispatch
 from .schema import Entity, Table, TableEntity, ColumnEntity
 
+#Needs Validation
 @singledispatch
 def needs_validation(entity, _ignore_tables: list):
     """Check if entity should or not be validated, considering the ignore-tables configuration"""
@@ -21,6 +22,7 @@ def _(table: Table, ignore_tables: list):
 def _(table_entity: TableEntity, ignore_tables: list):
     return needs_validation(table_entity.table, ignore_tables)
 
+# Canonical Name
 @singledispatch
 def canonical_name(entity):
     """The entity identifier on the report"""

@@ -3,8 +3,7 @@
 from types import ModuleType
 import pytest
 from sql_judge import validates
-from sql_judge.parse_configuration.schema_validations import (
-    module_validations, to_configuration)
+from sql_judge.schema_validations import (module_validations)
 
 @pytest.fixture
 def mockule():
