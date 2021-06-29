@@ -1,7 +1,7 @@
 """Validates the Schema"""
-from .judge import judge
+from .judge import judge, Judge
 
-__all__ = ('judge', 'validates')
+__all__ = ('judge', 'Judge', 'validates')
 
 def validates(entity):
     """ Sets Entity to which the validation will run """

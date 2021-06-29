@@ -2,21 +2,19 @@
 from typing import Callable, Dict, Collection
 from collections import namedtuple
 from .schema import Schema, Entity
-from .validation_entity import needs_validation, canonical_name
+from .validation_entity import canonical_name
 
 Fail = namedtuple('Fail', ['group', 'report_name', 'message'])
 
-def validate_entities(validations: Dict[str, Collection[Callable]], ignore_tables: Collection[str], schema: Schema):
-    """ Run the schema validation and return a report """
+def entities_validation(validations: Dict[str, Collection[Callable]], _needs_validation: Callable, schema: Schema):
     report: list = []
     for entity in schema.entities():
-        if not needs_validation(entity, ignore_tables):
+        if not _needs_validation(entity):
             continue
         group = entity.__name__.lower()
         messages = validate_entity(validations, entity)
         report += [Fail(group, canonical_name(entity), message)
-                   for message in messages if message is not None]
-
+                  for message in messages if message is not None]
     return report
 
 def validate_entity(validations: Dict[str, Collection[Callable]], entity: Entity):
@@ -29,4 +27,5 @@ def _guard_validation(validation: Callable, entity: Entity):
     try:
         return validation(entity)
     except Exception as err: # pylint: disable=broad-except
-        return f'validation "{validation.__name__}" raised a {type(err).__name__} with the message "{err}"'
+        error = type(err).__name__
+        return f'validation "{validation.__name__}" raised a {error} with the message "{err}"'

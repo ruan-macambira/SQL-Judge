@@ -1,7 +1,8 @@
 # pylint: disable = missing-module-docstring
 # pylint: disable = missing-function-docstring
 from pytest import fixture
-from sql_judge.validate import validate_entities
+from sql_judge.validate import entities_validation
+from sql_judge.validation_entity import func_needs_validation
 from sql_judge.schema import Schema
 from sql_judge import validates
 
@@ -16,7 +17,8 @@ def report(build_schema_adapter):
         'tables': {'table_one': {'columns': {'column_one': {}}}, 'ignore': {}},
         'functions': {'function_one': {}}
     }))
-    return validate_entities(validations, ['ignore'], schema)
+    needs_validation = func_needs_validation(['ignore'])
+    return entities_validation(validations, needs_validation, schema)
 
 def pass_validation(_table):
     return None

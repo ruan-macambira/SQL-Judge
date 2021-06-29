@@ -4,6 +4,11 @@ namely: whether it needs validations and the name it will appear on the report""
 from functools import singledispatch
 from .schema import Entity, Table, TableEntity, ColumnEntity
 
+def func_needs_validation(ignore_tables: list):
+    def func(entity: Entity):
+        return needs_validation(entity, ignore_tables)
+    return func
+
 #Needs Validation
 @singledispatch
 def needs_validation(entity, _ignore_tables: list):
