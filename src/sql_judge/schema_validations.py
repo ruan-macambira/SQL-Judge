@@ -2,7 +2,8 @@
 Capture and organize schema validations
 """
 import inspect
-from collections import defaultdict
+from operator import attrgetter
+from .util import group_by
 VALID_ENTITITES = [
     'table', 'column', 'trigger', 'constraint', 'function', 'procedure', 'index'
 ]
@@ -19,8 +20,4 @@ def module_validations(module):
 
 def to_configuration(validations):
     """ Converts a collection of validation functions to the configuration format """
-    validations_dict = defaultdict(list)
-
-    for validation in validations:
-        validations_dict[validation.validates].append(validation)
-    return validations_dict
+    return group_by(validations,key=attrgetter('validates'))
